@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0",
-  "releaseDate": "2025-12-11",
-  "changelog": "Add color customization, dynamic custom buttons, and settings export/import"
+  "version": "1.5.1",
+  "releaseDate": "2025-12-12",
+  "changelog": "Fix updater.js antivirus false positive - use GitHub API instead of raw URLs"
 }
