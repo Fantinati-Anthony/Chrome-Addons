@@ -1,0 +1,5 @@
+{
+  "version": "1.4.6",
+  "releaseDate": "2025-12-11",
+  "changelog": "Remove all internal domain references for public repo"
+}
