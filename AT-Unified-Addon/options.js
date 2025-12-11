@@ -74,6 +74,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ========== BORDER RADIUS ==========
+  const DEFAULT_RADIUS = {
+    radiusSmall: 4,
+    radiusMedium: 8,
+    radiusLarge: 12
+  };
+
+  const radiusSmall = document.getElementById('radius-small');
+  const radiusMedium = document.getElementById('radius-medium');
+  const radiusLarge = document.getElementById('radius-large');
+  const radiusSmallValue = document.getElementById('radius-small-value');
+  const radiusMediumValue = document.getElementById('radius-medium-value');
+  const radiusLargeValue = document.getElementById('radius-large-value');
+  const saveRadiusBtn = document.getElementById('btn-save-radius');
+  const resetRadiusBtn = document.getElementById('btn-reset-radius');
+  const radiusStatus = document.getElementById('radius-status');
+
+  // Update value display on slider change
+  function updateRadiusDisplay() {
+    if (radiusSmallValue) radiusSmallValue.textContent = radiusSmall.value + 'px';
+    if (radiusMediumValue) radiusMediumValue.textContent = radiusMedium.value + 'px';
+    if (radiusLargeValue) radiusLargeValue.textContent = radiusLarge.value + 'px';
+  }
+
+  if (radiusSmall) radiusSmall.addEventListener('input', updateRadiusDisplay);
+  if (radiusMedium) radiusMedium.addEventListener('input', updateRadiusDisplay);
+  if (radiusLarge) radiusLarge.addEventListener('input', updateRadiusDisplay);
+
+  // Load saved radius
+  chrome.storage.sync.get(['customRadius'], (data) => {
+    const radius = data.customRadius || DEFAULT_RADIUS;
+    if (radiusSmall) radiusSmall.value = radius.radiusSmall;
+    if (radiusMedium) radiusMedium.value = radius.radiusMedium;
+    if (radiusLarge) radiusLarge.value = radius.radiusLarge;
+    updateRadiusDisplay();
+  });
+
+  // Save radius
+  if (saveRadiusBtn) {
+    saveRadiusBtn.addEventListener('click', () => {
+      const radius = {
+        radiusSmall: parseInt(radiusSmall.value),
+        radiusMedium: parseInt(radiusMedium.value),
+        radiusLarge: parseInt(radiusLarge.value)
+      };
+      chrome.storage.sync.set({ customRadius: radius }, () => {
+        showStatus(radiusStatus, 'Arrondis sauvegardes!', 'success');
+      });
+    });
+  }
+
+  // Reset radius
+  if (resetRadiusBtn) {
+    resetRadiusBtn.addEventListener('click', () => {
+      if (radiusSmall) radiusSmall.value = DEFAULT_RADIUS.radiusSmall;
+      if (radiusMedium) radiusMedium.value = DEFAULT_RADIUS.radiusMedium;
+      if (radiusLarge) radiusLarge.value = DEFAULT_RADIUS.radiusLarge;
+      updateRadiusDisplay();
+      chrome.storage.sync.set({ customRadius: DEFAULT_RADIUS }, () => {
+        showStatus(radiusStatus, 'Arrondis reinitialises!', 'success');
+      });
+    });
+  }
+
   // ========== DYNAMIC BUTTONS ==========
   const buttonsList = document.getElementById('buttons-list');
   const newBtnName = document.getElementById('new-btn-name');
