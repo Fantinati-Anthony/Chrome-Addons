@@ -78,45 +78,59 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Check for updates on popup open
-  await checkAndShowUpdate();
+  try {
+    await checkAndShowUpdate();
+  } catch (e) {
+    console.log('Update check skipped:', e.message);
+  }
 
   // Setup version footer
   const footer = document.getElementById('version-footer');
   if (footer) {
-    const localVersion = await Updater.getLocalVersion();
-    footer.innerHTML = `v${localVersion} | <a href="#" id="check-update-link">Verifier les mises a jour</a> | <a href="#" id="changelog-link">Changelog</a>`;
+    try {
+      const localVersion = await Updater.getLocalVersion();
+      footer.innerHTML = `v${localVersion} | <a href="#" id="check-update-link">Verifier les mises a jour</a> | <a href="#" id="changelog-link">Changelog</a>`;
 
-    // Manual check link
-    document.getElementById('check-update-link').addEventListener('click', async (e) => {
-      e.preventDefault();
-      const link = e.target;
-      link.textContent = 'Verification...';
+      // Manual check link
+      document.getElementById('check-update-link').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const link = e.target;
+        link.textContent = 'Verification...';
 
-      const result = await Updater.checkForUpdate();
+        try {
+          const result = await Updater.checkForUpdate();
 
-      if (result.hasUpdate) {
-        link.textContent = 'Mise a jour disponible!';
-        updateBadge.classList.remove('hidden');
-        updateBanner.classList.remove('hidden');
-        updateVersions.textContent = `v${result.localVersion} → v${result.remoteVersion}`;
-      } else if (result.error) {
-        link.textContent = result.error;
-      } else {
-        link.textContent = 'A jour!';
-      }
+          if (result.hasUpdate) {
+            link.textContent = 'Mise a jour disponible!';
+            updateBadge.classList.remove('hidden');
+            updateBanner.classList.remove('hidden');
+            updateVersions.textContent = `v${result.localVersion} → v${result.remoteVersion}`;
+          } else if (result.error) {
+            link.textContent = result.error;
+          } else {
+            link.textContent = 'A jour!';
+          }
+        } catch (err) {
+          link.textContent = 'Erreur';
+        }
 
-      setTimeout(() => {
-        link.textContent = 'Verifier les mises a jour';
-      }, 3000);
-    });
+        setTimeout(() => {
+          link.textContent = 'Verifier les mises a jour';
+        }, 3000);
+      });
 
-    // Changelog link - opens CHANGELOG.md on GitHub
-    document.getElementById('changelog-link').addEventListener('click', async (e) => {
-      e.preventDefault();
-      const config = await Updater.getConfig();
-      const changelogUrl = `https://github.com/${config.githubUser}/${config.githubRepo}/blob/${config.githubBranch}/${config.githubPath}/CHANGELOG.md`;
-      chrome.tabs.create({ url: changelogUrl });
-    });
+      // Changelog link - opens CHANGELOG.md on GitHub
+      document.getElementById('changelog-link').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const config = await Updater.getConfig();
+        const changelogUrl = `https://github.com/${config.githubUser}/${config.githubRepo}/blob/${config.githubBranch}/${config.githubPath}/CHANGELOG.md`;
+        chrome.tabs.create({ url: changelogUrl });
+      });
+    } catch (e) {
+      // Fallback if Updater is not available
+      const manifest = chrome.runtime.getManifest();
+      footer.innerHTML = `v${manifest.version}`;
+    }
   }
 });
 

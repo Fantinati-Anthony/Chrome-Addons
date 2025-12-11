@@ -1,5 +1,5 @@
 {
-  "version": "1.5.1",
+  "version": "1.5.2",
   "releaseDate": "2025-12-12",
-  "changelog": "Fix updater.js antivirus false positive - use GitHub API instead of raw URLs"
+  "changelog": "Fix version footer display and add error handling for updater"
 }
