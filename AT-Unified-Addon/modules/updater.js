@@ -1,84 +1,68 @@
 // Version checker for AT Unified Toolkit
-// Checks version.json on GitHub to notify user of available updates
+// Simple update checker using GitHub API
 
 const Updater = (function() {
   'use strict';
 
-  // Repository information (hardcoded for security)
-  const REPO_OWNER = 'Fantinati-Anthony';
-  const REPO_NAME = 'Chrome-Addons';
-  const REPO_BRANCH = 'main';
-  const ADDON_PATH = 'AT-Unified-Addon';
-  const CHECK_INTERVAL = 3600000; // 1 hour
+  // Configuration
+  const CONFIG = {
+    owner: 'Fantinati-Anthony',
+    repo: 'Chrome-Addons',
+    branch: 'main',
+    path: 'AT-Unified-Addon',
+    checkInterval: 3600000
+  };
 
-  // Build version file URL
-  function buildVersionUrl() {
-    const base = 'https://raw.githubusercontent.com';
-    const path = `${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/${ADDON_PATH}/version.json`;
-    return `${base}/${path}?t=${Date.now()}`;
-  }
+  // Get version URL (GitHub API - more trusted by antivirus)
+  const VERSION_URL = 'https://api.github.com/repos/' + CONFIG.owner + '/' + CONFIG.repo + '/contents/' + CONFIG.path + '/version.json?ref=' + CONFIG.branch;
 
-  // Build download URL for updates
-  function buildDownloadUrl() {
-    return `https://download-directory.github.io/?url=https://github.com/${REPO_OWNER}/${REPO_NAME}/tree/${REPO_BRANCH}/${ADDON_PATH}`;
-  }
-
-  // Compare semantic versions (returns: 1 if v1 > v2, -1 if v1 < v2, 0 if equal)
-  function compareVersions(v1, v2) {
-    const parts1 = v1.split('.').map(Number);
-    const parts2 = v2.split('.').map(Number);
-
-    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-      const p1 = parts1[i] || 0;
-      const p2 = parts2[i] || 0;
-      if (p1 > p2) return 1;
-      if (p1 < p2) return -1;
-    }
-    return 0;
-  }
-
-  // Get current local version from manifest
+  // Get local version
   async function getLocalVersion() {
-    const manifest = chrome.runtime.getManifest();
-    return manifest.version;
+    return chrome.runtime.getManifest().version;
   }
 
-  // Fetch remote version from GitHub (public repo only)
+  // Fetch remote version
   async function getRemoteVersion() {
     try {
-      const url = buildVersionUrl();
-      const response = await fetch(url, { cache: 'no-store' });
+      const response = await fetch(VERSION_URL, {
+        headers: { 'Accept': 'application/vnd.github.v3+json' }
+      });
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Fichier version.json introuvable');
-        }
-        throw new Error(`HTTP ${response.status}`);
-      }
+      if (!response.ok) return null;
 
       const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Version check failed:', error);
+      // GitHub API returns content in base64
+      const content = atob(data.content);
+      return JSON.parse(content);
+    } catch (e) {
+      console.log('Update check error:', e.message);
       return null;
     }
   }
 
-  // Check for updates
+  // Compare versions
+  function isNewer(remote, local) {
+    const r = remote.split('.').map(Number);
+    const l = local.split('.').map(Number);
+
+    for (let i = 0; i < 3; i++) {
+      if ((r[i] || 0) > (l[i] || 0)) return true;
+      if ((r[i] || 0) < (l[i] || 0)) return false;
+    }
+    return false;
+  }
+
+  // Check for update
   async function checkForUpdate() {
     const localVersion = await getLocalVersion();
     const remoteData = await getRemoteVersion();
 
     if (!remoteData) {
-      return {
-        hasUpdate: false,
-        error: 'Impossible de verifier les mises a jour'
-      };
+      return { hasUpdate: false, error: 'Verification impossible' };
     }
 
-    const hasUpdate = compareVersions(remoteData.version, localVersion) > 0;
+    const hasUpdate = isNewer(remoteData.version, localVersion);
 
-    // Store last check time
     chrome.storage.local.set({
       lastUpdateCheck: Date.now(),
       remoteVersion: remoteData.version,
@@ -86,68 +70,59 @@ const Updater = (function() {
     });
 
     return {
-      hasUpdate,
-      localVersion,
+      hasUpdate: hasUpdate,
+      localVersion: localVersion,
       remoteVersion: remoteData.version,
       changelog: remoteData.changelog,
       releaseDate: remoteData.releaseDate
     };
   }
 
-  // Download update (opens download page)
-  async function downloadUpdate() {
-    chrome.tabs.create({ url: buildDownloadUrl() });
+  // Open download page
+  function downloadUpdate() {
+    const url = 'https://github.com/' + CONFIG.owner + '/' + CONFIG.repo + '/tree/' + CONFIG.branch + '/' + CONFIG.path;
+    chrome.tabs.create({ url: url });
   }
 
-  // Download full repo ZIP
-  async function downloadZip() {
-    const zipUrl = `https://github.com/${REPO_OWNER}/${REPO_NAME}/archive/refs/heads/${REPO_BRANCH}.zip`;
-    chrome.downloads.download({
-      url: zipUrl,
-      filename: `${REPO_NAME}-${REPO_BRANCH}.zip`,
-      saveAs: true
-    });
+  // Download ZIP
+  function downloadZip() {
+    const url = 'https://github.com/' + CONFIG.owner + '/' + CONFIG.repo + '/archive/refs/heads/' + CONFIG.branch + '.zip';
+    chrome.downloads.download({ url: url, saveAs: true });
   }
 
-  // Reload extension
-  function reloadExtension() {
-    chrome.runtime.reload();
+  // Get config
+  function getConfig() {
+    return {
+      githubUser: CONFIG.owner,
+      githubRepo: CONFIG.repo,
+      githubBranch: CONFIG.branch,
+      githubPath: CONFIG.path
+    };
   }
 
-  // Initialize - check on startup if needed
+  // Initialize
   async function init() {
-    const data = await chrome.storage.local.get(['lastUpdateCheck', 'hasUpdate']);
+    const data = await chrome.storage.local.get(['lastUpdateCheck']);
     const now = Date.now();
 
-    if (!data.lastUpdateCheck || (now - data.lastUpdateCheck) > CHECK_INTERVAL) {
+    if (!data.lastUpdateCheck || (now - data.lastUpdateCheck) > CONFIG.checkInterval) {
       await checkForUpdate();
     }
   }
 
-  // Get config info (for debugging)
-  async function getConfig() {
-    return {
-      githubUser: REPO_OWNER,
-      githubRepo: REPO_NAME,
-      githubBranch: REPO_BRANCH,
-      githubPath: ADDON_PATH,
-      githubPrivate: false,
-      githubToken: ''
-    };
-  }
-
   return {
-    checkForUpdate,
-    downloadUpdate,
-    downloadZip,
-    reloadExtension,
-    getLocalVersion,
-    getConfig,
-    init
+    checkForUpdate: checkForUpdate,
+    downloadUpdate: downloadUpdate,
+    downloadZip: downloadZip,
+    getLocalVersion: getLocalVersion,
+    getConfig: getConfig,
+    init: init
   };
 })();
 
-// Auto-initialize when loaded
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize on load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() { Updater.init(); });
+} else {
   Updater.init();
-});
+}
