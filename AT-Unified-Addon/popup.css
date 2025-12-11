@@ -1,3 +1,18 @@
+:root {
+  /* Couleurs personnalisables */
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --primary-color: #3498db;
+  --primary-hover: #2980b9;
+  --secondary-color: #2c3e50;
+  --button-bg: white;
+  --button-text: #666;
+  --panel-bg: white;
+  --border-color: #eee;
+  --success-color: #27ae60;
+  --error-color: #e74c3c;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -11,8 +26,8 @@ body {
   min-height: 400px;
   max-height: 600px;
   overflow-y: auto;
-  background: #f5f5f5;
-  color: #333;
+  background: var(--bg-color);
+  color: var(--text-color);
 }
 
 .container {
@@ -25,7 +40,7 @@ header {
 
 header h1 {
   font-size: 18px;
-  color: #2c3e50;
+  color: var(--secondary-color);
   margin-bottom: 10px;
   text-align: center;
 }
@@ -53,7 +68,7 @@ header h1 {
 }
 
 .nav-btn.active {
-  background: #3498db;
+  background: var(--primary-color);
   color: white;
 }
 
@@ -66,7 +81,7 @@ header h1 {
 }
 
 .tool-section {
-  background: white;
+  background: var(--panel-bg);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
@@ -75,16 +90,16 @@ header h1 {
 
 .tool-section h3 {
   font-size: 14px;
-  color: #2c3e50;
+  color: var(--secondary-color);
   margin-bottom: 10px;
   padding-bottom: 5px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .action-btn {
   padding: 10px 15px;
   border: none;
-  background: #3498db;
+  background: var(--primary-color);
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -95,7 +110,7 @@ header h1 {
 }
 
 .action-btn:hover {
-  background: #2980b9;
+  background: var(--primary-hover);
 }
 
 .action-btn:active {
@@ -147,7 +162,7 @@ textarea {
 
 textarea:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: var(--primary-color);
 }
 
 select {
@@ -161,7 +176,7 @@ select {
 
 select:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: var(--primary-color);
 }
 
 input[type="number"] {
@@ -202,12 +217,12 @@ input[type="number"] {
 }
 
 .color-hex:hover {
-  color: #3498db;
+  color: var(--primary-color);
 }
 
 .color-link {
   font-size: 11px;
-  color: #3498db;
+  color: var(--primary-color);
   text-decoration: none;
 }
 
@@ -216,7 +231,7 @@ input[type="number"] {
 }
 
 .color-delete {
-  background: #e74c3c;
+  background: var(--error-color);
   color: white;
   border: none;
   border-radius: 3px;
@@ -312,7 +327,7 @@ input[type="number"] {
 }
 
 .resize-btn:hover {
-  background: #3498db;
+  background: var(--primary-color);
   color: white;
 }
 
@@ -354,7 +369,7 @@ input[type="number"] {
 .visit-btn {
   padding: 4px 8px;
   border: none;
-  background: #27ae60;
+  background: var(--success-color);
   color: white;
   border-radius: 3px;
   cursor: pointer;
@@ -363,7 +378,7 @@ input[type="number"] {
 }
 
 .visit-btn:hover {
-  background: #219a52;
+  opacity: 0.85;
 }
 
 /* CSS Domain indicator */
@@ -405,12 +420,12 @@ input[type="number"] {
 
 .status-message.success {
   background: #d4edda;
-  color: #155724;
+  color: var(--success-color);
 }
 
 .status-message.error {
   background: #f8d7da;
-  color: #721c24;
+  color: var(--error-color);
 }
 
 .status-message.info {
@@ -420,7 +435,7 @@ input[type="number"] {
 
 /* Copied feedback */
 .copied {
-  color: #27ae60 !important;
+  color: var(--success-color) !important;
 }
 
 /* Update notification styles */
@@ -467,7 +482,7 @@ input[type="number"] {
   justify-content: center;
   width: 24px;
   height: 24px;
-  background: #e74c3c;
+  background: var(--error-color);
   color: white;
   border-radius: 50%;
   cursor: pointer;
@@ -476,7 +491,8 @@ input[type="number"] {
 }
 
 .update-badge:hover {
-  background: #c0392b;
+  background: var(--error-color);
+  opacity: 0.85;
   transform: scale(1.1);
 }
 
@@ -491,7 +507,7 @@ input[type="number"] {
 }
 
 .update-banner {
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  background: linear-gradient(135deg, var(--success-color), #2ecc71);
   color: white;
   padding: 10px 12px;
   border-radius: 6px;
@@ -531,7 +547,7 @@ input[type="number"] {
   padding: 6px 12px;
   border: none;
   background: white;
-  color: #27ae60;
+  color: var(--success-color);
   border-radius: 4px;
   cursor: pointer;
   font-size: 11px;
@@ -571,7 +587,7 @@ input[type="number"] {
 }
 
 .version-footer a {
-  color: #3498db;
+  color: var(--primary-color);
   text-decoration: none;
 }
 
@@ -596,6 +612,11 @@ input[type="number"] {
   gap: 8px;
 }
 
+/* Custom buttons container - make buttons flow in grid */
+#custom-buttons-container {
+  display: contents;
+}
+
 .tool-icon {
   display: flex;
   flex-direction: column;
@@ -603,7 +624,7 @@ input[type="number"] {
   justify-content: center;
   padding: 12px 8px;
   border: none;
-  background: white;
+  background: var(--button-bg);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s;
@@ -627,14 +648,14 @@ input[type="number"] {
 
 .tool-label {
   font-size: 10px;
-  color: #666;
+  color: var(--button-text);
   text-align: center;
   line-height: 1.2;
 }
 
 /* Tool Panel */
 .tool-panel {
-  background: white;
+  background: var(--panel-bg);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   overflow: hidden;
@@ -649,19 +670,19 @@ input[type="number"] {
   align-items: center;
   gap: 10px;
   padding: 12px 15px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #eee;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .back-btn {
   width: 32px;
   height: 32px;
   border: none;
-  background: white;
+  background: var(--button-bg);
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  color: #666;
+  color: var(--button-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -670,14 +691,14 @@ input[type="number"] {
 }
 
 .back-btn:hover {
-  background: #3498db;
+  background: var(--primary-color);
   color: white;
 }
 
 .panel-header h2 {
   font-size: 15px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--secondary-color);
   margin: 0;
 }
 
@@ -704,7 +725,7 @@ input[type="number"] {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
   font-size: 12px;
 }
 
@@ -718,7 +739,7 @@ input[type="number"] {
   overflow: hidden;
   text-overflow: ellipsis;
   margin-right: 10px;
-  color: #333;
+  color: var(--text-color);
 }
 
 /* Loading state */
@@ -732,12 +753,12 @@ input[type="number"] {
 /* Domain indicator */
 .domain-indicator {
   font-size: 11px;
-  color: #666;
+  color: var(--button-text);
   margin-bottom: 10px;
   padding: 8px 10px;
-  background: #f8f9fa;
+  background: var(--bg-color);
   border-radius: 6px;
-  border-left: 3px solid #3498db;
+  border-left: 3px solid var(--primary-color);
 }
 
 /* Improved action button in panels */
@@ -790,7 +811,7 @@ input[type="number"] {
 }
 
 .setup-modal-content {
-  background: white;
+  background: var(--panel-bg);
   border-radius: 12px;
   padding: 20px;
   width: 340px;
@@ -801,12 +822,12 @@ input[type="number"] {
 
 .setup-modal-content h2 {
   font-size: 18px;
-  color: #2c3e50;
+  color: var(--secondary-color);
   margin-bottom: 8px;
 }
 
 .setup-modal-content > p {
-  color: #666;
+  color: var(--button-text);
   font-size: 13px;
   margin-bottom: 20px;
 }
@@ -839,7 +860,7 @@ input[type="number"] {
 
 .setup-field input:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: var(--primary-color);
 }
 
 .setup-actions {
@@ -852,7 +873,7 @@ input[type="number"] {
 .setup-btn {
   padding: 12px;
   border: none;
-  background: #3498db;
+  background: var(--primary-color);
   color: white;
   border-radius: 6px;
   font-size: 14px;
@@ -862,7 +883,7 @@ input[type="number"] {
 }
 
 .setup-btn:hover {
-  background: #2980b9;
+  background: var(--primary-hover);
 }
 
 .setup-btn-skip {

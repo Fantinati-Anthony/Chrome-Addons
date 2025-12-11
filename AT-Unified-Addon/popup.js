@@ -4,75 +4,14 @@
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('Toolkit loaded');
 
+  // ========== APPLY CUSTOM COLORS ==========
+  await applyCustomColors();
+
   // ========== SETTINGS BUTTON ==========
   const settingsBtn = document.getElementById('btn-settings');
   if (settingsBtn) {
     settingsBtn.addEventListener('click', () => {
       chrome.runtime.openOptionsPage();
-    });
-  }
-
-  // ========== QUICK LINKS CONFIG ==========
-  const link1Label = document.getElementById('link1-label');
-  const link2Label = document.getElementById('link2-label');
-  const quickLink2 = document.getElementById('quick-link-2');
-
-  // Load quick link labels from storage
-  async function loadQuickLinks() {
-    const data = await chrome.storage.sync.get(['link1Name', 'link1Url', 'link2Name', 'link2Url']);
-
-    // Update labels
-    if (link1Label) {
-      link1Label.textContent = data.link1Name || 'Lien 1';
-    }
-    if (link2Label) {
-      link2Label.textContent = data.link2Name || 'BO';
-    }
-
-    // Hide link2 if no URL configured
-    if (quickLink2 && !data.link2Url) {
-      quickLink2.style.display = 'none';
-    } else if (quickLink2) {
-      quickLink2.style.display = '';
-    }
-  }
-
-  await loadQuickLinks();
-
-  // ========== FIRST LAUNCH SETUP ==========
-  const setupModal = document.getElementById('setup-modal');
-  const saveSetupBtn = document.getElementById('btn-save-setup');
-  const skipSetupBtn = document.getElementById('btn-skip-setup');
-
-  // Check if first launch
-  const configData = await chrome.storage.sync.get(['linksConfigured']);
-
-  if (!configData.linksConfigured && setupModal) {
-    setupModal.classList.remove('hidden');
-
-    // Save setup
-    saveSetupBtn.addEventListener('click', async () => {
-      const link1Name = document.getElementById('setup-link1-name').value.trim() || 'Lien 1';
-      const link1Url = document.getElementById('setup-link1-url').value.trim();
-      const link2Name = document.getElementById('setup-link2-name').value.trim() || 'BO';
-      const link2Url = document.getElementById('setup-link2-url').value.trim();
-
-      await chrome.storage.sync.set({
-        link1Name,
-        link1Url,
-        link2Name,
-        link2Url,
-        linksConfigured: true
-      });
-
-      setupModal.classList.add('hidden');
-      await loadQuickLinks();
-    });
-
-    // Skip setup
-    skipSetupBtn.addEventListener('click', async () => {
-      await chrome.storage.sync.set({ linksConfigured: true });
-      setupModal.classList.add('hidden');
     });
   }
 
@@ -180,3 +119,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 });
+
+// ========== CUSTOM COLORS ==========
+async function applyCustomColors() {
+  const DEFAULT_COLORS = {
+    bgColor: '#f5f5f5',
+    textColor: '#333333',
+    primaryColor: '#3498db',
+    primaryHover: '#2980b9',
+    secondaryColor: '#2c3e50',
+    buttonBg: '#ffffff',
+    buttonText: '#666666',
+    panelBg: '#ffffff',
+    borderColor: '#eeeeee',
+    successColor: '#27ae60',
+    errorColor: '#e74c3c'
+  };
+
+  const data = await chrome.storage.sync.get(['customColors']);
+  const colors = data.customColors || DEFAULT_COLORS;
+
+  // Apply colors to CSS variables
+  const root = document.documentElement;
+  root.style.setProperty('--bg-color', colors.bgColor);
+  root.style.setProperty('--text-color', colors.textColor);
+  root.style.setProperty('--primary-color', colors.primaryColor);
+  root.style.setProperty('--primary-hover', colors.primaryHover);
+  root.style.setProperty('--secondary-color', colors.secondaryColor);
+  root.style.setProperty('--button-bg', colors.buttonBg);
+  root.style.setProperty('--button-text', colors.buttonText);
+  root.style.setProperty('--panel-bg', colors.panelBg);
+  root.style.setProperty('--border-color', colors.borderColor);
+  root.style.setProperty('--success-color', colors.successColor);
+  root.style.setProperty('--error-color', colors.errorColor);
+}
