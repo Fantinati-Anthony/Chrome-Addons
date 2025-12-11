@@ -35,15 +35,10 @@
     <!-- Main Grid View (Home) -->
     <section id="grid-view" class="grid-view">
       <div class="tools-grid">
-        <!-- Quick Links (configurable) -->
-        <button class="tool-icon" id="quick-link-1" data-tool="link1" data-action="direct">
-          <span class="tool-emoji">🏢</span>
-          <span class="tool-label" id="link1-label">Lien 1</span>
-        </button>
-        <button class="tool-icon" id="quick-link-2" data-tool="link2" data-action="direct">
-          <span class="tool-emoji">🔧</span>
-          <span class="tool-label" id="link2-label">BO</span>
-        </button>
+        <!-- Custom Buttons (dynamically loaded) -->
+        <div id="custom-buttons-container"></div>
+
+        <!-- Built-in Tools -->
         <button class="tool-icon" data-tool="desktop" data-action="direct">
           <span class="tool-emoji">🖥️</span>
           <span class="tool-label">Raccourci</span>
@@ -222,39 +217,6 @@
       <button id="btn-inject-js" class="action-btn">Executer JS</button>
     </div>
   </template>
-
-  <!-- First Launch Setup Modal -->
-  <div id="setup-modal" class="setup-modal hidden">
-    <div class="setup-modal-content">
-      <h2>Configuration initiale</h2>
-      <p>Configurez vos liens rapides pour commencer:</p>
-
-      <div class="setup-form">
-        <div class="setup-field">
-          <label for="setup-link1-name">Lien 1 - Nom:</label>
-          <input type="text" id="setup-link1-name" value="" placeholder="ex: Intranet">
-        </div>
-        <div class="setup-field">
-          <label for="setup-link1-url">Lien 1 - URL:</label>
-          <input type="text" id="setup-link1-url" placeholder="https://example.com">
-        </div>
-
-        <div class="setup-field">
-          <label for="setup-link2-name">Lien 2 - Nom:</label>
-          <input type="text" id="setup-link2-name" value="BO" placeholder="Nom du lien">
-        </div>
-        <div class="setup-field">
-          <label for="setup-link2-url">Lien 2 - URL:</label>
-          <input type="text" id="setup-link2-url" placeholder="https://admin.example.com">
-        </div>
-      </div>
-
-      <div class="setup-actions">
-        <button id="btn-save-setup" class="setup-btn">Sauvegarder</button>
-        <button id="btn-skip-setup" class="setup-btn-skip">Configurer plus tard</button>
-      </div>
-    </div>
-  </div>
 
   <script src="modules/updater.js"></script>
   <script src="modules/auto-updater.js"></script>

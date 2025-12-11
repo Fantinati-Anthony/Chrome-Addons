@@ -26,24 +26,6 @@ const PanelLoader = (function() {
 
   // Direct actions (no panel needed)
   const directActions = {
-    link1: async () => {
-      const data = await chrome.storage.sync.get(['link1Url']);
-      const url = data.link1Url;
-      if (url) {
-        chrome.tabs.create({ url });
-      } else {
-        alert('URL non configuree. Allez dans les options pour configurer ce lien.');
-      }
-    },
-    link2: async () => {
-      const data = await chrome.storage.sync.get(['link2Url']);
-      const url = data.link2Url;
-      if (url) {
-        chrome.tabs.create({ url });
-      } else {
-        alert('URL non configuree. Allez dans les options pour configurer ce lien.');
-      }
-    },
     desktop: async () => {
       try {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -102,6 +84,9 @@ const PanelLoader = (function() {
 
   // Initialize panel loader
   function init() {
+    // Load custom buttons
+    loadCustomButtons();
+
     // Attach click handlers to tool icons
     document.querySelectorAll('.tool-icon').forEach(icon => {
       icon.addEventListener('click', () => {
@@ -119,6 +104,60 @@ const PanelLoader = (function() {
 
     // Back button
     backBtn.addEventListener('click', closePanel);
+  }
+
+  // Load and render custom buttons from storage
+  async function loadCustomButtons() {
+    const container = document.getElementById('custom-buttons-container');
+    if (!container) return;
+
+    const data = await chrome.storage.sync.get(['customButtons']);
+    const customButtons = data.customButtons || [];
+
+    container.innerHTML = '';
+
+    customButtons.forEach(btn => {
+      const button = document.createElement('button');
+      button.className = 'tool-icon';
+      button.title = btn.name;
+
+      // Determine icon: emoji or favicon
+      let iconHtml;
+      if (btn.icon) {
+        iconHtml = `<span class="tool-emoji">${btn.icon}</span>`;
+      } else {
+        // Use favicon from the URL
+        const domain = getDomainFromUrl(btn.url);
+        iconHtml = `<span class="tool-emoji"><img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32" alt="" style="width:24px;height:24px;"></span>`;
+      }
+
+      button.innerHTML = `
+        ${iconHtml}
+        <span class="tool-label">${escapeHtml(btn.name)}</span>
+      `;
+
+      button.addEventListener('click', () => {
+        chrome.tabs.create({ url: btn.url });
+      });
+
+      container.appendChild(button);
+    });
+  }
+
+  // Helper: Get domain from URL
+  function getDomainFromUrl(url) {
+    try {
+      return new URL(url).hostname;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  // Helper: Escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   // Open a tool panel
