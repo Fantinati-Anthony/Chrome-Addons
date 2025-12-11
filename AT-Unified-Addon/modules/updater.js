@@ -19,15 +19,16 @@ var Updater = {
     var config = this.getConfig();
     var localVersion = this.getLocalVersion();
 
-    // Public raw URL - no API
+    // Public raw URL - no API (with cache buster)
     var url = 'https://raw.githubusercontent.com/'
       + config.githubUser + '/'
       + config.githubRepo + '/'
       + config.githubBranch + '/'
-      + config.githubPath + '/version.json';
+      + config.githubPath + '/version.json'
+      + '?t=' + Date.now();
 
     try {
-      var response = await fetch(url);
+      var response = await fetch(url, { cache: 'no-store' });
       if (!response.ok) {
         return { hasUpdate: false, error: 'Erreur reseau' };
       }
