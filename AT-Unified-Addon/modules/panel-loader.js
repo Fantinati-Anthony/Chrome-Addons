@@ -121,20 +121,39 @@ const PanelLoader = (function() {
       button.className = 'tool-icon';
       button.title = btn.name;
 
-      // Determine icon: emoji or favicon
-      let iconHtml;
+      const emojiSpan = document.createElement('span');
+      emojiSpan.className = 'tool-emoji';
+
       if (btn.icon) {
-        iconHtml = `<span class="tool-emoji">${btn.icon}</span>`;
+        // User defined emoji/icon
+        emojiSpan.textContent = btn.icon;
       } else {
-        // Use favicon from the URL
+        // Favicon with fallback chain
         const domain = getDomainFromUrl(btn.url);
-        iconHtml = `<span class="tool-emoji"><img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32" alt="" style="width:24px;height:24px;"></span>`;
+        const img = document.createElement('img');
+        img.style.cssText = 'width:24px;height:24px;';
+        img.alt = '';
+
+        // Try DuckDuckGo first, then Google, then default emoji
+        img.src = 'https://icons.duckduckgo.com/ip3/' + domain + '.ico';
+        img.onerror = function() {
+          this.onerror = function() {
+            // Both failed, replace with globe emoji
+            emojiSpan.textContent = '🌐';
+            this.remove();
+          };
+          this.src = 'https://www.google.com/s2/favicons?domain=' + domain + '&sz=32';
+        };
+
+        emojiSpan.appendChild(img);
       }
 
-      button.innerHTML = `
-        ${iconHtml}
-        <span class="tool-label">${escapeHtml(btn.name)}</span>
-      `;
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'tool-label';
+      labelSpan.textContent = btn.name;
+
+      button.appendChild(emojiSpan);
+      button.appendChild(labelSpan);
 
       button.addEventListener('click', () => {
         chrome.tabs.create({ url: btn.url });
