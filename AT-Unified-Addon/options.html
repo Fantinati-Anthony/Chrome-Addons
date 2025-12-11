@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AT Toolkit - Options</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      background: #f5f5f5;
+      color: #333;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #3498db;
+    }
+
+    .section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .section h2 {
+      font-size: 18px;
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+
+    .section p {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #3498db;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: #2980b9;
+    }
+
+    .status {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+
+    .info {
+      background: #e7f3ff;
+      border-left: 4px solid #3498db;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #2c3e50;
+    }
+
+    .info.warning {
+      background: #fff3cd;
+      border-left-color: #ffc107;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .form-row .form-group {
+      margin-bottom: 0;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      margin-bottom: 0;
+    }
+
+    .test-btn {
+      background: #6c757d;
+      margin-left: 10px;
+    }
+
+    .test-btn:hover {
+      background: #5a6268;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .quick-link-config {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .quick-link-config:last-of-type {
+      border-bottom: none;
+      margin-bottom: 15px;
+    }
+
+    .quick-link-config h3 {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h1>AT Toolkit - Options</h1>
+
+  <div class="section">
+    <h2>Liens rapides</h2>
+    <p>Configurez les raccourcis affichés sur la page d'accueil de l'extension.</p>
+
+    <div class="quick-link-config">
+      <h3>Lien 1 (Principal)</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="link1-name">Nom:</label>
+          <input type="text" id="link1-name" placeholder="ex: Intranet">
+        </div>
+        <div class="form-group">
+          <label for="link1-url">URL:</label>
+          <input type="text" id="link1-url" placeholder="ex: https://intranet.example.com">
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-link-config">
+      <h3>Lien 2 (Back Office)</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="link2-name">Nom:</label>
+          <input type="text" id="link2-name" placeholder="ex: BO">
+        </div>
+        <div class="form-group">
+          <label for="link2-url">URL:</label>
+          <input type="text" id="link2-url" placeholder="ex: https://admin.monsite.com">
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button id="btn-save-links">Sauvegarder</button>
+      <button id="btn-update-favicon" class="test-btn">Mettre a jour l'icone</button>
+    </div>
+    <div id="links-status" class="status" style="display: none;"></div>
+
+    <div class="info" style="margin-top: 15px;">
+      Le bouton "Mettre a jour l'icone" recupere le favicon du Lien 1 et l'utilise comme icone de l'extension dans Chrome.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Mises a jour</h2>
+    <p>L'extension se met a jour depuis le repository GitHub public:</p>
+
+    <div class="info">
+      <strong>Repository:</strong> Fantinati-Anthony/Chrome-Addons<br>
+      <strong>Branche:</strong> main<br>
+      <strong>Dossier:</strong> AT-Unified-Addon
+    </div>
+
+    <div class="btn-group">
+      <button id="btn-force-update" style="background: #e67e22;">Reinitialiser le cache MAJ</button>
+    </div>
+    <div id="github-status" class="status" style="display: none;"></div>
+  </div>
+
+  <div class="section">
+    <h2>API OpenAI (GPT)</h2>
+    <p>Configurez votre cle API OpenAI pour utiliser la fonctionnalite de correction de texte avec GPT.</p>
+
+    <div class="info">
+      Obtenez votre cle API sur <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>
+    </div>
+
+    <label for="api-key">Cle API OpenAI:</label>
+    <input type="password" id="api-key" placeholder="sk-...">
+
+    <div class="checkbox-group">
+      <input type="checkbox" id="show-api-key">
+      <label for="show-api-key" style="margin-bottom: 0;">Afficher la cle</label>
+    </div>
+
+    <button id="btn-save-api-key">Sauvegarder</button>
+    <div id="api-key-status" class="status" style="display: none;"></div>
+  </div>
+
+  <div class="section">
+    <h2>Notifications ChatGPT</h2>
+    <p>Configurez les notifications sonores pour ChatGPT et OpenAI Playground.</p>
+
+    <div class="checkbox-group">
+      <input type="checkbox" id="enable-ding" checked>
+      <label for="enable-ding" style="margin-bottom: 0;">Activer le son de notification</label>
+    </div>
+
+    <label for="ding-volume">Volume:</label>
+    <input type="range" id="ding-volume" min="0" max="100" value="50" style="width: 100%; margin-bottom: 15px;">
+
+    <button id="btn-save-ding">Sauvegarder</button>
+    <div id="ding-status" class="status" style="display: none;"></div>
+  </div>
+
+  <div class="section">
+    <h2>Donnees</h2>
+    <p>Gerez les donnees stockees par l'extension.</p>
+
+    <button id="btn-clear-all" style="background: #e74c3c;">Effacer toutes les donnees</button>
+    <div id="clear-status" class="status" style="display: none;"></div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
