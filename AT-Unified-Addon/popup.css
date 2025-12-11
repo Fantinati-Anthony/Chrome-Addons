@@ -11,6 +11,11 @@
   --border-color: #eee;
   --success-color: #27ae60;
   --error-color: #e74c3c;
+
+  /* Border radius personnalisables */
+  --radius-small: 4px;
+  --radius-medium: 8px;
+  --radius-large: 12px;
 }
 
 * {
@@ -82,7 +87,7 @@ header h1 {
 
 .tool-section {
   background: var(--panel-bg);
-  border-radius: 8px;
+  border-radius: var(--radius-medium);
   padding: 12px;
   margin-bottom: 12px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -101,7 +106,7 @@ header h1 {
   border: none;
   background: var(--primary-color);
   color: white;
-  border-radius: 4px;
+  border-radius: var(--radius-small);
   cursor: pointer;
   font-size: 13px;
   transition: all 0.2s;
@@ -510,7 +515,7 @@ input[type="number"] {
   background: linear-gradient(135deg, var(--success-color), #2ecc71);
   color: white;
   padding: 10px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-medium);
   margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
@@ -625,7 +630,7 @@ input[type="number"] {
   padding: 12px 8px;
   border: none;
   background: var(--button-bg);
-  border-radius: 12px;
+  border-radius: var(--radius-large);
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 2px 4px rgba(0,0,0,0.06);
@@ -656,7 +661,7 @@ input[type="number"] {
 /* Tool Panel */
 .tool-panel {
   background: var(--panel-bg);
-  border-radius: 12px;
+  border-radius: var(--radius-large);
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   overflow: hidden;
 }
@@ -679,7 +684,7 @@ input[type="number"] {
   height: 32px;
   border: none;
   background: var(--button-bg);
-  border-radius: 8px;
+  border-radius: var(--radius-medium);
   cursor: pointer;
   font-size: 16px;
   color: var(--button-text);
@@ -757,7 +762,7 @@ input[type="number"] {
   margin-bottom: 10px;
   padding: 8px 10px;
   background: var(--bg-color);
-  border-radius: 6px;
+  border-radius: var(--radius-medium);
   border-left: 3px solid var(--primary-color);
 }
 
@@ -812,7 +817,7 @@ input[type="number"] {
 
 .setup-modal-content {
   background: var(--panel-bg);
-  border-radius: 12px;
+  border-radius: var(--radius-large);
   padding: 20px;
   width: 340px;
   max-height: 90vh;

@@ -382,6 +382,56 @@
     .btn-reset:hover {
       background: #7f8c8d;
     }
+
+    /* Radius sliders */
+    .radius-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .radius-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .radius-item label {
+      font-size: 13px;
+      margin-bottom: 0;
+    }
+
+    .radius-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .radius-input input[type="range"] {
+      flex: 1;
+      height: 6px;
+      -webkit-appearance: none;
+      background: #ddd;
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .radius-input input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #3498db;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .radius-input span {
+      min-width: 40px;
+      font-size: 12px;
+      color: #666;
+      text-align: right;
+    }
   </style>
 </head>
 <body>
@@ -444,6 +494,42 @@
       <button id="btn-reset-colors" class="btn-reset">Reinitialiser</button>
     </div>
     <div id="colors-status" class="status" style="display: none;"></div>
+  </div>
+
+  <!-- Border Radius -->
+  <div class="section">
+    <h2>Arrondis (Border Radius)</h2>
+    <p>Personnalisez les arrondis des boutons, panneaux et autres elements.</p>
+
+    <div class="radius-grid">
+      <div class="radius-item">
+        <label>Petit (boutons):</label>
+        <div class="radius-input">
+          <input type="range" id="radius-small" min="0" max="20" value="4">
+          <span id="radius-small-value">4px</span>
+        </div>
+      </div>
+      <div class="radius-item">
+        <label>Moyen (panneaux):</label>
+        <div class="radius-input">
+          <input type="range" id="radius-medium" min="0" max="30" value="8">
+          <span id="radius-medium-value">8px</span>
+        </div>
+      </div>
+      <div class="radius-item">
+        <label>Grand (icones, popup):</label>
+        <div class="radius-input">
+          <input type="range" id="radius-large" min="0" max="40" value="12">
+          <span id="radius-large-value">12px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button id="btn-save-radius">Sauvegarder les arrondis</button>
+      <button id="btn-reset-radius" class="btn-reset">Reinitialiser</button>
+    </div>
+    <div id="radius-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- Boutons dynamiques -->

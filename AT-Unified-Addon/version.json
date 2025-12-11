@@ -1,5 +1,5 @@
 {
-  "version": "1.5.2",
+  "version": "1.5.3",
   "releaseDate": "2025-12-12",
-  "changelog": "Fix version footer display and add error handling for updater"
+  "changelog": "Add customizable border radius for buttons, panels and popup"
 }

@@ -150,8 +150,15 @@ async function applyCustomColors() {
     errorColor: '#e74c3c'
   };
 
-  const data = await chrome.storage.sync.get(['customColors']);
+  const DEFAULT_RADIUS = {
+    radiusSmall: 4,
+    radiusMedium: 8,
+    radiusLarge: 12
+  };
+
+  const data = await chrome.storage.sync.get(['customColors', 'customRadius']);
   const colors = data.customColors || DEFAULT_COLORS;
+  const radius = data.customRadius || DEFAULT_RADIUS;
 
   // Apply colors to CSS variables
   const root = document.documentElement;
@@ -166,4 +173,9 @@ async function applyCustomColors() {
   root.style.setProperty('--border-color', colors.borderColor);
   root.style.setProperty('--success-color', colors.successColor);
   root.style.setProperty('--error-color', colors.errorColor);
+
+  // Apply border radius
+  root.style.setProperty('--radius-small', radius.radiusSmall + 'px');
+  root.style.setProperty('--radius-medium', radius.radiusMedium + 'px');
+  root.style.setProperty('--radius-large', radius.radiusLarge + 'px');
 }
