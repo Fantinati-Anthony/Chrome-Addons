@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toolkit</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-top">
+        <h1>Toolkit</h1>
+        <div class="header-actions">
+          <button id="btn-settings" class="settings-btn" title="Reglages">⚙️</button>
+          <div id="update-badge" class="update-badge hidden" title="Mise a jour disponible">
+            <span class="update-icon">&#8635;</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update notification banner (hidden by default) -->
+      <div id="update-banner" class="update-banner hidden">
+        <div class="update-info">
+          <strong>Mise a jour disponible!</strong>
+          <span id="update-versions"></span>
+        </div>
+        <div class="update-actions">
+          <button id="btn-download-update" class="update-btn">Telecharger</button>
+          <button id="btn-dismiss-update" class="update-btn-dismiss">X</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid View (Home) -->
+    <section id="grid-view" class="grid-view">
+      <div class="tools-grid">
+        <!-- Quick Links (configurable) -->
+        <button class="tool-icon" id="quick-link-1" data-tool="link1" data-action="direct">
+          <span class="tool-emoji">🏢</span>
+          <span class="tool-label" id="link1-label">Lien 1</span>
+        </button>
+        <button class="tool-icon" id="quick-link-2" data-tool="link2" data-action="direct">
+          <span class="tool-emoji">🔧</span>
+          <span class="tool-label" id="link2-label">BO</span>
+        </button>
+        <button class="tool-icon" data-tool="desktop" data-action="direct">
+          <span class="tool-emoji">🖥️</span>
+          <span class="tool-label">Raccourci</span>
+        </button>
+
+        <!-- Domain Tools -->
+        <button class="tool-icon" data-tool="whois" data-action="direct">
+          <span class="tool-emoji">🔍</span>
+          <span class="tool-label">Whois</span>
+        </button>
+        <button class="tool-icon" data-tool="dnschecker" data-action="direct">
+          <span class="tool-emoji">🌐</span>
+          <span class="tool-label">DNS</span>
+        </button>
+        <button class="tool-icon" data-tool="mailtester" data-action="direct">
+          <span class="tool-emoji">✉️</span>
+          <span class="tool-label">Mail Test</span>
+        </button>
+
+        <!-- Tools -->
+        <button class="tool-icon" data-tool="colorpicker" data-title="Color Picker">
+          <span class="tool-emoji">🎨</span>
+          <span class="tool-label">Couleurs</span>
+        </button>
+        <button class="tool-icon" data-tool="downloads" data-title="Telechargements">
+          <span class="tool-emoji">📥</span>
+          <span class="tool-label">Downloads</span>
+        </button>
+        <button class="tool-icon" data-tool="emails" data-title="Extracteur d'Emails">
+          <span class="tool-emoji">📧</span>
+          <span class="tool-label">Emails</span>
+        </button>
+        <button class="tool-icon" data-tool="speech" data-title="Synthese Vocale">
+          <span class="tool-emoji">🔊</span>
+          <span class="tool-label">Voix</span>
+        </button>
+
+        <!-- Browser -->
+        <button class="tool-icon" data-tool="bookmarks" data-title="Favoris du domaine">
+          <span class="tool-emoji">⭐</span>
+          <span class="tool-label">Favoris</span>
+        </button>
+        <button class="tool-icon" data-tool="folders" data-title="Dossiers de favoris">
+          <span class="tool-emoji">📁</span>
+          <span class="tool-label">Dossiers</span>
+        </button>
+        <button class="tool-icon" data-tool="history" data-title="Historique du domaine">
+          <span class="tool-emoji">🕐</span>
+          <span class="tool-label">Historique</span>
+        </button>
+
+        <!-- Dev -->
+        <button class="tool-icon" data-tool="resize" data-title="Redimensionner">
+          <span class="tool-emoji">📐</span>
+          <span class="tool-label">Resize</span>
+        </button>
+        <button class="tool-icon" data-tool="css" data-title="Injection CSS">
+          <span class="tool-emoji">🎭</span>
+          <span class="tool-label">CSS</span>
+        </button>
+        <button class="tool-icon" data-tool="js" data-title="Injection JavaScript">
+          <span class="tool-emoji">⚡</span>
+          <span class="tool-label">JS</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Dynamic Tool Panel (loaded on demand) -->
+    <section id="tool-panel" class="tool-panel hidden">
+      <div class="panel-header">
+        <button id="btn-back" class="back-btn">←</button>
+        <h2 id="panel-title">Outil</h2>
+      </div>
+      <div id="panel-content" class="panel-content">
+        <!-- Content loaded dynamically -->
+      </div>
+    </section>
+
+    <!-- Version Footer -->
+    <div id="version-footer" class="version-footer"></div>
+  </div>
+
+  <!-- Tool Templates (hidden, used for dynamic loading) -->
+  <template id="tpl-colorpicker">
+    <div class="tool-content">
+      <button id="btn-pick-color" class="action-btn">Choisir une couleur</button>
+      <div id="color-list"></div>
+      <div class="tool-actions">
+        <button id="btn-clear-colors" class="small-btn">Tout effacer</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-downloads">
+    <div class="tool-content">
+      <textarea id="dl-urls" placeholder="Entrez les URLs (une par ligne)..." rows="5"></textarea>
+      <div class="dl-controls">
+        <label>Simultanes: <input type="number" id="dl-concurrent" value="3" min="1" max="10"></label>
+        <button id="btn-download" class="action-btn">Telecharger</button>
+      </div>
+      <div id="dl-log"></div>
+    </div>
+  </template>
+
+  <template id="tpl-emails">
+    <div class="tool-content">
+      <button id="btn-extract-emails" class="action-btn">Extraire les emails</button>
+      <div id="email-count"></div>
+      <div id="email-list"></div>
+      <div class="tool-actions">
+        <button id="btn-copy-emails-lines" class="small-btn">Copier (lignes)</button>
+        <button id="btn-copy-emails-semicolon" class="small-btn">Copier (;)</button>
+        <button id="btn-clear-emails" class="small-btn">Effacer</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-speech">
+    <div class="tool-content">
+      <select id="voice-select">
+        <option value="">Chargement des voix...</option>
+      </select>
+      <button id="btn-save-voice" class="action-btn">Sauvegarder la voix</button>
+    </div>
+  </template>
+
+  <template id="tpl-bookmarks">
+    <div class="tool-content">
+      <div id="domain-bookmarks">
+        <div class="loading">Chargement...</div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-folders">
+    <div class="tool-content">
+      <div id="bookmark-folders">
+        <div class="loading">Chargement...</div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-history">
+    <div class="tool-content">
+      <button id="btn-load-history" class="action-btn">Charger l'historique</button>
+      <div id="domain-history"></div>
+    </div>
+  </template>
+
+  <template id="tpl-resize">
+    <div class="tool-content">
+      <div class="resize-buttons">
+        <button class="resize-btn" data-width="1920" data-height="1080">1920x1080</button>
+        <button class="resize-btn" data-width="1366" data-height="768">1366x768</button>
+        <button class="resize-btn" data-width="1440" data-height="900">1440x900</button>
+        <button class="resize-btn" data-width="1280" data-height="800">1280x800</button>
+        <button class="resize-btn" data-width="414" data-height="896">414x896 (iPhone)</button>
+        <button class="resize-btn" data-width="375" data-height="812">375x812 (iPhone X)</button>
+        <button class="resize-btn" data-width="360" data-height="640">360x640 (Android)</button>
+        <button class="resize-btn" data-width="768" data-height="1024">768x1024 (Tablet)</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-css">
+    <div class="tool-content">
+      <div id="css-domain" class="domain-indicator"></div>
+      <textarea id="css-code" placeholder="Entrez le CSS..." rows="8"></textarea>
+      <button id="btn-inject-css" class="action-btn">Injecter CSS</button>
+    </div>
+  </template>
+
+  <template id="tpl-js">
+    <div class="tool-content">
+      <textarea id="js-code" placeholder="Entrez le JavaScript..." rows="8"></textarea>
+      <button id="btn-inject-js" class="action-btn">Executer JS</button>
+    </div>
+  </template>
+
+  <!-- First Launch Setup Modal -->
+  <div id="setup-modal" class="setup-modal hidden">
+    <div class="setup-modal-content">
+      <h2>Configuration initiale</h2>
+      <p>Configurez vos liens rapides pour commencer:</p>
+
+      <div class="setup-form">
+        <div class="setup-field">
+          <label for="setup-link1-name">Lien 1 - Nom:</label>
+          <input type="text" id="setup-link1-name" value="" placeholder="ex: Intranet">
+        </div>
+        <div class="setup-field">
+          <label for="setup-link1-url">Lien 1 - URL:</label>
+          <input type="text" id="setup-link1-url" placeholder="https://example.com">
+        </div>
+
+        <div class="setup-field">
+          <label for="setup-link2-name">Lien 2 - Nom:</label>
+          <input type="text" id="setup-link2-name" value="BO" placeholder="Nom du lien">
+        </div>
+        <div class="setup-field">
+          <label for="setup-link2-url">Lien 2 - URL:</label>
+          <input type="text" id="setup-link2-url" placeholder="https://admin.example.com">
+        </div>
+      </div>
+
+      <div class="setup-actions">
+        <button id="btn-save-setup" class="setup-btn">Sauvegarder</button>
+        <button id="btn-skip-setup" class="setup-btn-skip">Configurer plus tard</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="modules/updater.js"></script>
+  <script src="modules/auto-updater.js"></script>
+  <script src="modules/panel-loader.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
