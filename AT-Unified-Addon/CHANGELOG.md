@@ -7,6 +7,77 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.5.8] - 2025-12-12
+
+### Ajoute
+- **Reorganisation des boutons personnalises** :
+  - Boutons ▲ et ▼ pour chaque bouton
+  - Monter/Descendre un bouton dans la liste
+  - L'ordre est sauvegarde automatiquement
+
+---
+
+## [1.5.7] - 2025-12-12
+
+### Corrige
+- **Faux positif antivirus** : Utilisation de XMLHttpRequest au lieu de fetch()
+  - Pattern plus ancien et moins suspect pour Windows Defender
+  - Compatible avec async/await via Promise wrapper
+
+---
+
+## [1.5.6] - 2025-12-12
+
+### Corrige
+- **Cache CDN GitHub** : Ajout d'un parametre anti-cache pour forcer la recuperation de version.json
+
+---
+
+## [1.5.5] - 2025-12-12
+
+### Corrige
+- **Chargement des favicons** : Chaine de fallback amelioree
+  - DuckDuckGo en premier (plus fiable)
+  - Google Favicons en fallback
+  - Emoji globe si les deux echouent
+
+---
+
+## [1.5.4] - 2025-12-12
+
+### Corrige
+- **Updater** : Utilisation de l'URL raw.githubusercontent.com sans API
+
+---
+
+## [1.5.3] - 2025-12-12
+
+### Ajoute
+- **Border radius personnalisable** :
+  - Curseurs pour ajuster les rayons (petit, moyen, grand)
+  - Applique aux boutons, panneaux et popup
+
+---
+
+## [1.5.0] - 2025-12-12
+
+### Ajoute
+- **Personnalisation des couleurs** :
+  - Fond, texte, boutons, panneaux, bordures
+  - Couleurs de succes et d'erreur
+  - CSS Variables pour le theming
+
+- **Boutons personnalises dynamiques** :
+  - Remplace les 2 liens fixes par des boutons illimites
+  - Nom, URL et emoji/favicon configurable
+  - Favicon automatique depuis le domaine
+
+- **Export/Import des reglages** :
+  - Sauvegarde complete en JSON
+  - Restauration facile des parametres
+
+---
+
 ## [1.4.3] - 2025-12-11
 
 ### Corrige
