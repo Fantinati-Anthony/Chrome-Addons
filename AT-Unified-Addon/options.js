@@ -24,6 +24,28 @@ document.addEventListener('DOMContentLoaded', () => {
     '❤️', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍'
   ];
 
+  // ========== POPUP TITLE ==========
+  const popupTitleInput = document.getElementById('popup-title-input');
+  const saveTitleBtn = document.getElementById('btn-save-title');
+  const titleStatus = document.getElementById('title-status');
+
+  // Load saved title
+  chrome.storage.sync.get(['popupTitle'], (data) => {
+    if (data.popupTitle && popupTitleInput) {
+      popupTitleInput.value = data.popupTitle;
+    }
+  });
+
+  // Save title
+  if (saveTitleBtn) {
+    saveTitleBtn.addEventListener('click', () => {
+      const title = popupTitleInput.value.trim() || 'Toolkit';
+      chrome.storage.sync.set({ popupTitle: title }, () => {
+        showStatus(titleStatus, 'Nom sauvegarde!', 'success');
+      });
+    });
+  }
+
   // ========== COLOR CUSTOMIZATION ==========
   const colorInputs = {
     bgColor: document.getElementById('color-bg'),

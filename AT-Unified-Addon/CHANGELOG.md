@@ -7,6 +7,15 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.6.1] - 2025-12-12
+
+### Ajoute
+- **Nom du popup personnalisable** :
+  - Nouveau reglage "Parametres generaux" dans les options
+  - Permet de changer le titre "Toolkit" par un nom personnalise
+
+---
+
 ## [1.6.0] - 2025-12-12
 
 ### Ajoute

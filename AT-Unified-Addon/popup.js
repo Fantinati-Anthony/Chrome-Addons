@@ -7,6 +7,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ========== APPLY CUSTOM COLORS ==========
   await applyCustomColors();
 
+  // ========== APPLY CUSTOM TITLE ==========
+  const popupTitleEl = document.getElementById('popup-title');
+  if (popupTitleEl) {
+    const data = await chrome.storage.sync.get(['popupTitle']);
+    if (data.popupTitle) {
+      popupTitleEl.textContent = data.popupTitle;
+    }
+  }
+
   // ========== SETTINGS BUTTON ==========
   const settingsBtn = document.getElementById('btn-settings');
   if (settingsBtn) {
