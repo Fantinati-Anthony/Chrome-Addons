@@ -1,5 +1,5 @@
 {
-  "version": "1.6.0",
+  "version": "1.6.1",
   "releaseDate": "2025-12-12",
-  "changelog": "Automatic background update checking every hour"
+  "changelog": "Customizable popup title in settings"
 }
