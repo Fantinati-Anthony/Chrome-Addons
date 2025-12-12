@@ -7,6 +7,15 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.5.9] - 2025-12-12
+
+### Modifie
+- **Verification MAJ manuelle** : Le lien "Verifier les mises a jour" ouvre maintenant GitHub directement
+  - Suppression de tous les appels reseau dans updater.js
+  - Evite les faux positifs Windows Defender (Trojan:Win32/Fauppod.A!cl)
+
+---
+
 ## [1.5.8] - 2025-12-12
 
 ### Ajoute

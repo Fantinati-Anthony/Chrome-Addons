@@ -91,32 +91,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const localVersion = await Updater.getLocalVersion();
       footer.innerHTML = `v${localVersion} | <a href="#" id="check-update-link">Verifier les mises a jour</a> | <a href="#" id="changelog-link">Changelog</a>`;
 
-      // Manual check link
-      document.getElementById('check-update-link').addEventListener('click', async (e) => {
+      // Manual check link - opens GitHub releases page
+      document.getElementById('check-update-link').addEventListener('click', (e) => {
         e.preventDefault();
-        const link = e.target;
-        link.textContent = 'Verification...';
-
-        try {
-          const result = await Updater.checkForUpdate();
-
-          if (result.hasUpdate) {
-            link.textContent = 'Mise a jour disponible!';
-            updateBadge.classList.remove('hidden');
-            updateBanner.classList.remove('hidden');
-            updateVersions.textContent = `v${result.localVersion} → v${result.remoteVersion}`;
-          } else if (result.error) {
-            link.textContent = result.error;
-          } else {
-            link.textContent = 'A jour!';
-          }
-        } catch (err) {
-          link.textContent = 'Erreur';
-        }
-
-        setTimeout(() => {
-          link.textContent = 'Verifier les mises a jour';
-        }, 3000);
+        const config = Updater.getConfig();
+        const releasesUrl = 'https://github.com/' + config.githubUser + '/' + config.githubRepo + '/tree/' + config.githubBranch + '/' + config.githubPath;
+        chrome.tabs.create({ url: releasesUrl });
       });
 
       // Changelog link - opens CHANGELOG.md on GitHub
