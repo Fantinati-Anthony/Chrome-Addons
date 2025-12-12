@@ -1,5 +1,5 @@
 {
-  "version": "1.5.8",
+  "version": "1.6.0",
   "releaseDate": "2025-12-12",
-  "changelog": "Add button reordering controls (up/down arrows)"
+  "changelog": "Automatic background update checking every hour"
 }
