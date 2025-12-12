@@ -24,6 +24,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // ========== RELOAD BUTTON ==========
+  const reloadBtn = document.getElementById('btn-reload');
+  if (reloadBtn) {
+    reloadBtn.addEventListener('click', () => {
+      chrome.runtime.reload();
+    });
+  }
+
   // ========== UPDATE SYSTEM ==========
   // UI elements for update
   const updateBadge = document.getElementById('update-badge');
