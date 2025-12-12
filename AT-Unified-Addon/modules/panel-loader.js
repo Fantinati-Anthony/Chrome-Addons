@@ -154,10 +154,12 @@ const PanelLoader = (function() {
 
     container.innerHTML = '';
 
-    customButtons.forEach(btn => {
+    customButtons.forEach((btn, index) => {
       const button = document.createElement('button');
       button.className = 'tool-icon';
       button.title = btn.name;
+      button.dataset.customUrl = btn.url;
+      button.dataset.customIndex = index;
 
       const emojiSpan = document.createElement('span');
       emojiSpan.className = 'tool-emoji';

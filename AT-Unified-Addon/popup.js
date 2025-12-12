@@ -215,12 +215,16 @@ function initSearch() {
 
 function filterTools(query) {
   const allTools = document.querySelectorAll('.tool-icon[data-tool]');
+  const customButtons = document.querySelectorAll('#custom-buttons-container .tool-icon[data-custom-url]');
   const categories = document.querySelectorAll('.category-section:not(.favorites-section)');
 
   if (!query) {
     // Show all tools, restore category visibility
     allTools.forEach(tool => {
       tool.classList.remove('search-hidden', 'search-match');
+    });
+    customButtons.forEach(btn => {
+      btn.classList.remove('search-hidden', 'search-match');
     });
     categories.forEach(cat => {
       cat.style.display = '';
@@ -230,7 +234,7 @@ function filterTools(query) {
     return;
   }
 
-  // Filter tools by query
+  // Filter built-in tools by query
   allTools.forEach(tool => {
     const toolId = tool.dataset.tool;
     const label = tool.querySelector('.tool-label')?.textContent.toLowerCase() || '';
@@ -244,6 +248,23 @@ function filterTools(query) {
     } else {
       tool.classList.add('search-hidden');
       tool.classList.remove('search-match');
+    }
+  });
+
+  // Filter custom buttons by query
+  customButtons.forEach(btn => {
+    const label = btn.querySelector('.tool-label')?.textContent.toLowerCase() || '';
+    const url = btn.dataset.customUrl?.toLowerCase() || '';
+    const title = btn.title?.toLowerCase() || '';
+
+    const matches = label.includes(query) || url.includes(query) || title.includes(query);
+
+    if (matches) {
+      btn.classList.remove('search-hidden');
+      btn.classList.add('search-match');
+    } else {
+      btn.classList.add('search-hidden');
+      btn.classList.remove('search-match');
     }
   });
 
@@ -270,7 +291,7 @@ async function initFavorites() {
   const data = await chrome.storage.sync.get(['favoriteTools']);
   favoriteTools = data.favoriteTools || [];
 
-  // Add star buttons to all tools
+  // Add star buttons to all built-in tools
   addFavoriteStars();
 
   // Render favorites section
@@ -281,6 +302,22 @@ async function initFavorites() {
   if (favContainer) {
     const emptyText = typeof I18n !== 'undefined' ? I18n.t('favorites.empty') : 'Aucun favori';
     favContainer.dataset.emptyText = emptyText;
+  }
+
+  // Watch for custom buttons being loaded and add stars to them
+  const customContainer = document.getElementById('custom-buttons-container');
+  if (customContainer) {
+    const observer = new MutationObserver(() => {
+      addFavoriteStarsToCustomButtons();
+      renderFavorites();
+    });
+    observer.observe(customContainer, { childList: true });
+
+    // Also add stars if custom buttons are already loaded
+    setTimeout(() => {
+      addFavoriteStarsToCustomButtons();
+      renderFavorites();
+    }, 100);
   }
 }
 
@@ -305,6 +342,29 @@ function addFavoriteStars() {
   });
 }
 
+// Add favorite stars to custom buttons (uses custom:URL format)
+function addFavoriteStarsToCustomButtons() {
+  document.querySelectorAll('#custom-buttons-container .tool-icon[data-custom-url]').forEach(btn => {
+    const customUrl = btn.dataset.customUrl;
+    const favId = 'custom:' + customUrl;
+
+    // Don't add star if already exists
+    if (btn.querySelector('.favorite-star')) return;
+
+    const star = document.createElement('button');
+    star.className = 'favorite-star' + (favoriteTools.includes(favId) ? ' is-favorite' : '');
+    star.textContent = favoriteTools.includes(favId) ? '★' : '☆';
+    star.title = favoriteTools.includes(favId) ? 'Retirer des favoris' : 'Ajouter aux favoris';
+
+    star.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFavorite(favId);
+    });
+
+    btn.appendChild(star);
+  });
+}
+
 async function toggleFavorite(toolId) {
   const index = favoriteTools.indexOf(toolId);
   if (index > -1) {
@@ -322,12 +382,26 @@ async function toggleFavorite(toolId) {
 }
 
 function updateFavoriteStars() {
-  document.querySelectorAll('.favorite-star').forEach(star => {
+  // Update built-in tool stars
+  document.querySelectorAll('.category-section:not(.favorites-section) .tool-icon[data-tool] .favorite-star').forEach(star => {
     const tool = star.closest('.tool-icon');
     const toolId = tool?.dataset.tool;
     if (!toolId) return;
 
     const isFav = favoriteTools.includes(toolId);
+    star.className = 'favorite-star' + (isFav ? ' is-favorite' : '');
+    star.textContent = isFav ? '★' : '☆';
+    star.title = isFav ? 'Retirer des favoris' : 'Ajouter aux favoris';
+  });
+
+  // Update custom button stars
+  document.querySelectorAll('#custom-buttons-container .tool-icon[data-custom-url] .favorite-star').forEach(star => {
+    const btn = star.closest('.tool-icon');
+    const customUrl = btn?.dataset.customUrl;
+    if (!customUrl) return;
+
+    const favId = 'custom:' + customUrl;
+    const isFav = favoriteTools.includes(favId);
     star.className = 'favorite-star' + (isFav ? ' is-favorite' : '');
     star.textContent = isFav ? '★' : '☆';
     star.title = isFav ? 'Retirer des favoris' : 'Ajouter aux favoris';
@@ -355,8 +429,20 @@ function renderFavorites() {
   }
 
   // Clone favorite tools into favorites container
-  favoriteTools.forEach(toolId => {
-    const original = document.querySelector(`.category-section:not(.favorites-section) .tool-icon[data-tool="${toolId}"]`);
+  favoriteTools.forEach(favId => {
+    let original = null;
+    let isCustom = false;
+
+    if (favId.startsWith('custom:')) {
+      // Custom button favorite
+      const customUrl = favId.substring(7); // Remove 'custom:' prefix
+      original = document.querySelector(`#custom-buttons-container .tool-icon[data-custom-url="${customUrl}"]`);
+      isCustom = true;
+    } else {
+      // Built-in tool favorite
+      original = document.querySelector(`.category-section:not(.favorites-section) .tool-icon[data-tool="${favId}"]`);
+    }
+
     if (!original) return;
 
     const clone = original.cloneNode(true);
@@ -371,19 +457,26 @@ function renderFavorites() {
     removeBtn.title = 'Retirer des favoris';
     removeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      toggleFavorite(toolId);
+      toggleFavorite(favId);
     });
     clone.appendChild(removeBtn);
+
+    // Re-attach click handler for custom buttons
+    if (isCustom) {
+      const customUrl = favId.substring(7);
+      clone.addEventListener('click', (e) => {
+        if (e.target.classList.contains('favorite-star')) return;
+        chrome.tabs.create({ url: customUrl });
+      });
+    }
 
     container.appendChild(clone);
   });
 
-  // Re-attach tool handlers to cloned elements
-  if (typeof initToolHandlers === 'function') {
-    container.querySelectorAll('.tool-icon').forEach(tool => {
-      initSingleToolHandler(tool);
-    });
-  }
+  // Re-attach tool handlers to cloned built-in tools
+  container.querySelectorAll('.tool-icon[data-tool]').forEach(tool => {
+    initSingleToolHandler(tool);
+  });
 }
 
 // Helper to init handler for a single tool (for cloned favorites)
