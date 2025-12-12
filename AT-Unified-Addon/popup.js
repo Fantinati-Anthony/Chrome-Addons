@@ -4,6 +4,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('Toolkit loaded');
 
+  // ========== INITIALIZE I18N ==========
+  if (typeof I18n !== 'undefined') {
+    await I18n.init();
+  }
+
   // ========== APPLY CUSTOM COLORS ==========
   await applyCustomColors();
 
@@ -15,6 +20,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       popupTitleEl.textContent = data.popupTitle;
     }
   }
+
+  // ========== APPLY MODULE VISIBILITY ==========
+  await applyModuleVisibility();
+
+  // ========== CATEGORY COLLAPSE/EXPAND ==========
+  initCategoryHeaders();
 
   // ========== SETTINGS BUTTON ==========
   const settingsBtn = document.getElementById('btn-settings');
@@ -105,6 +116,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const footer = document.getElementById('version-footer');
   if (footer) {
     const localVersion = chrome.runtime.getManifest().version;
+    const checkText = typeof I18n !== 'undefined' ? I18n.t('app.version') : 'Verifier les mises a jour';
+    const changelogText = typeof I18n !== 'undefined' ? I18n.t('app.changelog') : 'Changelog';
     footer.innerHTML = `v${localVersion} | <a href="#" id="check-update-link">Verifier les mises a jour</a> | <a href="#" id="changelog-link">Changelog</a>`;
 
     // Manual check link - triggers background check and updates UI
@@ -134,6 +147,89 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 });
+
+// ========== CATEGORY HEADERS ==========
+function initCategoryHeaders() {
+  document.querySelectorAll('.category-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const isCollapsed = header.dataset.collapsed === 'true';
+      header.dataset.collapsed = isCollapsed ? 'false' : 'true';
+
+      // Save collapsed state
+      const categoryId = header.closest('.category-section').id;
+      saveCollapsedState(categoryId, !isCollapsed);
+    });
+  });
+
+  // Load saved collapsed states
+  loadCollapsedStates();
+}
+
+async function loadCollapsedStates() {
+  const data = await chrome.storage.local.get(['collapsedCategories']);
+  const collapsed = data.collapsedCategories || {};
+
+  Object.keys(collapsed).forEach(categoryId => {
+    const section = document.getElementById(categoryId);
+    if (section && collapsed[categoryId]) {
+      const header = section.querySelector('.category-header');
+      if (header) {
+        header.dataset.collapsed = 'true';
+      }
+    }
+  });
+}
+
+async function saveCollapsedState(categoryId, isCollapsed) {
+  const data = await chrome.storage.local.get(['collapsedCategories']);
+  const collapsed = data.collapsedCategories || {};
+  collapsed[categoryId] = isCollapsed;
+  await chrome.storage.local.set({ collapsedCategories: collapsed });
+}
+
+// ========== MODULE VISIBILITY ==========
+async function applyModuleVisibility() {
+  // Load enabled modules
+  const data = await chrome.storage.sync.get(['enabledModules']);
+  const enabledModules = data.enabledModules || {};
+
+  // Apply visibility to tool icons
+  document.querySelectorAll('.tool-icon[data-tool]').forEach(icon => {
+    const toolId = icon.dataset.tool;
+    // If module is explicitly disabled (false), hide it
+    if (enabledModules[toolId] === false) {
+      icon.style.display = 'none';
+    }
+  });
+
+  // Hide empty categories (except custom links)
+  document.querySelectorAll('.category-section').forEach(section => {
+    const categoryId = section.id;
+    if (categoryId === 'category-customLinks') return; // Skip custom links
+
+    const grid = section.querySelector('.tools-grid');
+    if (!grid) return;
+
+    const visibleTools = grid.querySelectorAll('.tool-icon:not([style*="display: none"])');
+    if (visibleTools.length === 0) {
+      section.classList.add('hidden');
+    } else {
+      section.classList.remove('hidden');
+    }
+  });
+
+  // Handle custom links category visibility
+  const customLinksSection = document.getElementById('category-customLinks');
+  if (customLinksSection) {
+    const data = await chrome.storage.sync.get(['customButtons']);
+    const customButtons = data.customButtons || [];
+    if (customButtons.length === 0) {
+      customLinksSection.classList.add('hidden');
+    } else {
+      customLinksSection.classList.remove('hidden');
+    }
+  }
+}
 
 // ========== CUSTOM COLORS ==========
 async function applyCustomColors() {
