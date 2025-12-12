@@ -6,7 +6,7 @@ const I18n = (function() {
 
   let currentLang = 'fr';
   let translations = {};
-  const SUPPORTED_LANGS = ['fr', 'en'];
+  const SUPPORTED_LANGS = ['fr', 'en', 'es', 'pt'];
   const DEFAULT_LANG = 'fr';
 
   // Initialize i18n
@@ -137,7 +137,9 @@ const I18n = (function() {
   function getLangName(lang) {
     const names = {
       fr: 'Francais',
-      en: 'English'
+      en: 'English',
+      es: 'Espanol',
+      pt: 'Portugues'
     };
     return names[lang] || lang;
   }

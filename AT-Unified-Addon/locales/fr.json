@@ -9,16 +9,24 @@
     "reload": "Recharger l'extension",
     "updateAvailable": "Mise a jour disponible!",
     "download": "Telecharger",
-    "changelog": "Changelog"
+    "changelog": "Changelog",
+    "searchPlaceholder": "Rechercher un outil..."
   },
 
   "categories": {
+    "favorites": "Favoris",
     "customLinks": "Liens personnalises",
     "domainDns": "Domaine & DNS",
     "seoAnalysis": "SEO & Analyse",
     "development": "Developpement",
     "browser": "Navigateur",
     "utilities": "Utilitaires"
+  },
+
+  "favorites": {
+    "empty": "Aucun favori - Survolez un outil et cliquez sur l'etoile pour l'ajouter",
+    "add": "Ajouter aux favoris",
+    "remove": "Retirer des favoris"
   },
 
   "tools": {

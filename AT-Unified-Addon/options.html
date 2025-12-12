@@ -529,6 +529,8 @@
         <select id="language-select">
           <option value="fr">Francais</option>
           <option value="en">English</option>
+          <option value="es">Espanol</option>
+          <option value="pt">Portugues</option>
         </select>
       </div>
     </div>
@@ -629,6 +631,35 @@
       <button id="btn-reset-radius" class="btn-reset">Reinitialiser</button>
     </div>
     <div id="radius-status" class="status" style="display: none;"></div>
+  </div>
+
+  <!-- Button Size -->
+  <div class="section">
+    <h2>Taille des boutons</h2>
+    <p>Ajustez la taille des boutons d'outils dans le popup.</p>
+
+    <div class="radius-grid">
+      <div class="radius-item">
+        <label>Taille des boutons:</label>
+        <div class="radius-input">
+          <input type="range" id="button-size" min="0.7" max="1.5" step="0.1" value="1">
+          <span id="button-size-value">100%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="size-preview" style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+      <div id="size-preview-btn" style="display: inline-flex; flex-direction: column; align-items: center; padding: 12px 8px; background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <span style="font-size: 24px;">🔧</span>
+        <span style="font-size: 10px; color: #666;">Outil</span>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button id="btn-save-size">Sauvegarder la taille</button>
+      <button id="btn-reset-size" class="btn-reset">Reinitialiser</button>
+    </div>
+    <div id="size-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- Gestion des modules -->

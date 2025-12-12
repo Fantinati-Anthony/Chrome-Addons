@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ========== APPLY CUSTOM COLORS ==========
   await applyCustomColors();
 
+  // ========== APPLY BUTTON SIZE ==========
+  await applyButtonSize();
+
   // ========== APPLY CUSTOM TITLE ==========
   const popupTitleEl = document.getElementById('popup-title');
   if (popupTitleEl) {
@@ -24,7 +27,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ========== APPLY MODULE VISIBILITY ==========
   await applyModuleVisibility();
 
-  // ========== CATEGORY COLLAPSE/EXPAND ==========
+  // ========== INITIALIZE FAVORITES ==========
+  await initFavorites();
+
+  // ========== INITIALIZE SEARCH ==========
+  initSearch();
+
+  // ========== CATEGORY COLLAPSE/EXPAND (ACCORDION) ==========
   initCategoryHeaders();
 
   // ========== SETTINGS BUTTON ==========
@@ -148,35 +157,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// ========== CATEGORY HEADERS ==========
+// ========== CATEGORY HEADERS (ACCORDION) ==========
 function initCategoryHeaders() {
   document.querySelectorAll('.category-header').forEach(header => {
+    // Skip favorites header (no collapse)
+    if (header.dataset.noCollapse === 'true') return;
+
     header.addEventListener('click', () => {
       const isCollapsed = header.dataset.collapsed === 'true';
-      header.dataset.collapsed = isCollapsed ? 'false' : 'true';
-
-      // Save collapsed state
       const categoryId = header.closest('.category-section').id;
-      saveCollapsedState(categoryId, !isCollapsed);
-    });
-  });
 
-  // Load saved collapsed states
-  loadCollapsedStates();
-}
-
-async function loadCollapsedStates() {
-  const data = await chrome.storage.local.get(['collapsedCategories']);
-  const collapsed = data.collapsedCategories || {};
-
-  Object.keys(collapsed).forEach(categoryId => {
-    const section = document.getElementById(categoryId);
-    if (section && collapsed[categoryId]) {
-      const header = section.querySelector('.category-header');
-      if (header) {
+      if (isCollapsed) {
+        // Opening this category - close all others (accordion effect)
+        document.querySelectorAll('.category-header').forEach(otherHeader => {
+          if (otherHeader !== header && otherHeader.dataset.noCollapse !== 'true') {
+            otherHeader.dataset.collapsed = 'true';
+            const otherId = otherHeader.closest('.category-section').id;
+            saveCollapsedState(otherId, true);
+          }
+        });
+        header.dataset.collapsed = 'false';
+        saveCollapsedState(categoryId, false);
+      } else {
+        // Closing this category
         header.dataset.collapsed = 'true';
+        saveCollapsedState(categoryId, true);
       }
-    }
+    });
   });
 }
 
@@ -185,6 +192,226 @@ async function saveCollapsedState(categoryId, isCollapsed) {
   const collapsed = data.collapsedCategories || {};
   collapsed[categoryId] = isCollapsed;
   await chrome.storage.local.set({ collapsedCategories: collapsed });
+}
+
+// ========== SEARCH FUNCTIONALITY ==========
+function initSearch() {
+  const searchInput = document.getElementById('search-tools');
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    filterTools(query);
+  });
+
+  // Clear search on Escape
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      searchInput.value = '';
+      filterTools('');
+    }
+  });
+}
+
+function filterTools(query) {
+  const allTools = document.querySelectorAll('.tool-icon[data-tool]');
+  const categories = document.querySelectorAll('.category-section:not(.favorites-section)');
+
+  if (!query) {
+    // Show all tools, restore category visibility
+    allTools.forEach(tool => {
+      tool.classList.remove('search-hidden', 'search-match');
+    });
+    categories.forEach(cat => {
+      cat.style.display = '';
+    });
+    // Re-apply module visibility
+    applyModuleVisibility();
+    return;
+  }
+
+  // Filter tools by query
+  allTools.forEach(tool => {
+    const toolId = tool.dataset.tool;
+    const label = tool.querySelector('.tool-label')?.textContent.toLowerCase() || '';
+    const title = tool.dataset.title?.toLowerCase() || '';
+
+    const matches = toolId.includes(query) || label.includes(query) || title.includes(query);
+
+    if (matches) {
+      tool.classList.remove('search-hidden');
+      tool.classList.add('search-match');
+    } else {
+      tool.classList.add('search-hidden');
+      tool.classList.remove('search-match');
+    }
+  });
+
+  // Expand categories with matches, hide empty ones
+  categories.forEach(cat => {
+    const visibleTools = cat.querySelectorAll('.tool-icon:not(.search-hidden)');
+    if (visibleTools.length > 0) {
+      cat.style.display = '';
+      const header = cat.querySelector('.category-header');
+      if (header && header.dataset.noCollapse !== 'true') {
+        header.dataset.collapsed = 'false';
+      }
+    } else {
+      cat.style.display = 'none';
+    }
+  });
+}
+
+// ========== FAVORITES SYSTEM ==========
+let favoriteTools = [];
+
+async function initFavorites() {
+  // Load favorites from storage
+  const data = await chrome.storage.sync.get(['favoriteTools']);
+  favoriteTools = data.favoriteTools || [];
+
+  // Add star buttons to all tools
+  addFavoriteStars();
+
+  // Render favorites section
+  renderFavorites();
+
+  // Set empty text
+  const favContainer = document.getElementById('favorites-container');
+  if (favContainer) {
+    const emptyText = typeof I18n !== 'undefined' ? I18n.t('favorites.empty') : 'Aucun favori';
+    favContainer.dataset.emptyText = emptyText;
+  }
+}
+
+function addFavoriteStars() {
+  document.querySelectorAll('.category-section:not(.favorites-section) .tool-icon[data-tool]').forEach(tool => {
+    const toolId = tool.dataset.tool;
+
+    // Don't add star if already exists
+    if (tool.querySelector('.favorite-star')) return;
+
+    const star = document.createElement('button');
+    star.className = 'favorite-star' + (favoriteTools.includes(toolId) ? ' is-favorite' : '');
+    star.textContent = favoriteTools.includes(toolId) ? '★' : '☆';
+    star.title = favoriteTools.includes(toolId) ? 'Retirer des favoris' : 'Ajouter aux favoris';
+
+    star.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFavorite(toolId);
+    });
+
+    tool.appendChild(star);
+  });
+}
+
+async function toggleFavorite(toolId) {
+  const index = favoriteTools.indexOf(toolId);
+  if (index > -1) {
+    favoriteTools.splice(index, 1);
+  } else {
+    favoriteTools.push(toolId);
+  }
+
+  // Save to storage
+  await chrome.storage.sync.set({ favoriteTools });
+
+  // Update UI
+  updateFavoriteStars();
+  renderFavorites();
+}
+
+function updateFavoriteStars() {
+  document.querySelectorAll('.favorite-star').forEach(star => {
+    const tool = star.closest('.tool-icon');
+    const toolId = tool?.dataset.tool;
+    if (!toolId) return;
+
+    const isFav = favoriteTools.includes(toolId);
+    star.className = 'favorite-star' + (isFav ? ' is-favorite' : '');
+    star.textContent = isFav ? '★' : '☆';
+    star.title = isFav ? 'Retirer des favoris' : 'Ajouter aux favoris';
+  });
+}
+
+function renderFavorites() {
+  const container = document.getElementById('favorites-container');
+  const section = document.getElementById('category-favorites');
+  const countSpan = section?.querySelector('.favorites-count');
+
+  if (!container || !section) return;
+
+  // Clear container
+  container.innerHTML = '';
+
+  if (favoriteTools.length === 0) {
+    section.classList.add('hidden');
+    return;
+  }
+
+  section.classList.remove('hidden');
+  if (countSpan) {
+    countSpan.textContent = `(${favoriteTools.length})`;
+  }
+
+  // Clone favorite tools into favorites container
+  favoriteTools.forEach(toolId => {
+    const original = document.querySelector(`.category-section:not(.favorites-section) .tool-icon[data-tool="${toolId}"]`);
+    if (!original) return;
+
+    const clone = original.cloneNode(true);
+    // Remove star from clone
+    const star = clone.querySelector('.favorite-star');
+    if (star) star.remove();
+
+    // Add remove button instead
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'favorite-star is-favorite';
+    removeBtn.textContent = '★';
+    removeBtn.title = 'Retirer des favoris';
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFavorite(toolId);
+    });
+    clone.appendChild(removeBtn);
+
+    container.appendChild(clone);
+  });
+
+  // Re-attach tool handlers to cloned elements
+  if (typeof initToolHandlers === 'function') {
+    container.querySelectorAll('.tool-icon').forEach(tool => {
+      initSingleToolHandler(tool);
+    });
+  }
+}
+
+// Helper to init handler for a single tool (for cloned favorites)
+function initSingleToolHandler(tool) {
+  tool.addEventListener('click', async (e) => {
+    // Ignore if clicking on favorite star
+    if (e.target.classList.contains('favorite-star')) return;
+
+    const toolId = tool.dataset.tool;
+    const action = tool.dataset.action;
+
+    if (action === 'direct') {
+      // Handle direct actions
+      handleDirectAction(toolId);
+    } else {
+      // Open panel
+      if (typeof showToolPanel === 'function') {
+        showToolPanel(toolId);
+      }
+    }
+  });
+}
+
+// ========== BUTTON SIZE ==========
+async function applyButtonSize() {
+  const data = await chrome.storage.sync.get(['buttonSize']);
+  const size = data.buttonSize || 1;
+  document.documentElement.style.setProperty('--button-size', size);
 }
 
 // ========== MODULE VISIBILITY ==========
