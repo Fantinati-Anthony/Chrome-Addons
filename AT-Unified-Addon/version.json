@@ -1,5 +1,5 @@
 {
-  "version": "1.6.3",
+  "version": "1.7.0",
   "releaseDate": "2025-12-12",
-  "changelog": "Add reload extension button in popup header"
+  "changelog": "Add 14 new tools: QR Code, Meta tags, Links extractor, Images viewer, Sitemap, PageSpeed, Lighthouse, Headers, Cookies, Clear data, SSL checker, Lorem Ipsum, Fonts detector, Translator"
 }

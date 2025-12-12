@@ -104,6 +104,70 @@
           <span class="tool-emoji">⚡</span>
           <span class="tool-label">JS</span>
         </button>
+
+        <!-- SEO/Web Analysis -->
+        <button class="tool-icon" data-tool="qrcode" data-title="QR Code">
+          <span class="tool-emoji">📱</span>
+          <span class="tool-label">QR Code</span>
+        </button>
+        <button class="tool-icon" data-tool="metatags" data-title="Meta Tags">
+          <span class="tool-emoji">🏷️</span>
+          <span class="tool-label">Meta</span>
+        </button>
+        <button class="tool-icon" data-tool="links" data-title="Liens de la page">
+          <span class="tool-emoji">🔗</span>
+          <span class="tool-label">Liens</span>
+        </button>
+        <button class="tool-icon" data-tool="images" data-title="Images de la page">
+          <span class="tool-emoji">🖼️</span>
+          <span class="tool-label">Images</span>
+        </button>
+        <button class="tool-icon" data-tool="sitemap" data-title="Sitemap">
+          <span class="tool-emoji">🗺️</span>
+          <span class="tool-label">Sitemap</span>
+        </button>
+
+        <!-- Performance (direct) -->
+        <button class="tool-icon" data-tool="pagespeed" data-action="direct">
+          <span class="tool-emoji">⚡</span>
+          <span class="tool-label">PageSpeed</span>
+        </button>
+        <button class="tool-icon" data-tool="lighthouse" data-action="direct">
+          <span class="tool-emoji">🔦</span>
+          <span class="tool-label">Lighthouse</span>
+        </button>
+
+        <!-- Security -->
+        <button class="tool-icon" data-tool="headers" data-title="Headers HTTP">
+          <span class="tool-emoji">📋</span>
+          <span class="tool-label">Headers</span>
+        </button>
+        <button class="tool-icon" data-tool="cookies" data-title="Cookies">
+          <span class="tool-emoji">🍪</span>
+          <span class="tool-label">Cookies</span>
+        </button>
+        <button class="tool-icon" data-tool="cleardata" data-title="Vider les donnees">
+          <span class="tool-emoji">🧹</span>
+          <span class="tool-label">Clear</span>
+        </button>
+        <button class="tool-icon" data-tool="ssl" data-title="SSL/TLS">
+          <span class="tool-emoji">🔒</span>
+          <span class="tool-label">SSL</span>
+        </button>
+
+        <!-- Utils -->
+        <button class="tool-icon" data-tool="lorem" data-title="Lorem Ipsum">
+          <span class="tool-emoji">📝</span>
+          <span class="tool-label">Lorem</span>
+        </button>
+        <button class="tool-icon" data-tool="fonts" data-title="Polices detectees">
+          <span class="tool-emoji">🔤</span>
+          <span class="tool-label">Fonts</span>
+        </button>
+        <button class="tool-icon" data-tool="translate" data-title="Traducteur">
+          <span class="tool-emoji">🌍</span>
+          <span class="tool-label">Traduire</span>
+        </button>
       </div>
     </section>
 
@@ -216,6 +280,130 @@
     <div class="tool-content">
       <textarea id="js-code" placeholder="Entrez le JavaScript..." rows="8"></textarea>
       <button id="btn-inject-js" class="action-btn">Executer JS</button>
+    </div>
+  </template>
+
+  <template id="tpl-qrcode">
+    <div class="tool-content">
+      <div id="qr-url" class="domain-indicator"></div>
+      <div id="qr-container" style="text-align: center; padding: 20px;">
+        <canvas id="qr-canvas"></canvas>
+      </div>
+      <div class="tool-actions">
+        <button id="btn-copy-qr" class="action-btn">Copier l'image</button>
+        <button id="btn-download-qr" class="small-btn">Telecharger</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-metatags">
+    <div class="tool-content">
+      <button id="btn-extract-meta" class="action-btn">Extraire les meta tags</button>
+      <div id="meta-list" class="meta-list"></div>
+    </div>
+  </template>
+
+  <template id="tpl-links">
+    <div class="tool-content">
+      <button id="btn-extract-links" class="action-btn">Extraire les liens</button>
+      <div id="links-stats"></div>
+      <div id="links-list" class="links-list"></div>
+      <div class="tool-actions">
+        <button id="btn-copy-links" class="small-btn">Copier tous</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-images">
+    <div class="tool-content">
+      <button id="btn-extract-images" class="action-btn">Extraire les images</button>
+      <div id="images-stats"></div>
+      <div id="images-list" class="images-list"></div>
+      <div class="tool-actions">
+        <button id="btn-copy-images" class="small-btn">Copier URLs</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-sitemap">
+    <div class="tool-content">
+      <button id="btn-load-sitemap" class="action-btn">Charger sitemap.xml</button>
+      <div id="sitemap-status"></div>
+      <div id="sitemap-list" class="sitemap-list"></div>
+    </div>
+  </template>
+
+  <template id="tpl-headers">
+    <div class="tool-content">
+      <button id="btn-fetch-headers" class="action-btn">Charger les headers</button>
+      <div id="headers-list" class="headers-list"></div>
+    </div>
+  </template>
+
+  <template id="tpl-cookies">
+    <div class="tool-content">
+      <div id="cookies-domain" class="domain-indicator"></div>
+      <div id="cookies-list" class="cookies-list"></div>
+      <div class="tool-actions">
+        <button id="btn-copy-cookies" class="small-btn">Copier JSON</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-cleardata">
+    <div class="tool-content">
+      <div id="clear-domain" class="domain-indicator"></div>
+      <div class="clear-options">
+        <label><input type="checkbox" id="clear-cookies" checked> Cookies</label>
+        <label><input type="checkbox" id="clear-cache" checked> Cache</label>
+        <label><input type="checkbox" id="clear-storage" checked> Local Storage</label>
+      </div>
+      <button id="btn-clear-data" class="action-btn danger">Vider les donnees</button>
+      <div id="clear-status"></div>
+    </div>
+  </template>
+
+  <template id="tpl-ssl">
+    <div class="tool-content">
+      <div id="ssl-domain" class="domain-indicator"></div>
+      <div id="ssl-info" class="ssl-info"></div>
+      <button id="btn-check-ssl" class="action-btn">Verifier SSL</button>
+    </div>
+  </template>
+
+  <template id="tpl-lorem">
+    <div class="tool-content">
+      <div class="lorem-options">
+        <label>Paragraphes: <input type="number" id="lorem-count" value="3" min="1" max="20"></label>
+      </div>
+      <button id="btn-generate-lorem" class="action-btn">Generer</button>
+      <div id="lorem-output" class="lorem-output"></div>
+      <button id="btn-copy-lorem" class="small-btn">Copier</button>
+    </div>
+  </template>
+
+  <template id="tpl-fonts">
+    <div class="tool-content">
+      <button id="btn-detect-fonts" class="action-btn">Detecter les polices</button>
+      <div id="fonts-list" class="fonts-list"></div>
+    </div>
+  </template>
+
+  <template id="tpl-translate">
+    <div class="tool-content">
+      <textarea id="translate-input" placeholder="Texte a traduire..." rows="4"></textarea>
+      <div class="translate-controls">
+        <select id="translate-lang">
+          <option value="en">Anglais</option>
+          <option value="fr">Francais</option>
+          <option value="es">Espagnol</option>
+          <option value="de">Allemand</option>
+          <option value="it">Italien</option>
+          <option value="pt">Portugais</option>
+        </select>
+        <button id="btn-translate" class="action-btn">Traduire</button>
+      </div>
+      <div id="translate-output" class="translate-output"></div>
     </div>
   </template>
 

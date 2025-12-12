@@ -906,3 +906,267 @@ input[type="number"] {
   color: #666;
   background: #f5f5f5;
 }
+
+/* ========== NEW TOOLS STYLES ========== */
+
+/* Meta tags */
+.meta-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.meta-item {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+}
+
+.meta-item:last-child {
+  border-bottom: none;
+}
+
+.meta-item strong {
+  color: var(--primary-color);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.meta-content {
+  color: var(--text-color);
+  word-break: break-all;
+  cursor: pointer;
+}
+
+.meta-content:hover {
+  color: var(--primary-color);
+}
+
+/* Links list */
+.links-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.link-item {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 11px;
+}
+
+.link-item:last-child {
+  border-bottom: none;
+}
+
+.link-item a {
+  color: var(--primary-color);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.link-item a:hover {
+  text-decoration: underline;
+}
+
+/* Images list */
+.images-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.image-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 11px;
+}
+
+.image-item:last-child {
+  border-bottom: none;
+}
+
+.image-item img {
+  border-radius: 4px;
+  object-fit: cover;
+  background: #f0f0f0;
+}
+
+.image-item span {
+  flex-grow: 1;
+  color: var(--button-text);
+}
+
+.image-item a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* Sitemap list */
+.sitemap-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.sitemap-item {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 11px;
+}
+
+.sitemap-item:last-child {
+  border-bottom: none;
+}
+
+.sitemap-item a {
+  color: var(--primary-color);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.sitemap-item a:hover {
+  text-decoration: underline;
+}
+
+/* Headers list */
+.headers-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.header-item {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.header-item:last-child {
+  border-bottom: none;
+}
+
+.header-item strong {
+  color: var(--primary-color);
+}
+
+/* Cookies list */
+.cookies-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.cookie-item {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.cookie-item:last-child {
+  border-bottom: none;
+}
+
+.cookie-item strong {
+  color: var(--secondary-color);
+}
+
+/* Clear data */
+.clear-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.clear-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.clear-options input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.action-btn.danger {
+  background: var(--error-color);
+}
+
+.action-btn.danger:hover {
+  background: #c0392b;
+}
+
+/* SSL info */
+.ssl-info {
+  margin-bottom: 15px;
+}
+
+/* Lorem output */
+.lorem-output {
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--bg-color);
+  padding: 12px;
+  border-radius: var(--radius-medium);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 10px 0;
+  white-space: pre-wrap;
+}
+
+.lorem-options {
+  margin-bottom: 10px;
+}
+
+.lorem-options label {
+  font-size: 12px;
+  color: var(--button-text);
+}
+
+/* Fonts list */
+.fonts-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.font-item {
+  padding: 10px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+}
+
+.font-item:last-child {
+  border-bottom: none;
+}
+
+/* Translate */
+.translate-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.translate-controls select {
+  flex: 1;
+}
+
+.translate-controls .action-btn {
+  width: auto;
+  margin-top: 0;
+  padding: 8px 20px;
+}
+
+.translate-output {
+  max-height: 150px;
+  overflow-y: auto;
+  background: var(--bg-color);
+  padding: 12px;
+  border-radius: var(--radius-medium);
+  font-size: 12px;
+  margin-top: 10px;
+}
