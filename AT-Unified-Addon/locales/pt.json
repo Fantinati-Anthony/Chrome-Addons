@@ -1,0 +1,286 @@
+{
+  "lang": "pt",
+  "langName": "Portugues",
+
+  "app": {
+    "title": "Toolkit",
+    "version": "Versao",
+    "settings": "Configuracoes",
+    "reload": "Recarregar extensao",
+    "updateAvailable": "Atualizacao disponivel!",
+    "download": "Baixar",
+    "changelog": "Changelog",
+    "searchPlaceholder": "Procurar uma ferramenta..."
+  },
+
+  "categories": {
+    "favorites": "Favoritos",
+    "customLinks": "Links personalizados",
+    "domainDns": "Dominio & DNS",
+    "seoAnalysis": "SEO & Analise",
+    "development": "Desenvolvimento",
+    "browser": "Navegador",
+    "utilities": "Utilitarios"
+  },
+
+  "favorites": {
+    "empty": "Sem favoritos - Passe o mouse sobre uma ferramenta e clique na estrela",
+    "add": "Adicionar aos favoritos",
+    "remove": "Remover dos favoritos"
+  },
+
+  "tools": {
+    "desktop": { "label": "Atalho", "title": "Atalho da area de trabalho" },
+    "whois": { "label": "Whois", "title": "Whois" },
+    "dnschecker": { "label": "DNS", "title": "DNS Checker" },
+    "mailtester": { "label": "Mail Test", "title": "Mail Tester" },
+    "ssl": { "label": "SSL", "title": "SSL/TLS" },
+    "colorpicker": { "label": "Cores", "title": "Seletor de cores" },
+    "downloads": { "label": "Downloads", "title": "Downloads" },
+    "emails": { "label": "Emails", "title": "Extrator de emails" },
+    "speech": { "label": "Voz", "title": "Texto para voz" },
+    "bookmarks": { "label": "Favoritos", "title": "Favoritos do dominio" },
+    "folders": { "label": "Pastas", "title": "Pastas de favoritos" },
+    "history": { "label": "Historico", "title": "Historico do dominio" },
+    "resize": { "label": "Resize", "title": "Redimensionar" },
+    "css": { "label": "CSS", "title": "Injecao CSS" },
+    "js": { "label": "JS", "title": "Injecao JavaScript" },
+    "qrcode": { "label": "QR Code", "title": "Codigo QR" },
+    "metatags": { "label": "Meta", "title": "Meta Tags" },
+    "links": { "label": "Links", "title": "Links da pagina" },
+    "images": { "label": "Imagens", "title": "Imagens da pagina" },
+    "sitemap": { "label": "Sitemap", "title": "Sitemap" },
+    "pagespeed": { "label": "PageSpeed", "title": "PageSpeed Insights" },
+    "lighthouse": { "label": "Lighthouse", "title": "Lighthouse Audit" },
+    "headers": { "label": "Headers", "title": "Headers HTTP" },
+    "cookies": { "label": "Cookies", "title": "Cookies" },
+    "cleardata": { "label": "Limpar", "title": "Limpar dados" },
+    "lorem": { "label": "Lorem", "title": "Lorem Ipsum" },
+    "fonts": { "label": "Fontes", "title": "Fontes detectadas" },
+    "translate": { "label": "Traduzir", "title": "Tradutor" }
+  },
+
+  "actions": {
+    "back": "Voltar",
+    "copy": "Copiar",
+    "copied": "Copiado!",
+    "save": "Salvar",
+    "saved": "Salvo!",
+    "delete": "Excluir",
+    "clear": "Limpar",
+    "clearAll": "Limpar tudo",
+    "extract": "Extrair",
+    "generate": "Gerar",
+    "detect": "Detectar",
+    "load": "Carregar",
+    "check": "Verificar",
+    "inject": "Injetar",
+    "execute": "Executar",
+    "translate": "Traduzir",
+    "downloadFile": "Baixar"
+  },
+
+  "messages": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "noData": "Sem dados",
+    "noResults": "Sem resultados",
+    "success": "Sucesso",
+    "urlNotAvailable": "URL nao disponivel",
+    "domainLabel": "Dominio",
+    "secureConnection": "Conexao segura (HTTPS)",
+    "insecureConnection": "Conexao nao segura (HTTP)"
+  },
+
+  "colorpicker": {
+    "pickColor": "Escolher uma cor",
+    "noColors": "Sem cores",
+    "analyze": "Analisar"
+  },
+
+  "downloads": {
+    "placeholder": "Digite as URLs (uma por linha)...",
+    "concurrent": "Simultaneos",
+    "download": "Baixar",
+    "starting": "Iniciando",
+    "files": "arquivo(s)",
+    "done": "Pronto!"
+  },
+
+  "emails": {
+    "extract": "Extrair emails",
+    "count": "email(s)",
+    "copyLines": "Copiar (linhas)",
+    "copySemicolon": "Copiar (;)"
+  },
+
+  "speech": {
+    "loadingVoices": "Carregando vozes...",
+    "saveVoice": "Salvar voz"
+  },
+
+  "bookmarks": {
+    "noBookmarks": "Sem favoritos para"
+  },
+
+  "folders": {
+    "noFolders": "Sem pastas",
+    "emptyBar": "Barra de favoritos vazia"
+  },
+
+  "history": {
+    "load": "Carregar historico",
+    "noHistory": "Sem historico"
+  },
+
+  "css": {
+    "placeholder": "Digite o CSS...",
+    "inject": "Injetar CSS",
+    "injected": "Injetado!"
+  },
+
+  "js": {
+    "placeholder": "Digite o JavaScript...",
+    "execute": "Executar JS",
+    "executed": "Executado!"
+  },
+
+  "qrcode": {
+    "copyImage": "Copiar imagem",
+    "download": "Baixar"
+  },
+
+  "metatags": {
+    "extract": "Extrair meta tags",
+    "noMeta": "Sem meta tags"
+  },
+
+  "links": {
+    "extract": "Extrair links",
+    "internal": "internos",
+    "external": "externos",
+    "copyAll": "Copiar todos"
+  },
+
+  "images": {
+    "extract": "Extrair imagens",
+    "found": "imagens encontradas",
+    "copyUrls": "Copiar URLs"
+  },
+
+  "sitemap": {
+    "load": "Carregar sitemap.xml",
+    "urls": "URLs",
+    "sitemaps": "sitemaps",
+    "notFound": "Sitemap nao encontrado ou erro"
+  },
+
+  "headers": {
+    "load": "Carregar headers",
+    "noHeaders": "Sem headers"
+  },
+
+  "cookies": {
+    "copyJson": "Copiar JSON",
+    "noCookies": "Sem cookies"
+  },
+
+  "cleardata": {
+    "cookies": "Cookies",
+    "cache": "Cache",
+    "storage": "Local Storage",
+    "clear": "Limpar dados",
+    "cleared": "Limpo",
+    "cacheReload": "cache (requer recarregar)"
+  },
+
+  "lorem": {
+    "paragraphs": "Paragrafos",
+    "generate": "Gerar",
+    "copy": "Copiar"
+  },
+
+  "fonts": {
+    "detect": "Detectar fontes",
+    "noFonts": "Nenhuma fonte detectada"
+  },
+
+  "translate": {
+    "placeholder": "Texto para traduzir...",
+    "languages": {
+      "en": "Ingles",
+      "fr": "Frances",
+      "es": "Espanhol",
+      "de": "Alemao",
+      "it": "Italiano",
+      "pt": "Portugues"
+    }
+  },
+
+  "options": {
+    "title": "AT Toolkit - Opcoes",
+    "general": "Configuracoes gerais",
+    "popupName": "Nome do popup",
+    "language": "Idioma",
+    "colors": "Personalizacao de cores",
+    "colorsDesc": "Personalize a aparencia da sua extensao modificando as cores.",
+    "bgColor": "Fundo",
+    "textColor": "Texto",
+    "primaryColor": "Cor principal",
+    "primaryHover": "Principal (hover)",
+    "secondaryColor": "Cor secundaria",
+    "buttonBg": "Fundo botoes",
+    "buttonText": "Texto botoes",
+    "panelBg": "Fundo paineis",
+    "borderColor": "Bordas",
+    "successColor": "Sucesso",
+    "errorColor": "Erro",
+    "saveColors": "Salvar cores",
+    "resetColors": "Redefinir",
+    "radius": "Bordas arredondadas",
+    "radiusDesc": "Personalize as bordas arredondadas de botoes, paineis e outros elementos.",
+    "radiusSmall": "Pequeno (botoes)",
+    "radiusMedium": "Medio (paineis)",
+    "radiusLarge": "Grande (icones, popup)",
+    "saveRadius": "Salvar bordas",
+    "resetRadius": "Redefinir",
+    "buttonSize": "Tamanho dos botoes",
+    "buttonSizeDesc": "Ajuste o tamanho dos botoes de ferramentas no popup.",
+    "saveSize": "Salvar tamanho",
+    "resetSize": "Redefinir",
+    "customButtons": "Botoes personalizados",
+    "customButtonsDesc": "Adicione quantos botoes desejar.",
+    "buttonName": "Nome",
+    "buttonUrl": "URL",
+    "buttonIcon": "Icone",
+    "buttonIconTip": "Deixe vazio para usar automaticamente o favicon do site.",
+    "addButton": "Adicionar",
+    "noButtons": "Sem botoes personalizados. Adicione um abaixo!",
+    "modules": "Gerenciamento de modulos",
+    "modulesDesc": "Ative ou desative ferramentas conforme suas necessidades.",
+    "enableAll": "Ativar todos",
+    "disableAll": "Desativar todos",
+    "saveModules": "Salvar modulos",
+    "backup": "Backup de configuracoes",
+    "backupDesc": "Exporte suas configuracoes para salva-las ou importa-las em outro navegador.",
+    "export": "Exportar configuracoes",
+    "import": "Importar configuracoes",
+    "updates": "Atualizacoes",
+    "updatesDesc": "A extensao se atualiza a partir do repositorio GitHub publico.",
+    "repository": "Repositorio",
+    "branch": "Branch",
+    "folder": "Pasta",
+    "resetUpdateCache": "Redefinir cache de atualizacoes",
+    "apiKey": "Chave API OpenAI",
+    "apiKeyDesc": "Configure sua chave API do OpenAI para usar o GPT.",
+    "showKey": "Mostrar chave",
+    "notifications": "Notificacoes ChatGPT",
+    "notificationsDesc": "Configure as notificacoes sonoras.",
+    "enableSound": "Ativar som de notificacao",
+    "volume": "Volume",
+    "data": "Dados",
+    "dataDesc": "Gerencie os dados armazenados pela extensao.",
+    "clearAllData": "Apagar todos os dados",
+    "clearConfirm": "Tem certeza de que deseja apagar todos os dados? Esta acao e irreversivel."
+  }
+}

@@ -7,6 +7,40 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.9.0] - 2025-12-12
+
+### Ajoute
+- **Recherche d'outils** :
+  - Champ de recherche en haut du popup
+  - Filtrage instantane des outils par nom
+  - Les categories s'ouvrent automatiquement avec les resultats
+  - Touche Echap pour effacer la recherche
+
+- **Systeme de favoris** :
+  - Etoile sur chaque outil pour l'ajouter aux favoris
+  - Section favoris toujours visible en haut
+  - Acces rapide aux outils les plus utilises
+
+- **Effet accordeon** :
+  - Une seule categorie ouverte a la fois
+  - Toutes les categories sont fermees par defaut
+  - Correction du repli des liens personnalises
+
+- **Taille des boutons configurable** :
+  - Nouveau reglage dans les options
+  - Curseur de 70% a 150%
+  - Apercu en temps reel
+
+- **Nouvelles langues** :
+  - Espagnol (Espanol)
+  - Portugais (Portugues)
+  - 4 langues supportees au total
+
+### Corrige
+- Les liens personnalises se replient maintenant correctement
+
+---
+
 ## [1.8.0] - 2025-12-12
 
 ### Ajoute

@@ -1,5 +1,5 @@
 {
-  "version": "1.8.0",
+  "version": "1.9.0",
   "releaseDate": "2025-12-12",
-  "changelog": "Multi-language support (FR/EN), tools organized by categories, admin module enable/disable settings"
+  "changelog": "Search, favorites, accordion effect, button size, Spanish/Portuguese translations"
 }

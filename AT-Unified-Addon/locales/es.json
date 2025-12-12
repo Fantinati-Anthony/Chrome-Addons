@@ -1,0 +1,286 @@
+{
+  "lang": "es",
+  "langName": "Espanol",
+
+  "app": {
+    "title": "Toolkit",
+    "version": "Version",
+    "settings": "Configuracion",
+    "reload": "Recargar extension",
+    "updateAvailable": "Actualizacion disponible!",
+    "download": "Descargar",
+    "changelog": "Changelog",
+    "searchPlaceholder": "Buscar una herramienta..."
+  },
+
+  "categories": {
+    "favorites": "Favoritos",
+    "customLinks": "Enlaces personalizados",
+    "domainDns": "Dominio & DNS",
+    "seoAnalysis": "SEO & Analisis",
+    "development": "Desarrollo",
+    "browser": "Navegador",
+    "utilities": "Utilidades"
+  },
+
+  "favorites": {
+    "empty": "Sin favoritos - Pase el raton sobre una herramienta y haga clic en la estrella",
+    "add": "Agregar a favoritos",
+    "remove": "Eliminar de favoritos"
+  },
+
+  "tools": {
+    "desktop": { "label": "Acceso", "title": "Acceso directo" },
+    "whois": { "label": "Whois", "title": "Whois" },
+    "dnschecker": { "label": "DNS", "title": "DNS Checker" },
+    "mailtester": { "label": "Mail Test", "title": "Mail Tester" },
+    "ssl": { "label": "SSL", "title": "SSL/TLS" },
+    "colorpicker": { "label": "Colores", "title": "Selector de color" },
+    "downloads": { "label": "Descargas", "title": "Descargas" },
+    "emails": { "label": "Emails", "title": "Extractor de emails" },
+    "speech": { "label": "Voz", "title": "Texto a voz" },
+    "bookmarks": { "label": "Marcadores", "title": "Marcadores del dominio" },
+    "folders": { "label": "Carpetas", "title": "Carpetas de marcadores" },
+    "history": { "label": "Historial", "title": "Historial del dominio" },
+    "resize": { "label": "Resize", "title": "Redimensionar" },
+    "css": { "label": "CSS", "title": "Inyeccion CSS" },
+    "js": { "label": "JS", "title": "Inyeccion JavaScript" },
+    "qrcode": { "label": "QR Code", "title": "Codigo QR" },
+    "metatags": { "label": "Meta", "title": "Meta Tags" },
+    "links": { "label": "Enlaces", "title": "Enlaces de la pagina" },
+    "images": { "label": "Imagenes", "title": "Imagenes de la pagina" },
+    "sitemap": { "label": "Sitemap", "title": "Sitemap" },
+    "pagespeed": { "label": "PageSpeed", "title": "PageSpeed Insights" },
+    "lighthouse": { "label": "Lighthouse", "title": "Lighthouse Audit" },
+    "headers": { "label": "Headers", "title": "Headers HTTP" },
+    "cookies": { "label": "Cookies", "title": "Cookies" },
+    "cleardata": { "label": "Limpiar", "title": "Limpiar datos" },
+    "lorem": { "label": "Lorem", "title": "Lorem Ipsum" },
+    "fonts": { "label": "Fuentes", "title": "Fuentes detectadas" },
+    "translate": { "label": "Traducir", "title": "Traductor" }
+  },
+
+  "actions": {
+    "back": "Volver",
+    "copy": "Copiar",
+    "copied": "Copiado!",
+    "save": "Guardar",
+    "saved": "Guardado!",
+    "delete": "Eliminar",
+    "clear": "Limpiar",
+    "clearAll": "Limpiar todo",
+    "extract": "Extraer",
+    "generate": "Generar",
+    "detect": "Detectar",
+    "load": "Cargar",
+    "check": "Verificar",
+    "inject": "Inyectar",
+    "execute": "Ejecutar",
+    "translate": "Traducir",
+    "downloadFile": "Descargar"
+  },
+
+  "messages": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "noData": "Sin datos",
+    "noResults": "Sin resultados",
+    "success": "Exito",
+    "urlNotAvailable": "URL no disponible",
+    "domainLabel": "Dominio",
+    "secureConnection": "Conexion segura (HTTPS)",
+    "insecureConnection": "Conexion no segura (HTTP)"
+  },
+
+  "colorpicker": {
+    "pickColor": "Elegir un color",
+    "noColors": "Sin colores",
+    "analyze": "Analizar"
+  },
+
+  "downloads": {
+    "placeholder": "Ingrese URLs (una por linea)...",
+    "concurrent": "Simultaneos",
+    "download": "Descargar",
+    "starting": "Iniciando",
+    "files": "archivo(s)",
+    "done": "Listo!"
+  },
+
+  "emails": {
+    "extract": "Extraer emails",
+    "count": "email(s)",
+    "copyLines": "Copiar (lineas)",
+    "copySemicolon": "Copiar (;)"
+  },
+
+  "speech": {
+    "loadingVoices": "Cargando voces...",
+    "saveVoice": "Guardar voz"
+  },
+
+  "bookmarks": {
+    "noBookmarks": "Sin marcadores para"
+  },
+
+  "folders": {
+    "noFolders": "Sin carpetas",
+    "emptyBar": "Barra de marcadores vacia"
+  },
+
+  "history": {
+    "load": "Cargar historial",
+    "noHistory": "Sin historial"
+  },
+
+  "css": {
+    "placeholder": "Ingrese CSS...",
+    "inject": "Inyectar CSS",
+    "injected": "Inyectado!"
+  },
+
+  "js": {
+    "placeholder": "Ingrese JavaScript...",
+    "execute": "Ejecutar JS",
+    "executed": "Ejecutado!"
+  },
+
+  "qrcode": {
+    "copyImage": "Copiar imagen",
+    "download": "Descargar"
+  },
+
+  "metatags": {
+    "extract": "Extraer meta tags",
+    "noMeta": "Sin meta tags"
+  },
+
+  "links": {
+    "extract": "Extraer enlaces",
+    "internal": "internos",
+    "external": "externos",
+    "copyAll": "Copiar todos"
+  },
+
+  "images": {
+    "extract": "Extraer imagenes",
+    "found": "imagenes encontradas",
+    "copyUrls": "Copiar URLs"
+  },
+
+  "sitemap": {
+    "load": "Cargar sitemap.xml",
+    "urls": "URLs",
+    "sitemaps": "sitemaps",
+    "notFound": "Sitemap no encontrado o error"
+  },
+
+  "headers": {
+    "load": "Cargar headers",
+    "noHeaders": "Sin headers"
+  },
+
+  "cookies": {
+    "copyJson": "Copiar JSON",
+    "noCookies": "Sin cookies"
+  },
+
+  "cleardata": {
+    "cookies": "Cookies",
+    "cache": "Cache",
+    "storage": "Local Storage",
+    "clear": "Limpiar datos",
+    "cleared": "Limpiado",
+    "cacheReload": "cache (requiere recargar)"
+  },
+
+  "lorem": {
+    "paragraphs": "Parrafos",
+    "generate": "Generar",
+    "copy": "Copiar"
+  },
+
+  "fonts": {
+    "detect": "Detectar fuentes",
+    "noFonts": "No se detectaron fuentes"
+  },
+
+  "translate": {
+    "placeholder": "Texto a traducir...",
+    "languages": {
+      "en": "Ingles",
+      "fr": "Frances",
+      "es": "Espanol",
+      "de": "Aleman",
+      "it": "Italiano",
+      "pt": "Portugues"
+    }
+  },
+
+  "options": {
+    "title": "AT Toolkit - Opciones",
+    "general": "Configuracion general",
+    "popupName": "Nombre del popup",
+    "language": "Idioma",
+    "colors": "Personalizacion de colores",
+    "colorsDesc": "Personalice la apariencia de su extension modificando los colores.",
+    "bgColor": "Fondo",
+    "textColor": "Texto",
+    "primaryColor": "Color principal",
+    "primaryHover": "Principal (hover)",
+    "secondaryColor": "Color secundario",
+    "buttonBg": "Fondo botones",
+    "buttonText": "Texto botones",
+    "panelBg": "Fondo paneles",
+    "borderColor": "Bordes",
+    "successColor": "Exito",
+    "errorColor": "Error",
+    "saveColors": "Guardar colores",
+    "resetColors": "Restablecer",
+    "radius": "Bordes redondeados",
+    "radiusDesc": "Personalice los bordes redondeados de botones, paneles y otros elementos.",
+    "radiusSmall": "Pequeno (botones)",
+    "radiusMedium": "Mediano (paneles)",
+    "radiusLarge": "Grande (iconos, popup)",
+    "saveRadius": "Guardar bordes",
+    "resetRadius": "Restablecer",
+    "buttonSize": "Tamano de botones",
+    "buttonSizeDesc": "Ajuste el tamano de los botones de herramientas en el popup.",
+    "saveSize": "Guardar tamano",
+    "resetSize": "Restablecer",
+    "customButtons": "Botones personalizados",
+    "customButtonsDesc": "Agregue tantos botones como desee.",
+    "buttonName": "Nombre",
+    "buttonUrl": "URL",
+    "buttonIcon": "Icono",
+    "buttonIconTip": "Deje vacio para usar automaticamente el favicon del sitio.",
+    "addButton": "Agregar",
+    "noButtons": "Sin botones personalizados. Agregue uno abajo!",
+    "modules": "Gestion de modulos",
+    "modulesDesc": "Active o desactive herramientas segun sus necesidades.",
+    "enableAll": "Activar todos",
+    "disableAll": "Desactivar todos",
+    "saveModules": "Guardar modulos",
+    "backup": "Respaldo de configuracion",
+    "backupDesc": "Exporte su configuracion para guardarla o importarla en otro navegador.",
+    "export": "Exportar configuracion",
+    "import": "Importar configuracion",
+    "updates": "Actualizaciones",
+    "updatesDesc": "La extension se actualiza desde el repositorio GitHub publico.",
+    "repository": "Repositorio",
+    "branch": "Rama",
+    "folder": "Carpeta",
+    "resetUpdateCache": "Restablecer cache de actualizaciones",
+    "apiKey": "Clave API OpenAI",
+    "apiKeyDesc": "Configure su clave API de OpenAI para usar GPT.",
+    "showKey": "Mostrar clave",
+    "notifications": "Notificaciones ChatGPT",
+    "notificationsDesc": "Configure las notificaciones sonoras.",
+    "enableSound": "Activar sonido de notificacion",
+    "volume": "Volumen",
+    "data": "Datos",
+    "dataDesc": "Gestione los datos almacenados por la extension.",
+    "clearAllData": "Borrar todos los datos",
+    "clearConfirm": "Esta seguro de que desea borrar todos los datos? Esta accion es irreversible."
+  }
+}

@@ -9,16 +9,24 @@
     "reload": "Reload extension",
     "updateAvailable": "Update available!",
     "download": "Download",
-    "changelog": "Changelog"
+    "changelog": "Changelog",
+    "searchPlaceholder": "Search for a tool..."
   },
 
   "categories": {
+    "favorites": "Favorites",
     "customLinks": "Custom Links",
     "domainDns": "Domain & DNS",
     "seoAnalysis": "SEO & Analysis",
     "development": "Development",
     "browser": "Browser",
     "utilities": "Utilities"
+  },
+
+  "favorites": {
+    "empty": "No favorites - Hover over a tool and click the star to add it",
+    "add": "Add to favorites",
+    "remove": "Remove from favorites"
   },
 
   "tools": {

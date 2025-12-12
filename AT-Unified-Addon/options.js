@@ -213,6 +213,61 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ========== BUTTON SIZE ==========
+  const buttonSizeSlider = document.getElementById('button-size');
+  const buttonSizeValue = document.getElementById('button-size-value');
+  const sizePreviewBtn = document.getElementById('size-preview-btn');
+  const saveSizeBtn = document.getElementById('btn-save-size');
+  const resetSizeBtn = document.getElementById('btn-reset-size');
+  const sizeStatus = document.getElementById('size-status');
+
+  function updateSizeDisplay() {
+    if (buttonSizeValue && buttonSizeSlider) {
+      const percent = Math.round(parseFloat(buttonSizeSlider.value) * 100);
+      buttonSizeValue.textContent = percent + '%';
+
+      // Update preview
+      if (sizePreviewBtn) {
+        const size = parseFloat(buttonSizeSlider.value);
+        sizePreviewBtn.style.padding = `${12 * size}px ${8 * size}px`;
+        sizePreviewBtn.querySelector('span:first-child').style.fontSize = `${24 * size}px`;
+        sizePreviewBtn.querySelector('span:last-child').style.fontSize = `${10 * size}px`;
+      }
+    }
+  }
+
+  if (buttonSizeSlider) {
+    buttonSizeSlider.addEventListener('input', updateSizeDisplay);
+  }
+
+  // Load saved size
+  chrome.storage.sync.get(['buttonSize'], (data) => {
+    const size = data.buttonSize || 1;
+    if (buttonSizeSlider) buttonSizeSlider.value = size;
+    updateSizeDisplay();
+  });
+
+  // Save size
+  if (saveSizeBtn) {
+    saveSizeBtn.addEventListener('click', () => {
+      const size = parseFloat(buttonSizeSlider.value);
+      chrome.storage.sync.set({ buttonSize: size }, () => {
+        showStatus(sizeStatus, 'Taille sauvegardee!', 'success');
+      });
+    });
+  }
+
+  // Reset size
+  if (resetSizeBtn) {
+    resetSizeBtn.addEventListener('click', () => {
+      if (buttonSizeSlider) buttonSizeSlider.value = 1;
+      updateSizeDisplay();
+      chrome.storage.sync.set({ buttonSize: 1 }, () => {
+        showStatus(sizeStatus, 'Taille reinitialisee!', 'success');
+      });
+    });
+  }
+
   // ========== DYNAMIC BUTTONS ==========
   const buttonsList = document.getElementById('buttons-list');
   const newBtnName = document.getElementById('new-btn-name');

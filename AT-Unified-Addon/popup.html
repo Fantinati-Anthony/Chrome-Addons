@@ -33,11 +33,29 @@
       </div>
     </header>
 
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input type="text" id="search-tools" data-i18n-placeholder="app.searchPlaceholder" placeholder="Rechercher un outil...">
+      <span class="search-icon">🔍</span>
+    </div>
+
     <!-- Main Grid View (Home) -->
     <section id="grid-view" class="grid-view">
+      <!-- Favorites Category (always visible, never collapsed) -->
+      <div id="category-favorites" class="category-section favorites-section hidden">
+        <div class="category-header favorites-header" data-collapsed="false" data-no-collapse="true">
+          <span class="category-emoji">⭐</span>
+          <span class="category-title" data-i18n="categories.favorites">Favoris</span>
+          <span class="favorites-count">(0)</span>
+        </div>
+        <div class="tools-grid" id="favorites-container">
+          <!-- Favorite tools loaded dynamically -->
+        </div>
+      </div>
+
       <!-- Custom Buttons Category -->
       <div id="category-customLinks" class="category-section">
-        <div class="category-header" data-collapsed="false">
+        <div class="category-header" data-collapsed="true">
           <span class="category-emoji">🔗</span>
           <span class="category-title" data-i18n="categories.customLinks">Liens personnalises</span>
           <span class="category-toggle">▼</span>
@@ -49,7 +67,7 @@
 
       <!-- Domain & DNS Category -->
       <div id="category-domainDns" class="category-section">
-        <div class="category-header" data-collapsed="false">
+        <div class="category-header" data-collapsed="true">
           <span class="category-emoji">🌐</span>
           <span class="category-title" data-i18n="categories.domainDns">Domaine & DNS</span>
           <span class="category-toggle">▼</span>
@@ -76,7 +94,7 @@
 
       <!-- SEO & Analysis Category -->
       <div id="category-seoAnalysis" class="category-section">
-        <div class="category-header" data-collapsed="false">
+        <div class="category-header" data-collapsed="true">
           <span class="category-emoji">📊</span>
           <span class="category-title" data-i18n="categories.seoAnalysis">SEO & Analyse</span>
           <span class="category-toggle">▼</span>
@@ -111,7 +129,7 @@
 
       <!-- Development Category -->
       <div id="category-development" class="category-section">
-        <div class="category-header" data-collapsed="false">
+        <div class="category-header" data-collapsed="true">
           <span class="category-emoji">💻</span>
           <span class="category-title" data-i18n="categories.development">Developpement</span>
           <span class="category-toggle">▼</span>
@@ -146,7 +164,7 @@
 
       <!-- Browser Category -->
       <div id="category-browser" class="category-section">
-        <div class="category-header" data-collapsed="false">
+        <div class="category-header" data-collapsed="true">
           <span class="category-emoji">🌍</span>
           <span class="category-title" data-i18n="categories.browser">Navigateur</span>
           <span class="category-toggle">▼</span>
@@ -177,7 +195,7 @@
 
       <!-- Utilities Category -->
       <div id="category-utilities" class="category-section">
-        <div class="category-header" data-collapsed="false">
+        <div class="category-header" data-collapsed="true">
           <span class="category-emoji">🛠️</span>
           <span class="category-title" data-i18n="categories.utilities">Utilitaires</span>
           <span class="category-toggle">▼</span>
