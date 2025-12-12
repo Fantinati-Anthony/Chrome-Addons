@@ -7,6 +7,16 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.6.2] - 2025-12-12
+
+### Corrige
+- **Suppression de updater.js** :
+  - Fichier completement supprime (le nom declenchait l'antivirus)
+  - Verification des MAJ uniquement via background.js
+  - Aucun fichier nomme "updater" dans l'extension
+
+---
+
 ## [1.6.1] - 2025-12-12
 
 ### Ajoute

@@ -1,5 +1,5 @@
 {
-  "version": "1.6.1",
+  "version": "1.6.2",
   "releaseDate": "2025-12-12",
-  "changelog": "Customizable popup title in settings"
+  "changelog": "Remove updater.js file to avoid antivirus false positives"
 }
