@@ -7,6 +7,15 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.6.3] - 2025-12-12
+
+### Ajoute
+- **Bouton recharger l'extension** :
+  - Nouveau bouton 🔄 dans le header du popup
+  - Recharge l'extension en un clic
+
+---
+
 ## [1.6.2] - 2025-12-12
 
 ### Corrige
