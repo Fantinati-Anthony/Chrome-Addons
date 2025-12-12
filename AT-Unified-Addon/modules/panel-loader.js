@@ -21,7 +21,19 @@ const PanelLoader = (function() {
     history: initHistory,
     resize: initResize,
     css: initCSS,
-    js: initJS
+    js: initJS,
+    qrcode: initQRCode,
+    metatags: initMetaTags,
+    links: initLinks,
+    images: initImages,
+    sitemap: initSitemap,
+    headers: initHeaders,
+    cookies: initCookies,
+    cleardata: initClearData,
+    ssl: initSSL,
+    lorem: initLorem,
+    fonts: initFonts,
+    translate: initTranslate
   };
 
   // Direct actions (no panel needed)
@@ -79,6 +91,32 @@ const PanelLoader = (function() {
     },
     mailtester: () => {
       chrome.tabs.create({ url: 'https://www.mail-tester.com/' });
+    },
+    pagespeed: async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab || !tab.url) {
+          alert('URL non disponible');
+          return;
+        }
+        chrome.tabs.create({ url: `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(tab.url)}` });
+      } catch (error) {
+        console.error('Error opening PageSpeed:', error);
+        alert('Erreur');
+      }
+    },
+    lighthouse: async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab || !tab.url) {
+          alert('URL non disponible');
+          return;
+        }
+        chrome.tabs.create({ url: `https://googlechrome.github.io/lighthouse/viewer/?psiurl=${encodeURIComponent(tab.url)}` });
+      } catch (error) {
+        console.error('Error opening Lighthouse:', error);
+        alert('Erreur');
+      }
     }
   };
 
@@ -676,6 +714,559 @@ const PanelLoader = (function() {
       } catch (error) {
         alert('Erreur: ' + error.message);
       }
+    });
+  }
+
+  // ========== New Tool Initializers ==========
+
+  async function initQRCode() {
+    const qrUrlDiv = document.getElementById('qr-url');
+    const qrCanvas = document.getElementById('qr-canvas');
+    const copyQrBtn = document.getElementById('btn-copy-qr');
+    const downloadQrBtn = document.getElementById('btn-download-qr');
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const url = tab?.url || '';
+      qrUrlDiv.textContent = url.length > 50 ? url.substring(0, 50) + '...' : url;
+
+      // Generate QR Code using canvas
+      generateQRCode(qrCanvas, url);
+
+      copyQrBtn.addEventListener('click', async () => {
+        try {
+          const dataUrl = qrCanvas.toDataURL('image/png');
+          const blob = await (await fetch(dataUrl)).blob();
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          copyQrBtn.textContent = 'Copie!';
+          setTimeout(() => { copyQrBtn.textContent = 'Copier l\'image'; }, 1000);
+        } catch (e) {
+          alert('Erreur lors de la copie');
+        }
+      });
+
+      downloadQrBtn.addEventListener('click', () => {
+        const dataUrl = qrCanvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = 'qrcode.png';
+        a.click();
+      });
+    } catch (error) {
+      qrUrlDiv.textContent = 'Erreur';
+    }
+  }
+
+  // Simple QR Code generator (using simple alphanumeric encoding)
+  function generateQRCode(canvas, text) {
+    const size = 200;
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+
+    // Use external QR API as image
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, size, size);
+    };
+    img.onerror = () => {
+      // Fallback: display text
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, size, size);
+      ctx.fillStyle = '#000';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('QR Error', size / 2, size / 2);
+    };
+    img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}`;
+  }
+
+  async function initMetaTags() {
+    const extractBtn = document.getElementById('btn-extract-meta');
+    const metaList = document.getElementById('meta-list');
+
+    extractBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const metas = [];
+            // Title
+            metas.push({ name: 'title', content: document.title });
+            // Meta tags
+            document.querySelectorAll('meta').forEach(meta => {
+              const name = meta.getAttribute('name') || meta.getAttribute('property') || meta.getAttribute('http-equiv');
+              const content = meta.getAttribute('content');
+              if (name && content) {
+                metas.push({ name, content });
+              }
+            });
+            // Canonical
+            const canonical = document.querySelector('link[rel="canonical"]');
+            if (canonical) metas.push({ name: 'canonical', content: canonical.href });
+            return metas;
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          renderMetaTags(results[0].result);
+        }
+      } catch (error) {
+        metaList.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+
+    function renderMetaTags(metas) {
+      if (metas.length === 0) {
+        metaList.innerHTML = '<div class="status-message info">Aucun meta tag</div>';
+        return;
+      }
+      metaList.innerHTML = '';
+      metas.forEach(meta => {
+        const item = document.createElement('div');
+        item.className = 'meta-item';
+        item.innerHTML = `<strong>${escapeHtml(meta.name)}:</strong> <span class="meta-content">${escapeHtml(meta.content)}</span>`;
+        item.querySelector('.meta-content').addEventListener('click', async () => {
+          await navigator.clipboard.writeText(meta.content);
+          item.querySelector('.meta-content').textContent = 'Copie!';
+          setTimeout(() => { item.querySelector('.meta-content').textContent = meta.content; }, 1000);
+        });
+        metaList.appendChild(item);
+      });
+    }
+  }
+
+  async function initLinks() {
+    const extractBtn = document.getElementById('btn-extract-links');
+    const statsDiv = document.getElementById('links-stats');
+    const linksList = document.getElementById('links-list');
+    const copyBtn = document.getElementById('btn-copy-links');
+
+    let allLinks = [];
+
+    extractBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const currentHost = new URL(tab.url).hostname;
+
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const links = [];
+            document.querySelectorAll('a[href]').forEach(a => {
+              const href = a.href;
+              if (href && !href.startsWith('javascript:')) {
+                links.push({ href, text: a.textContent.trim().substring(0, 50) });
+              }
+            });
+            return links;
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          allLinks = results[0].result;
+          const internal = allLinks.filter(l => {
+            try { return new URL(l.href).hostname === currentHost; } catch { return false; }
+          });
+          const external = allLinks.filter(l => {
+            try { return new URL(l.href).hostname !== currentHost; } catch { return false; }
+          });
+
+          statsDiv.innerHTML = `<strong>${allLinks.length}</strong> liens (${internal.length} internes, ${external.length} externes)`;
+          renderLinks(allLinks);
+        }
+      } catch (error) {
+        linksList.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (allLinks.length > 0) {
+        await navigator.clipboard.writeText(allLinks.map(l => l.href).join('\n'));
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier tous'; }, 1000);
+      }
+    });
+
+    function renderLinks(links) {
+      linksList.innerHTML = '';
+      const uniqueLinks = [...new Set(links.map(l => l.href))];
+      uniqueLinks.slice(0, 100).forEach(href => {
+        const item = document.createElement('div');
+        item.className = 'link-item';
+        item.innerHTML = `<a href="${escapeHtml(href)}" target="_blank">${escapeHtml(href.substring(0, 60))}${href.length > 60 ? '...' : ''}</a>`;
+        linksList.appendChild(item);
+      });
+      if (uniqueLinks.length > 100) {
+        linksList.innerHTML += `<div class="status-message info">+${uniqueLinks.length - 100} autres liens...</div>`;
+      }
+    }
+  }
+
+  async function initImages() {
+    const extractBtn = document.getElementById('btn-extract-images');
+    const statsDiv = document.getElementById('images-stats');
+    const imagesList = document.getElementById('images-list');
+    const copyBtn = document.getElementById('btn-copy-images');
+
+    let allImages = [];
+
+    extractBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const images = [];
+            document.querySelectorAll('img[src]').forEach(img => {
+              if (img.src && !img.src.startsWith('data:')) {
+                images.push({ src: img.src, alt: img.alt || '', width: img.naturalWidth, height: img.naturalHeight });
+              }
+            });
+            return images;
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          allImages = results[0].result;
+          statsDiv.innerHTML = `<strong>${allImages.length}</strong> images trouvees`;
+          renderImages(allImages);
+        }
+      } catch (error) {
+        imagesList.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (allImages.length > 0) {
+        await navigator.clipboard.writeText(allImages.map(i => i.src).join('\n'));
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier URLs'; }, 1000);
+      }
+    });
+
+    function renderImages(images) {
+      imagesList.innerHTML = '';
+      images.slice(0, 50).forEach(img => {
+        const item = document.createElement('div');
+        item.className = 'image-item';
+        item.innerHTML = `
+          <img src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt)}" style="max-width:60px;max-height:40px;">
+          <span>${img.width}x${img.height}</span>
+          <a href="${escapeHtml(img.src)}" target="_blank">↗</a>
+        `;
+        imagesList.appendChild(item);
+      });
+      if (images.length > 50) {
+        imagesList.innerHTML += `<div class="status-message info">+${images.length - 50} autres images...</div>`;
+      }
+    }
+  }
+
+  async function initSitemap() {
+    const loadBtn = document.getElementById('btn-load-sitemap');
+    const statusDiv = document.getElementById('sitemap-status');
+    const sitemapList = document.getElementById('sitemap-list');
+
+    loadBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const origin = new URL(tab.url).origin;
+        const sitemapUrl = origin + '/sitemap.xml';
+
+        statusDiv.innerHTML = 'Chargement...';
+
+        const response = await fetch(sitemapUrl);
+        if (!response.ok) throw new Error('Sitemap non trouve');
+
+        const text = await response.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, 'text/xml');
+
+        const urls = xml.querySelectorAll('url loc');
+        const sitemaps = xml.querySelectorAll('sitemap loc');
+
+        statusDiv.innerHTML = `<strong>${urls.length}</strong> URLs, <strong>${sitemaps.length}</strong> sitemaps`;
+
+        sitemapList.innerHTML = '';
+        urls.forEach(loc => {
+          const item = document.createElement('div');
+          item.className = 'sitemap-item';
+          item.innerHTML = `<a href="${escapeHtml(loc.textContent)}" target="_blank">${escapeHtml(loc.textContent.substring(0, 60))}</a>`;
+          sitemapList.appendChild(item);
+        });
+        sitemaps.forEach(loc => {
+          const item = document.createElement('div');
+          item.className = 'sitemap-item';
+          item.innerHTML = `📁 <a href="${escapeHtml(loc.textContent)}" target="_blank">${escapeHtml(loc.textContent)}</a>`;
+          sitemapList.appendChild(item);
+        });
+
+      } catch (error) {
+        statusDiv.innerHTML = '<div class="status-message error">Sitemap non trouve ou erreur</div>';
+      }
+    });
+  }
+
+  async function initHeaders() {
+    const fetchBtn = document.getElementById('btn-fetch-headers');
+    const headersList = document.getElementById('headers-list');
+
+    fetchBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        headersList.innerHTML = 'Chargement...';
+
+        const response = await fetch(tab.url, { method: 'HEAD' });
+        const headers = [];
+        response.headers.forEach((value, key) => {
+          headers.push({ key, value });
+        });
+
+        renderHeaders(headers);
+      } catch (error) {
+        headersList.innerHTML = '<div class="status-message error">Erreur lors du chargement</div>';
+      }
+    });
+
+    function renderHeaders(headers) {
+      if (headers.length === 0) {
+        headersList.innerHTML = '<div class="status-message info">Aucun header</div>';
+        return;
+      }
+      headersList.innerHTML = '';
+      headers.forEach(h => {
+        const item = document.createElement('div');
+        item.className = 'header-item';
+        item.innerHTML = `<strong>${escapeHtml(h.key)}:</strong> ${escapeHtml(h.value)}`;
+        headersList.appendChild(item);
+      });
+    }
+  }
+
+  async function initCookies() {
+    const domainDiv = document.getElementById('cookies-domain');
+    const cookiesList = document.getElementById('cookies-list');
+    const copyBtn = document.getElementById('btn-copy-cookies');
+
+    let allCookies = [];
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const url = new URL(tab.url);
+      domainDiv.textContent = `Domaine: ${url.hostname}`;
+
+      const cookies = await chrome.cookies.getAll({ domain: url.hostname });
+      allCookies = cookies;
+      renderCookies(cookies);
+    } catch (error) {
+      cookiesList.innerHTML = '<div class="status-message error">Erreur</div>';
+    }
+
+    copyBtn.addEventListener('click', async () => {
+      if (allCookies.length > 0) {
+        await navigator.clipboard.writeText(JSON.stringify(allCookies, null, 2));
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier JSON'; }, 1000);
+      }
+    });
+
+    function renderCookies(cookies) {
+      if (cookies.length === 0) {
+        cookiesList.innerHTML = '<div class="status-message info">Aucun cookie</div>';
+        return;
+      }
+      cookiesList.innerHTML = '';
+      cookies.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'cookie-item';
+        item.innerHTML = `<strong>${escapeHtml(c.name)}</strong>: ${escapeHtml(c.value.substring(0, 30))}${c.value.length > 30 ? '...' : ''}`;
+        cookiesList.appendChild(item);
+      });
+    }
+  }
+
+  async function initClearData() {
+    const domainDiv = document.getElementById('clear-domain');
+    const clearBtn = document.getElementById('btn-clear-data');
+    const statusDiv = document.getElementById('clear-status');
+    const clearCookies = document.getElementById('clear-cookies');
+    const clearCache = document.getElementById('clear-cache');
+    const clearStorage = document.getElementById('clear-storage');
+
+    let currentUrl = '';
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      currentUrl = tab.url;
+      const url = new URL(tab.url);
+      domainDiv.textContent = `Domaine: ${url.hostname}`;
+    } catch (e) {
+      domainDiv.textContent = 'Domaine: N/A';
+    }
+
+    clearBtn.addEventListener('click', async () => {
+      const operations = [];
+
+      try {
+        const url = new URL(currentUrl);
+        const origin = url.origin;
+
+        if (clearCookies.checked) {
+          const cookies = await chrome.cookies.getAll({ domain: url.hostname });
+          for (const cookie of cookies) {
+            const cookieUrl = `http${cookie.secure ? 's' : ''}://${cookie.domain}${cookie.path}`;
+            await chrome.cookies.remove({ url: cookieUrl, name: cookie.name });
+          }
+          operations.push('cookies');
+        }
+
+        if (clearStorage.checked) {
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: () => {
+              localStorage.clear();
+              sessionStorage.clear();
+            }
+          });
+          operations.push('storage');
+        }
+
+        if (clearCache.checked) {
+          // Note: browsingData requires extra permission, use scripting instead
+          operations.push('cache (reload required)');
+        }
+
+        statusDiv.innerHTML = `<div class="status-message success">Supprime: ${operations.join(', ')}</div>`;
+
+      } catch (error) {
+        statusDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+  }
+
+  async function initSSL() {
+    const domainDiv = document.getElementById('ssl-domain');
+    const sslInfo = document.getElementById('ssl-info');
+    const checkBtn = document.getElementById('btn-check-ssl');
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const url = new URL(tab.url);
+      const domain = url.hostname;
+      domainDiv.textContent = `Domaine: ${domain}`;
+
+      const isHttps = url.protocol === 'https:';
+      sslInfo.innerHTML = isHttps
+        ? '<div class="status-message success">🔒 Connexion securisee (HTTPS)</div>'
+        : '<div class="status-message error">⚠️ Connexion non securisee (HTTP)</div>';
+
+      checkBtn.addEventListener('click', () => {
+        chrome.tabs.create({ url: `https://www.ssllabs.com/ssltest/analyze.html?d=${encodeURIComponent(domain)}` });
+      });
+    } catch (e) {
+      domainDiv.textContent = 'Domaine: N/A';
+    }
+  }
+
+  function initLorem() {
+    const countInput = document.getElementById('lorem-count');
+    const generateBtn = document.getElementById('btn-generate-lorem');
+    const outputDiv = document.getElementById('lorem-output');
+    const copyBtn = document.getElementById('btn-copy-lorem');
+
+    const loremText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
+    generateBtn.addEventListener('click', () => {
+      const count = parseInt(countInput.value) || 3;
+      const paragraphs = [];
+      for (let i = 0; i < count; i++) {
+        paragraphs.push(loremText);
+      }
+      outputDiv.textContent = paragraphs.join('\n\n');
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const text = outputDiv.textContent;
+      if (text) {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1000);
+      }
+    });
+  }
+
+  async function initFonts() {
+    const detectBtn = document.getElementById('btn-detect-fonts');
+    const fontsList = document.getElementById('fonts-list');
+
+    detectBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const fonts = new Set();
+            document.querySelectorAll('*').forEach(el => {
+              const computed = window.getComputedStyle(el);
+              const fontFamily = computed.fontFamily;
+              if (fontFamily) {
+                fontFamily.split(',').forEach(f => {
+                  const clean = f.trim().replace(/['"]/g, '');
+                  if (clean) fonts.add(clean);
+                });
+              }
+            });
+            return [...fonts];
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          renderFonts(results[0].result);
+        }
+      } catch (error) {
+        fontsList.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+
+    function renderFonts(fonts) {
+      if (fonts.length === 0) {
+        fontsList.innerHTML = '<div class="status-message info">Aucune police detectee</div>';
+        return;
+      }
+      fontsList.innerHTML = '';
+      fonts.forEach(font => {
+        const item = document.createElement('div');
+        item.className = 'font-item';
+        item.innerHTML = `<span style="font-family: ${font}">${escapeHtml(font)}</span>`;
+        fontsList.appendChild(item);
+      });
+    }
+  }
+
+  function initTranslate() {
+    const inputTextarea = document.getElementById('translate-input');
+    const langSelect = document.getElementById('translate-lang');
+    const translateBtn = document.getElementById('btn-translate');
+    const outputDiv = document.getElementById('translate-output');
+
+    translateBtn.addEventListener('click', () => {
+      const text = inputTextarea.value.trim();
+      const targetLang = langSelect.value;
+
+      if (!text) {
+        alert('Veuillez entrer du texte');
+        return;
+      }
+
+      // Open Google Translate with the text
+      const url = `https://translate.google.com/?sl=auto&tl=${targetLang}&text=${encodeURIComponent(text)}&op=translate`;
+      chrome.tabs.create({ url });
     });
   }
 

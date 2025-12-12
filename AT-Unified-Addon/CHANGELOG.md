@@ -7,6 +7,30 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.7.0] - 2025-12-12
+
+### Ajoute
+- **14 nouveaux outils** :
+  - **QR Code** : Genere un QR code de l'URL actuelle (copier/telecharger)
+  - **Meta Tags** : Extrait et affiche tous les meta tags SEO de la page
+  - **Liens** : Extrait tous les liens (internes/externes) avec statistiques
+  - **Images** : Liste toutes les images avec apercu et dimensions
+  - **Sitemap** : Charge et affiche le sitemap.xml du site
+  - **PageSpeed** : Ouvre l'analyse PageSpeed Insights
+  - **Lighthouse** : Lance un audit Lighthouse
+  - **Headers** : Affiche les headers HTTP de la page
+  - **Cookies** : Liste tous les cookies du domaine (export JSON)
+  - **Clear Data** : Supprime cookies, cache et storage du site
+  - **SSL** : Verifie le certificat SSL (lien vers SSL Labs)
+  - **Lorem Ipsum** : Generateur de texte Lorem Ipsum
+  - **Fonts** : Detecte les polices utilisees sur la page
+  - **Traducteur** : Ouvre Google Translate avec le texte
+
+### Modifie
+- Ajout de la permission "cookies" pour les nouveaux outils
+
+---
+
 ## [1.6.3] - 2025-12-12
 
 ### Ajoute

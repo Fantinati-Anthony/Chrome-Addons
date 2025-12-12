@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AT Unified Toolkit",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "description": "Suite d'outils unifiee: raccourcis bureau, injection CSS/JS, redimensionnement, couleurs, bookmarks, historique, emails, ChatGPT, telechargements, synthese vocale et plus.",
   "icons": {
     "16": "icons/icon16.png",
@@ -28,7 +28,8 @@
     "bookmarks",
     "history",
     "clipboardWrite",
-    "alarms"
+    "alarms",
+    "cookies"
   ],
   "host_permissions": [
     "<all_urls>"
