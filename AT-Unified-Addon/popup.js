@@ -96,42 +96,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Setup version footer
   const footer = document.getElementById('version-footer');
   if (footer) {
-    try {
-      const localVersion = await Updater.getLocalVersion();
-      footer.innerHTML = `v${localVersion} | <a href="#" id="check-update-link">Verifier les mises a jour</a> | <a href="#" id="changelog-link">Changelog</a>`;
+    const localVersion = chrome.runtime.getManifest().version;
+    footer.innerHTML = `v${localVersion} | <a href="#" id="check-update-link">Verifier les mises a jour</a> | <a href="#" id="changelog-link">Changelog</a>`;
 
-      // Manual check link - triggers background check and updates UI
-      document.getElementById('check-update-link').addEventListener('click', async (e) => {
-        e.preventDefault();
-        const link = e.target;
-        link.textContent = 'Verification...';
+    // Manual check link - triggers background check and updates UI
+    document.getElementById('check-update-link').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const link = e.target;
+      link.textContent = 'Verification...';
 
-        // Ask background to check
-        chrome.runtime.sendMessage({ type: 'checkForUpdates' }, async (response) => {
-          if (response && response.hasUpdate) {
-            link.textContent = 'MAJ disponible!';
-            checkAndShowUpdate();
-          } else {
-            link.textContent = 'A jour!';
-          }
-          setTimeout(() => {
-            link.textContent = 'Verifier les mises a jour';
-          }, 3000);
-        });
+      // Ask background to check
+      chrome.runtime.sendMessage({ type: 'checkForUpdates' }, async (response) => {
+        if (response && response.hasUpdate) {
+          link.textContent = 'MAJ disponible!';
+          checkAndShowUpdate();
+        } else {
+          link.textContent = 'A jour!';
+        }
+        setTimeout(() => {
+          link.textContent = 'Verifier les mises a jour';
+        }, 3000);
       });
+    });
 
-      // Changelog link - opens CHANGELOG.md on GitHub
-      document.getElementById('changelog-link').addEventListener('click', async (e) => {
-        e.preventDefault();
-        const config = await Updater.getConfig();
-        const changelogUrl = `https://github.com/${config.githubUser}/${config.githubRepo}/blob/${config.githubBranch}/${config.githubPath}/CHANGELOG.md`;
-        chrome.tabs.create({ url: changelogUrl });
-      });
-    } catch (e) {
-      // Fallback if Updater is not available
-      const manifest = chrome.runtime.getManifest();
-      footer.innerHTML = `v${manifest.version}`;
-    }
+    // Changelog link - opens CHANGELOG.md on GitHub
+    document.getElementById('changelog-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      chrome.tabs.create({ url: 'https://github.com/Fantinati-Anthony/Chrome-Addons/blob/main/AT-Unified-Addon/CHANGELOG.md' });
+    });
   }
 });
 
