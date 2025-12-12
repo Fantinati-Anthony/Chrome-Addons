@@ -23,21 +23,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   const downloadUpdateBtn = document.getElementById('btn-download-update');
   const dismissUpdateBtn = document.getElementById('btn-dismiss-update');
 
-  // Check for updates
+  // Check for updates from storage (background.js handles the actual check)
   async function checkAndShowUpdate() {
     try {
-      const result = await Updater.checkForUpdate();
+      const data = await chrome.storage.local.get(['hasUpdate', 'remoteVersion', 'updateDismissed', 'dismissedVersion']);
+      const localVersion = chrome.runtime.getManifest().version;
 
-      if (result.hasUpdate) {
+      if (data.hasUpdate && data.remoteVersion) {
         // Show update badge
         updateBadge.classList.remove('hidden');
 
         // Update version text
-        updateVersions.textContent = `v${result.localVersion} → v${result.remoteVersion}`;
+        updateVersions.textContent = `v${localVersion} → v${data.remoteVersion}`;
 
         // Check if banner was dismissed this session
-        const data = await chrome.storage.local.get(['updateDismissed', 'dismissedVersion']);
-        if (!data.updateDismissed || data.dismissedVersion !== result.remoteVersion) {
+        if (!data.updateDismissed || data.dismissedVersion !== data.remoteVersion) {
           updateBanner.classList.remove('hidden');
         }
       } else {
@@ -91,12 +91,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       const localVersion = await Updater.getLocalVersion();
       footer.innerHTML = `v${localVersion} | <a href="#" id="check-update-link">Verifier les mises a jour</a> | <a href="#" id="changelog-link">Changelog</a>`;
 
-      // Manual check link - opens GitHub releases page
-      document.getElementById('check-update-link').addEventListener('click', (e) => {
+      // Manual check link - triggers background check and updates UI
+      document.getElementById('check-update-link').addEventListener('click', async (e) => {
         e.preventDefault();
-        const config = Updater.getConfig();
-        const releasesUrl = 'https://github.com/' + config.githubUser + '/' + config.githubRepo + '/tree/' + config.githubBranch + '/' + config.githubPath;
-        chrome.tabs.create({ url: releasesUrl });
+        const link = e.target;
+        link.textContent = 'Verification...';
+
+        // Ask background to check
+        chrome.runtime.sendMessage({ type: 'checkForUpdates' }, async (response) => {
+          if (response && response.hasUpdate) {
+            link.textContent = 'MAJ disponible!';
+            checkAndShowUpdate();
+          } else {
+            link.textContent = 'A jour!';
+          }
+          setTimeout(() => {
+            link.textContent = 'Verifier les mises a jour';
+          }, 3000);
+        });
       });
 
       // Changelog link - opens CHANGELOG.md on GitHub

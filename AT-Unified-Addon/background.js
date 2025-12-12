@@ -140,6 +140,69 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 console.log('AT Unified Toolkit background service worker loaded');
 
+// ========== AUTO UPDATE CHECK ==========
+const UPDATE_CHECK_INTERVAL = 60; // minutes
+const VERSION_URL = 'https://raw.githubusercontent.com/Fantinati-Anthony/Chrome-Addons/main/AT-Unified-Addon/version.json';
+
+async function checkForUpdates() {
+  try {
+    const response = await fetch(VERSION_URL + '?t=' + Date.now());
+    if (!response.ok) return;
+
+    const data = await response.json();
+    const remoteVersion = data.version;
+    const localVersion = chrome.runtime.getManifest().version;
+
+    const hasUpdate = compareVersions(remoteVersion, localVersion) > 0;
+
+    await chrome.storage.local.set({
+      lastUpdateCheck: Date.now(),
+      remoteVersion: remoteVersion,
+      hasUpdate: hasUpdate,
+      changelog: data.changelog
+    });
+
+    if (hasUpdate) {
+      console.log('Mise a jour disponible:', localVersion, '->', remoteVersion);
+    }
+  } catch (e) {
+    console.log('Update check failed:', e.message);
+  }
+}
+
+function compareVersions(v1, v2) {
+  const p1 = v1.split('.').map(Number);
+  const p2 = v2.split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    if ((p1[i] || 0) > (p2[i] || 0)) return 1;
+    if ((p1[i] || 0) < (p2[i] || 0)) return -1;
+  }
+  return 0;
+}
+
+// Check on startup
+checkForUpdates();
+
+// Setup periodic check with alarms
+chrome.alarms.create('updateCheck', { periodInMinutes: UPDATE_CHECK_INTERVAL });
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === 'updateCheck') {
+    checkForUpdates();
+  }
+});
+
+// Listen for manual check request from popup
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'checkForUpdates') {
+    checkForUpdates().then(() => {
+      chrome.storage.local.get(['hasUpdate', 'remoteVersion', 'changelog'], (data) => {
+        sendResponse(data);
+      });
+    });
+    return true;
+  }
+});
+
 // ========== CUSTOM FAVICON RESTORE ==========
 // Restore custom extension icon on startup
 async function restoreCustomFavicon() {

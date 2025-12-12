@@ -7,6 +7,18 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.6.0] - 2025-12-12
+
+### Ajoute
+- **Verification MAJ automatique en arriere-plan** :
+  - Le service worker verifie automatiquement les mises a jour toutes les heures
+  - Verification au demarrage de l'extension
+  - Badge et banniere affiches automatiquement si MAJ disponible
+  - Utilise chrome.alarms pour la verification periodique
+  - Code de verification dans background.js (pas de faux positif antivirus)
+
+---
+
 ## [1.5.9] - 2025-12-12
 
 ### Modifie
