@@ -1,5 +1,5 @@
 {
-  "version": "1.7.0",
+  "version": "1.8.0",
   "releaseDate": "2025-12-12",
-  "changelog": "Add 14 new tools: QR Code, Meta tags, Links extractor, Images viewer, Sitemap, PageSpeed, Lighthouse, Headers, Cookies, Clear data, SSL checker, Lorem Ipsum, Fonts detector, Translator"
+  "changelog": "Multi-language support (FR/EN), tools organized by categories, admin module enable/disable settings"
 }

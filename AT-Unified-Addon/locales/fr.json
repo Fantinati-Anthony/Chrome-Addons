@@ -1,0 +1,274 @@
+{
+  "lang": "fr",
+  "langName": "Francais",
+
+  "app": {
+    "title": "Toolkit",
+    "version": "Version",
+    "settings": "Reglages",
+    "reload": "Recharger l'extension",
+    "updateAvailable": "Mise a jour disponible!",
+    "download": "Telecharger",
+    "changelog": "Changelog"
+  },
+
+  "categories": {
+    "customLinks": "Liens personnalises",
+    "domainDns": "Domaine & DNS",
+    "seoAnalysis": "SEO & Analyse",
+    "development": "Developpement",
+    "browser": "Navigateur",
+    "utilities": "Utilitaires"
+  },
+
+  "tools": {
+    "desktop": { "label": "Raccourci", "title": "Raccourci Bureau" },
+    "whois": { "label": "Whois", "title": "Whois" },
+    "dnschecker": { "label": "DNS", "title": "DNS Checker" },
+    "mailtester": { "label": "Mail Test", "title": "Mail Tester" },
+    "ssl": { "label": "SSL", "title": "SSL/TLS" },
+    "colorpicker": { "label": "Couleurs", "title": "Color Picker" },
+    "downloads": { "label": "Downloads", "title": "Telechargements" },
+    "emails": { "label": "Emails", "title": "Extracteur d'Emails" },
+    "speech": { "label": "Voix", "title": "Synthese Vocale" },
+    "bookmarks": { "label": "Favoris", "title": "Favoris du domaine" },
+    "folders": { "label": "Dossiers", "title": "Dossiers de favoris" },
+    "history": { "label": "Historique", "title": "Historique du domaine" },
+    "resize": { "label": "Resize", "title": "Redimensionner" },
+    "css": { "label": "CSS", "title": "Injection CSS" },
+    "js": { "label": "JS", "title": "Injection JavaScript" },
+    "qrcode": { "label": "QR Code", "title": "QR Code" },
+    "metatags": { "label": "Meta", "title": "Meta Tags" },
+    "links": { "label": "Liens", "title": "Liens de la page" },
+    "images": { "label": "Images", "title": "Images de la page" },
+    "sitemap": { "label": "Sitemap", "title": "Sitemap" },
+    "pagespeed": { "label": "PageSpeed", "title": "PageSpeed Insights" },
+    "lighthouse": { "label": "Lighthouse", "title": "Lighthouse Audit" },
+    "headers": { "label": "Headers", "title": "Headers HTTP" },
+    "cookies": { "label": "Cookies", "title": "Cookies" },
+    "cleardata": { "label": "Clear", "title": "Vider les donnees" },
+    "lorem": { "label": "Lorem", "title": "Lorem Ipsum" },
+    "fonts": { "label": "Fonts", "title": "Polices detectees" },
+    "translate": { "label": "Traduire", "title": "Traducteur" }
+  },
+
+  "actions": {
+    "back": "Retour",
+    "copy": "Copier",
+    "copied": "Copie!",
+    "save": "Sauvegarder",
+    "saved": "Sauvegarde!",
+    "delete": "Supprimer",
+    "clear": "Effacer",
+    "clearAll": "Tout effacer",
+    "extract": "Extraire",
+    "generate": "Generer",
+    "detect": "Detecter",
+    "load": "Charger",
+    "check": "Verifier",
+    "inject": "Injecter",
+    "execute": "Executer",
+    "translate": "Traduire",
+    "downloadFile": "Telecharger"
+  },
+
+  "messages": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "noData": "Aucune donnee",
+    "noResults": "Aucun resultat",
+    "success": "Succes",
+    "urlNotAvailable": "URL non disponible",
+    "domainLabel": "Domaine",
+    "secureConnection": "Connexion securisee (HTTPS)",
+    "insecureConnection": "Connexion non securisee (HTTP)"
+  },
+
+  "colorpicker": {
+    "pickColor": "Choisir une couleur",
+    "noColors": "Aucune couleur",
+    "analyze": "Analyser"
+  },
+
+  "downloads": {
+    "placeholder": "Entrez les URLs (une par ligne)...",
+    "concurrent": "Simultanes",
+    "download": "Telecharger",
+    "starting": "Demarrage",
+    "files": "fichier(s)",
+    "done": "Termine!"
+  },
+
+  "emails": {
+    "extract": "Extraire les emails",
+    "count": "email(s)",
+    "copyLines": "Copier (lignes)",
+    "copySemicolon": "Copier (;)"
+  },
+
+  "speech": {
+    "loadingVoices": "Chargement des voix...",
+    "saveVoice": "Sauvegarder la voix"
+  },
+
+  "bookmarks": {
+    "noBookmarks": "Aucun favori pour"
+  },
+
+  "folders": {
+    "noFolders": "Aucun dossier",
+    "emptyBar": "Barre de favoris vide"
+  },
+
+  "history": {
+    "load": "Charger l'historique",
+    "noHistory": "Aucun historique"
+  },
+
+  "css": {
+    "placeholder": "Entrez le CSS...",
+    "inject": "Injecter CSS",
+    "injected": "Injecte!"
+  },
+
+  "js": {
+    "placeholder": "Entrez le JavaScript...",
+    "execute": "Executer JS",
+    "executed": "Execute!"
+  },
+
+  "qrcode": {
+    "copyImage": "Copier l'image",
+    "download": "Telecharger"
+  },
+
+  "metatags": {
+    "extract": "Extraire les meta tags",
+    "noMeta": "Aucun meta tag"
+  },
+
+  "links": {
+    "extract": "Extraire les liens",
+    "internal": "internes",
+    "external": "externes",
+    "copyAll": "Copier tous"
+  },
+
+  "images": {
+    "extract": "Extraire les images",
+    "found": "images trouvees",
+    "copyUrls": "Copier URLs"
+  },
+
+  "sitemap": {
+    "load": "Charger sitemap.xml",
+    "urls": "URLs",
+    "sitemaps": "sitemaps",
+    "notFound": "Sitemap non trouve ou erreur"
+  },
+
+  "headers": {
+    "load": "Charger les headers",
+    "noHeaders": "Aucun header"
+  },
+
+  "cookies": {
+    "copyJson": "Copier JSON",
+    "noCookies": "Aucun cookie"
+  },
+
+  "cleardata": {
+    "cookies": "Cookies",
+    "cache": "Cache",
+    "storage": "Local Storage",
+    "clear": "Vider les donnees",
+    "cleared": "Supprime",
+    "cacheReload": "cache (reload required)"
+  },
+
+  "lorem": {
+    "paragraphs": "Paragraphes",
+    "generate": "Generer",
+    "copy": "Copier"
+  },
+
+  "fonts": {
+    "detect": "Detecter les polices",
+    "noFonts": "Aucune police detectee"
+  },
+
+  "translate": {
+    "placeholder": "Texte a traduire...",
+    "languages": {
+      "en": "Anglais",
+      "fr": "Francais",
+      "es": "Espagnol",
+      "de": "Allemand",
+      "it": "Italien",
+      "pt": "Portugais"
+    }
+  },
+
+  "options": {
+    "title": "AT Toolkit - Options",
+    "general": "Parametres generaux",
+    "popupName": "Nom du popup",
+    "language": "Langue",
+    "colors": "Personnalisation des couleurs",
+    "colorsDesc": "Personnalisez l'apparence de votre extension en modifiant les couleurs.",
+    "bgColor": "Fond",
+    "textColor": "Texte",
+    "primaryColor": "Couleur principale",
+    "primaryHover": "Principale (hover)",
+    "secondaryColor": "Couleur secondaire",
+    "buttonBg": "Fond boutons",
+    "buttonText": "Texte boutons",
+    "panelBg": "Fond panneaux",
+    "borderColor": "Bordures",
+    "successColor": "Succes",
+    "errorColor": "Erreur",
+    "saveColors": "Sauvegarder les couleurs",
+    "resetColors": "Reinitialiser",
+    "radius": "Arrondis (Border Radius)",
+    "radiusDesc": "Personnalisez les arrondis des boutons, panneaux et autres elements.",
+    "radiusSmall": "Petit (boutons)",
+    "radiusMedium": "Moyen (panneaux)",
+    "radiusLarge": "Grand (icones, popup)",
+    "saveRadius": "Sauvegarder les arrondis",
+    "resetRadius": "Reinitialiser",
+    "customButtons": "Boutons personnalises",
+    "customButtonsDesc": "Ajoutez autant de boutons que vous le souhaitez.",
+    "buttonName": "Nom",
+    "buttonUrl": "URL",
+    "buttonIcon": "Icone",
+    "buttonIconTip": "Laissez vide pour utiliser automatiquement le favicon du site.",
+    "addButton": "Ajouter",
+    "noButtons": "Aucun bouton personnalise. Ajoutez-en un ci-dessous!",
+    "modules": "Gestion des modules",
+    "modulesDesc": "Activez ou desactivez les outils selon vos besoins.",
+    "enableAll": "Tout activer",
+    "disableAll": "Tout desactiver",
+    "saveModules": "Sauvegarder les modules",
+    "backup": "Sauvegarde des reglages",
+    "backupDesc": "Exportez vos reglages pour les sauvegarder ou les importer sur un autre navigateur.",
+    "export": "Exporter les reglages",
+    "import": "Importer les reglages",
+    "updates": "Mises a jour",
+    "updatesDesc": "L'extension se met a jour depuis le repository GitHub public.",
+    "repository": "Repository",
+    "branch": "Branche",
+    "folder": "Dossier",
+    "resetUpdateCache": "Reinitialiser le cache MAJ",
+    "apiKey": "Cle API OpenAI",
+    "apiKeyDesc": "Configurez votre cle API OpenAI pour utiliser GPT.",
+    "showKey": "Afficher la cle",
+    "notifications": "Notifications ChatGPT",
+    "notificationsDesc": "Configurez les notifications sonores.",
+    "enableSound": "Activer le son de notification",
+    "volume": "Volume",
+    "data": "Donnees",
+    "dataDesc": "Gerez les donnees stockees par l'extension.",
+    "clearAllData": "Effacer toutes les donnees",
+    "clearConfirm": "Etes-vous sur de vouloir effacer toutes les donnees? Cette action est irreversible."
+  }
+}

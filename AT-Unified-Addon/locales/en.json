@@ -1,0 +1,274 @@
+{
+  "lang": "en",
+  "langName": "English",
+
+  "app": {
+    "title": "Toolkit",
+    "version": "Version",
+    "settings": "Settings",
+    "reload": "Reload extension",
+    "updateAvailable": "Update available!",
+    "download": "Download",
+    "changelog": "Changelog"
+  },
+
+  "categories": {
+    "customLinks": "Custom Links",
+    "domainDns": "Domain & DNS",
+    "seoAnalysis": "SEO & Analysis",
+    "development": "Development",
+    "browser": "Browser",
+    "utilities": "Utilities"
+  },
+
+  "tools": {
+    "desktop": { "label": "Shortcut", "title": "Desktop Shortcut" },
+    "whois": { "label": "Whois", "title": "Whois" },
+    "dnschecker": { "label": "DNS", "title": "DNS Checker" },
+    "mailtester": { "label": "Mail Test", "title": "Mail Tester" },
+    "ssl": { "label": "SSL", "title": "SSL/TLS" },
+    "colorpicker": { "label": "Colors", "title": "Color Picker" },
+    "downloads": { "label": "Downloads", "title": "Downloads" },
+    "emails": { "label": "Emails", "title": "Email Extractor" },
+    "speech": { "label": "Speech", "title": "Text to Speech" },
+    "bookmarks": { "label": "Bookmarks", "title": "Domain Bookmarks" },
+    "folders": { "label": "Folders", "title": "Bookmark Folders" },
+    "history": { "label": "History", "title": "Domain History" },
+    "resize": { "label": "Resize", "title": "Resize Window" },
+    "css": { "label": "CSS", "title": "CSS Injection" },
+    "js": { "label": "JS", "title": "JavaScript Injection" },
+    "qrcode": { "label": "QR Code", "title": "QR Code" },
+    "metatags": { "label": "Meta", "title": "Meta Tags" },
+    "links": { "label": "Links", "title": "Page Links" },
+    "images": { "label": "Images", "title": "Page Images" },
+    "sitemap": { "label": "Sitemap", "title": "Sitemap" },
+    "pagespeed": { "label": "PageSpeed", "title": "PageSpeed Insights" },
+    "lighthouse": { "label": "Lighthouse", "title": "Lighthouse Audit" },
+    "headers": { "label": "Headers", "title": "HTTP Headers" },
+    "cookies": { "label": "Cookies", "title": "Cookies" },
+    "cleardata": { "label": "Clear", "title": "Clear Data" },
+    "lorem": { "label": "Lorem", "title": "Lorem Ipsum" },
+    "fonts": { "label": "Fonts", "title": "Detected Fonts" },
+    "translate": { "label": "Translate", "title": "Translator" }
+  },
+
+  "actions": {
+    "back": "Back",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "save": "Save",
+    "saved": "Saved!",
+    "delete": "Delete",
+    "clear": "Clear",
+    "clearAll": "Clear All",
+    "extract": "Extract",
+    "generate": "Generate",
+    "detect": "Detect",
+    "load": "Load",
+    "check": "Check",
+    "inject": "Inject",
+    "execute": "Execute",
+    "translate": "Translate",
+    "downloadFile": "Download"
+  },
+
+  "messages": {
+    "loading": "Loading...",
+    "error": "Error",
+    "noData": "No data",
+    "noResults": "No results",
+    "success": "Success",
+    "urlNotAvailable": "URL not available",
+    "domainLabel": "Domain",
+    "secureConnection": "Secure connection (HTTPS)",
+    "insecureConnection": "Insecure connection (HTTP)"
+  },
+
+  "colorpicker": {
+    "pickColor": "Pick a color",
+    "noColors": "No colors",
+    "analyze": "Analyze"
+  },
+
+  "downloads": {
+    "placeholder": "Enter URLs (one per line)...",
+    "concurrent": "Concurrent",
+    "download": "Download",
+    "starting": "Starting",
+    "files": "file(s)",
+    "done": "Done!"
+  },
+
+  "emails": {
+    "extract": "Extract emails",
+    "count": "email(s)",
+    "copyLines": "Copy (lines)",
+    "copySemicolon": "Copy (;)"
+  },
+
+  "speech": {
+    "loadingVoices": "Loading voices...",
+    "saveVoice": "Save voice"
+  },
+
+  "bookmarks": {
+    "noBookmarks": "No bookmarks for"
+  },
+
+  "folders": {
+    "noFolders": "No folders",
+    "emptyBar": "Bookmarks bar empty"
+  },
+
+  "history": {
+    "load": "Load history",
+    "noHistory": "No history"
+  },
+
+  "css": {
+    "placeholder": "Enter CSS...",
+    "inject": "Inject CSS",
+    "injected": "Injected!"
+  },
+
+  "js": {
+    "placeholder": "Enter JavaScript...",
+    "execute": "Execute JS",
+    "executed": "Executed!"
+  },
+
+  "qrcode": {
+    "copyImage": "Copy image",
+    "download": "Download"
+  },
+
+  "metatags": {
+    "extract": "Extract meta tags",
+    "noMeta": "No meta tags"
+  },
+
+  "links": {
+    "extract": "Extract links",
+    "internal": "internal",
+    "external": "external",
+    "copyAll": "Copy all"
+  },
+
+  "images": {
+    "extract": "Extract images",
+    "found": "images found",
+    "copyUrls": "Copy URLs"
+  },
+
+  "sitemap": {
+    "load": "Load sitemap.xml",
+    "urls": "URLs",
+    "sitemaps": "sitemaps",
+    "notFound": "Sitemap not found or error"
+  },
+
+  "headers": {
+    "load": "Load headers",
+    "noHeaders": "No headers"
+  },
+
+  "cookies": {
+    "copyJson": "Copy JSON",
+    "noCookies": "No cookies"
+  },
+
+  "cleardata": {
+    "cookies": "Cookies",
+    "cache": "Cache",
+    "storage": "Local Storage",
+    "clear": "Clear data",
+    "cleared": "Cleared",
+    "cacheReload": "cache (reload required)"
+  },
+
+  "lorem": {
+    "paragraphs": "Paragraphs",
+    "generate": "Generate",
+    "copy": "Copy"
+  },
+
+  "fonts": {
+    "detect": "Detect fonts",
+    "noFonts": "No fonts detected"
+  },
+
+  "translate": {
+    "placeholder": "Text to translate...",
+    "languages": {
+      "en": "English",
+      "fr": "French",
+      "es": "Spanish",
+      "de": "German",
+      "it": "Italian",
+      "pt": "Portuguese"
+    }
+  },
+
+  "options": {
+    "title": "AT Toolkit - Options",
+    "general": "General Settings",
+    "popupName": "Popup name",
+    "language": "Language",
+    "colors": "Color Customization",
+    "colorsDesc": "Customize the appearance of your extension by changing colors.",
+    "bgColor": "Background",
+    "textColor": "Text",
+    "primaryColor": "Primary color",
+    "primaryHover": "Primary (hover)",
+    "secondaryColor": "Secondary color",
+    "buttonBg": "Button background",
+    "buttonText": "Button text",
+    "panelBg": "Panel background",
+    "borderColor": "Borders",
+    "successColor": "Success",
+    "errorColor": "Error",
+    "saveColors": "Save colors",
+    "resetColors": "Reset",
+    "radius": "Border Radius",
+    "radiusDesc": "Customize the border radius of buttons, panels and other elements.",
+    "radiusSmall": "Small (buttons)",
+    "radiusMedium": "Medium (panels)",
+    "radiusLarge": "Large (icons, popup)",
+    "saveRadius": "Save radius",
+    "resetRadius": "Reset",
+    "customButtons": "Custom Buttons",
+    "customButtonsDesc": "Add as many buttons as you want.",
+    "buttonName": "Name",
+    "buttonUrl": "URL",
+    "buttonIcon": "Icon",
+    "buttonIconTip": "Leave empty to automatically use the site's favicon.",
+    "addButton": "Add",
+    "noButtons": "No custom buttons. Add one below!",
+    "modules": "Module Management",
+    "modulesDesc": "Enable or disable tools according to your needs.",
+    "enableAll": "Enable all",
+    "disableAll": "Disable all",
+    "saveModules": "Save modules",
+    "backup": "Settings Backup",
+    "backupDesc": "Export your settings to save them or import them to another browser.",
+    "export": "Export settings",
+    "import": "Import settings",
+    "updates": "Updates",
+    "updatesDesc": "The extension updates from the public GitHub repository.",
+    "repository": "Repository",
+    "branch": "Branch",
+    "folder": "Folder",
+    "resetUpdateCache": "Reset update cache",
+    "apiKey": "OpenAI API Key",
+    "apiKeyDesc": "Configure your OpenAI API key to use GPT.",
+    "showKey": "Show key",
+    "notifications": "ChatGPT Notifications",
+    "notificationsDesc": "Configure sound notifications.",
+    "enableSound": "Enable notification sound",
+    "volume": "Volume",
+    "data": "Data",
+    "dataDesc": "Manage the data stored by the extension.",
+    "clearAllData": "Clear all data",
+    "clearConfirm": "Are you sure you want to clear all data? This action is irreversible."
+  }
+}

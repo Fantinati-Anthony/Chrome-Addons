@@ -24,24 +24,77 @@ document.addEventListener('DOMContentLoaded', () => {
     '❤️', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍'
   ];
 
-  // ========== POPUP TITLE ==========
+  // ========== GENERAL SETTINGS (TITLE + LANGUAGE) ==========
   const popupTitleInput = document.getElementById('popup-title-input');
-  const saveTitleBtn = document.getElementById('btn-save-title');
-  const titleStatus = document.getElementById('title-status');
+  const languageSelect = document.getElementById('language-select');
+  const saveGeneralBtn = document.getElementById('btn-save-general');
+  const generalStatus = document.getElementById('general-status');
 
-  // Load saved title
-  chrome.storage.sync.get(['popupTitle'], (data) => {
+  // Load saved settings
+  chrome.storage.sync.get(['popupTitle', 'language'], (data) => {
     if (data.popupTitle && popupTitleInput) {
       popupTitleInput.value = data.popupTitle;
     }
+    if (data.language && languageSelect) {
+      languageSelect.value = data.language;
+    }
   });
 
-  // Save title
-  if (saveTitleBtn) {
-    saveTitleBtn.addEventListener('click', () => {
+  // Save general settings
+  if (saveGeneralBtn) {
+    saveGeneralBtn.addEventListener('click', () => {
       const title = popupTitleInput.value.trim() || 'Toolkit';
-      chrome.storage.sync.set({ popupTitle: title }, () => {
-        showStatus(titleStatus, 'Nom sauvegarde!', 'success');
+      const language = languageSelect.value || 'fr';
+      chrome.storage.sync.set({ popupTitle: title, language: language }, () => {
+        showStatus(generalStatus, 'Parametres sauvegardes!', 'success');
+      });
+    });
+  }
+
+  // ========== MODULE MANAGEMENT ==========
+  const moduleCheckboxes = document.querySelectorAll('[data-module]');
+  const enableAllBtn = document.getElementById('btn-enable-all-modules');
+  const disableAllBtn = document.getElementById('btn-disable-all-modules');
+  const saveModulesBtn = document.getElementById('btn-save-modules');
+  const modulesStatus = document.getElementById('modules-status');
+
+  // Load saved module states
+  loadModuleStates();
+
+  function loadModuleStates() {
+    chrome.storage.sync.get(['enabledModules'], (data) => {
+      const modules = data.enabledModules || {};
+      moduleCheckboxes.forEach(checkbox => {
+        const moduleId = checkbox.dataset.module;
+        // Default to enabled if not specified
+        checkbox.checked = modules[moduleId] !== false;
+      });
+    });
+  }
+
+  // Enable all modules
+  if (enableAllBtn) {
+    enableAllBtn.addEventListener('click', () => {
+      moduleCheckboxes.forEach(cb => cb.checked = true);
+    });
+  }
+
+  // Disable all modules
+  if (disableAllBtn) {
+    disableAllBtn.addEventListener('click', () => {
+      moduleCheckboxes.forEach(cb => cb.checked = false);
+    });
+  }
+
+  // Save modules
+  if (saveModulesBtn) {
+    saveModulesBtn.addEventListener('click', () => {
+      const modules = {};
+      moduleCheckboxes.forEach(checkbox => {
+        modules[checkbox.dataset.module] = checkbox.checked;
+      });
+      chrome.storage.sync.set({ enabledModules: modules }, () => {
+        showStatus(modulesStatus, 'Modules sauvegardes!', 'success');
       });
     });
   }
@@ -341,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const localData = await chrome.storage.local.get(['colors', 'emails']);
 
       const exportData = {
-        version: '1.0',
+        version: '2.0',
         exportDate: new Date().toISOString(),
         sync: syncData,
         local: {

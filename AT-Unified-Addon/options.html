@@ -457,6 +457,58 @@
       color: #666;
       text-align: right;
     }
+
+    /* Modules management */
+    .modules-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .module-category {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .module-category h3 {
+      font-size: 14px;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .module-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .module-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+
+    .module-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .module-item:hover {
+      color: #3498db;
+    }
+
+    @media (max-width: 600px) {
+      .modules-container {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -465,14 +517,23 @@
   <!-- Parametres generaux -->
   <div class="section">
     <h2>Parametres generaux</h2>
-    <p>Personnalisez le nom affiche dans le popup de l'extension.</p>
+    <p>Personnalisez le nom et la langue de l'extension.</p>
 
-    <div class="form-group" style="display: flex; gap: 10px; align-items: center;">
-      <label for="popup-title-input" style="white-space: nowrap;">Nom du popup:</label>
-      <input type="text" id="popup-title-input" placeholder="Toolkit" style="flex: 1; padding: 8px;">
-      <button id="btn-save-title" class="btn">Sauvegarder</button>
+    <div class="form-row" style="margin-bottom: 15px;">
+      <div class="form-group">
+        <label for="popup-title-input">Nom du popup:</label>
+        <input type="text" id="popup-title-input" placeholder="Toolkit">
+      </div>
+      <div class="form-group">
+        <label for="language-select">Langue / Language:</label>
+        <select id="language-select">
+          <option value="fr">Francais</option>
+          <option value="en">English</option>
+        </select>
+      </div>
     </div>
-    <div id="title-status" class="status-message hidden"></div>
+    <button id="btn-save-general">Sauvegarder</button>
+    <div id="general-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- Personnalisation des couleurs -->
@@ -568,6 +629,84 @@
       <button id="btn-reset-radius" class="btn-reset">Reinitialiser</button>
     </div>
     <div id="radius-status" class="status" style="display: none;"></div>
+  </div>
+
+  <!-- Gestion des modules -->
+  <div class="section">
+    <h2>Gestion des modules</h2>
+    <p>Activez ou desactivez les outils selon vos besoins. Les outils desactives n'apparaitront pas dans le popup.</p>
+
+    <div class="modules-container">
+      <!-- Domain & DNS -->
+      <div class="module-category">
+        <h3>🌐 Domaine & DNS</h3>
+        <div class="module-list">
+          <label class="module-item"><input type="checkbox" data-module="whois" checked> 🔍 Whois</label>
+          <label class="module-item"><input type="checkbox" data-module="dnschecker" checked> 🌐 DNS Checker</label>
+          <label class="module-item"><input type="checkbox" data-module="mailtester" checked> ✉️ Mail Tester</label>
+          <label class="module-item"><input type="checkbox" data-module="ssl" checked> 🔒 SSL/TLS</label>
+        </div>
+      </div>
+
+      <!-- SEO & Analysis -->
+      <div class="module-category">
+        <h3>📊 SEO & Analyse</h3>
+        <div class="module-list">
+          <label class="module-item"><input type="checkbox" data-module="metatags" checked> 🏷️ Meta Tags</label>
+          <label class="module-item"><input type="checkbox" data-module="links" checked> 🔗 Liens</label>
+          <label class="module-item"><input type="checkbox" data-module="images" checked> 🖼️ Images</label>
+          <label class="module-item"><input type="checkbox" data-module="sitemap" checked> 🗺️ Sitemap</label>
+          <label class="module-item"><input type="checkbox" data-module="pagespeed" checked> ⚡ PageSpeed</label>
+          <label class="module-item"><input type="checkbox" data-module="lighthouse" checked> 🔦 Lighthouse</label>
+        </div>
+      </div>
+
+      <!-- Development -->
+      <div class="module-category">
+        <h3>💻 Developpement</h3>
+        <div class="module-list">
+          <label class="module-item"><input type="checkbox" data-module="resize" checked> 📐 Resize</label>
+          <label class="module-item"><input type="checkbox" data-module="css" checked> 🎭 CSS Injection</label>
+          <label class="module-item"><input type="checkbox" data-module="js" checked> ⚡ JS Injection</label>
+          <label class="module-item"><input type="checkbox" data-module="headers" checked> 📋 Headers</label>
+          <label class="module-item"><input type="checkbox" data-module="lorem" checked> 📝 Lorem Ipsum</label>
+          <label class="module-item"><input type="checkbox" data-module="fonts" checked> 🔤 Fonts</label>
+        </div>
+      </div>
+
+      <!-- Browser -->
+      <div class="module-category">
+        <h3>🌍 Navigateur</h3>
+        <div class="module-list">
+          <label class="module-item"><input type="checkbox" data-module="bookmarks" checked> ⭐ Favoris</label>
+          <label class="module-item"><input type="checkbox" data-module="folders" checked> 📁 Dossiers</label>
+          <label class="module-item"><input type="checkbox" data-module="history" checked> 🕐 Historique</label>
+          <label class="module-item"><input type="checkbox" data-module="cookies" checked> 🍪 Cookies</label>
+          <label class="module-item"><input type="checkbox" data-module="cleardata" checked> 🧹 Clear Data</label>
+        </div>
+      </div>
+
+      <!-- Utilities -->
+      <div class="module-category">
+        <h3>🛠️ Utilitaires</h3>
+        <div class="module-list">
+          <label class="module-item"><input type="checkbox" data-module="desktop" checked> 🖥️ Raccourci Bureau</label>
+          <label class="module-item"><input type="checkbox" data-module="colorpicker" checked> 🎨 Color Picker</label>
+          <label class="module-item"><input type="checkbox" data-module="qrcode" checked> 📱 QR Code</label>
+          <label class="module-item"><input type="checkbox" data-module="downloads" checked> 📥 Downloads</label>
+          <label class="module-item"><input type="checkbox" data-module="emails" checked> 📧 Emails</label>
+          <label class="module-item"><input type="checkbox" data-module="speech" checked> 🔊 Synthese Vocale</label>
+          <label class="module-item"><input type="checkbox" data-module="translate" checked> 🌍 Traducteur</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group" style="margin-top: 15px;">
+      <button id="btn-enable-all-modules">Tout activer</button>
+      <button id="btn-disable-all-modules" class="btn-reset">Tout desactiver</button>
+      <button id="btn-save-modules">Sauvegarder les modules</button>
+    </div>
+    <div id="modules-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- Boutons dynamiques -->

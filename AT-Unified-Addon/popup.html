@@ -12,8 +12,8 @@
       <div class="header-top">
         <h1 id="popup-title">Toolkit</h1>
         <div class="header-actions">
-          <button id="btn-reload" class="settings-btn" title="Recharger l'extension">🔄</button>
-          <button id="btn-settings" class="settings-btn" title="Reglages">⚙️</button>
+          <button id="btn-reload" class="settings-btn" data-i18n-title="app.reload" title="Recharger l'extension">🔄</button>
+          <button id="btn-settings" class="settings-btn" data-i18n-title="app.settings" title="Reglages">⚙️</button>
           <div id="update-badge" class="update-badge hidden" title="Mise a jour disponible">
             <span class="update-icon">&#8635;</span>
           </div>
@@ -23,11 +23,11 @@
       <!-- Update notification banner (hidden by default) -->
       <div id="update-banner" class="update-banner hidden">
         <div class="update-info">
-          <strong>Mise a jour disponible!</strong>
+          <strong data-i18n="app.updateAvailable">Mise a jour disponible!</strong>
           <span id="update-versions"></span>
         </div>
         <div class="update-actions">
-          <button id="btn-download-update" class="update-btn">Telecharger</button>
+          <button id="btn-download-update" class="update-btn" data-i18n="app.download">Telecharger</button>
           <button id="btn-dismiss-update" class="update-btn-dismiss">X</button>
         </div>
       </div>
@@ -35,139 +35,183 @@
 
     <!-- Main Grid View (Home) -->
     <section id="grid-view" class="grid-view">
-      <div class="tools-grid">
-        <!-- Custom Buttons (dynamically loaded) -->
-        <div id="custom-buttons-container"></div>
+      <!-- Custom Buttons Category -->
+      <div id="category-customLinks" class="category-section">
+        <div class="category-header" data-collapsed="false">
+          <span class="category-emoji">🔗</span>
+          <span class="category-title" data-i18n="categories.customLinks">Liens personnalises</span>
+          <span class="category-toggle">▼</span>
+        </div>
+        <div class="tools-grid" id="custom-buttons-container">
+          <!-- Custom buttons loaded dynamically -->
+        </div>
+      </div>
 
-        <!-- Built-in Tools -->
-        <button class="tool-icon" data-tool="desktop" data-action="direct">
-          <span class="tool-emoji">🖥️</span>
-          <span class="tool-label">Raccourci</span>
-        </button>
+      <!-- Domain & DNS Category -->
+      <div id="category-domainDns" class="category-section">
+        <div class="category-header" data-collapsed="false">
+          <span class="category-emoji">🌐</span>
+          <span class="category-title" data-i18n="categories.domainDns">Domaine & DNS</span>
+          <span class="category-toggle">▼</span>
+        </div>
+        <div class="tools-grid">
+          <button class="tool-icon" data-tool="whois" data-action="direct">
+            <span class="tool-emoji">🔍</span>
+            <span class="tool-label" data-i18n="tools.whois.label">Whois</span>
+          </button>
+          <button class="tool-icon" data-tool="dnschecker" data-action="direct">
+            <span class="tool-emoji">🌐</span>
+            <span class="tool-label" data-i18n="tools.dnschecker.label">DNS</span>
+          </button>
+          <button class="tool-icon" data-tool="mailtester" data-action="direct">
+            <span class="tool-emoji">✉️</span>
+            <span class="tool-label" data-i18n="tools.mailtester.label">Mail Test</span>
+          </button>
+          <button class="tool-icon" data-tool="ssl" data-title="SSL/TLS">
+            <span class="tool-emoji">🔒</span>
+            <span class="tool-label" data-i18n="tools.ssl.label">SSL</span>
+          </button>
+        </div>
+      </div>
 
-        <!-- Domain Tools -->
-        <button class="tool-icon" data-tool="whois" data-action="direct">
-          <span class="tool-emoji">🔍</span>
-          <span class="tool-label">Whois</span>
-        </button>
-        <button class="tool-icon" data-tool="dnschecker" data-action="direct">
-          <span class="tool-emoji">🌐</span>
-          <span class="tool-label">DNS</span>
-        </button>
-        <button class="tool-icon" data-tool="mailtester" data-action="direct">
-          <span class="tool-emoji">✉️</span>
-          <span class="tool-label">Mail Test</span>
-        </button>
+      <!-- SEO & Analysis Category -->
+      <div id="category-seoAnalysis" class="category-section">
+        <div class="category-header" data-collapsed="false">
+          <span class="category-emoji">📊</span>
+          <span class="category-title" data-i18n="categories.seoAnalysis">SEO & Analyse</span>
+          <span class="category-toggle">▼</span>
+        </div>
+        <div class="tools-grid">
+          <button class="tool-icon" data-tool="metatags" data-title="Meta Tags">
+            <span class="tool-emoji">🏷️</span>
+            <span class="tool-label" data-i18n="tools.metatags.label">Meta</span>
+          </button>
+          <button class="tool-icon" data-tool="links" data-title="Liens de la page">
+            <span class="tool-emoji">🔗</span>
+            <span class="tool-label" data-i18n="tools.links.label">Liens</span>
+          </button>
+          <button class="tool-icon" data-tool="images" data-title="Images de la page">
+            <span class="tool-emoji">🖼️</span>
+            <span class="tool-label" data-i18n="tools.images.label">Images</span>
+          </button>
+          <button class="tool-icon" data-tool="sitemap" data-title="Sitemap">
+            <span class="tool-emoji">🗺️</span>
+            <span class="tool-label" data-i18n="tools.sitemap.label">Sitemap</span>
+          </button>
+          <button class="tool-icon" data-tool="pagespeed" data-action="direct">
+            <span class="tool-emoji">⚡</span>
+            <span class="tool-label" data-i18n="tools.pagespeed.label">PageSpeed</span>
+          </button>
+          <button class="tool-icon" data-tool="lighthouse" data-action="direct">
+            <span class="tool-emoji">🔦</span>
+            <span class="tool-label" data-i18n="tools.lighthouse.label">Lighthouse</span>
+          </button>
+        </div>
+      </div>
 
-        <!-- Tools -->
-        <button class="tool-icon" data-tool="colorpicker" data-title="Color Picker">
-          <span class="tool-emoji">🎨</span>
-          <span class="tool-label">Couleurs</span>
-        </button>
-        <button class="tool-icon" data-tool="downloads" data-title="Telechargements">
-          <span class="tool-emoji">📥</span>
-          <span class="tool-label">Downloads</span>
-        </button>
-        <button class="tool-icon" data-tool="emails" data-title="Extracteur d'Emails">
-          <span class="tool-emoji">📧</span>
-          <span class="tool-label">Emails</span>
-        </button>
-        <button class="tool-icon" data-tool="speech" data-title="Synthese Vocale">
-          <span class="tool-emoji">🔊</span>
-          <span class="tool-label">Voix</span>
-        </button>
+      <!-- Development Category -->
+      <div id="category-development" class="category-section">
+        <div class="category-header" data-collapsed="false">
+          <span class="category-emoji">💻</span>
+          <span class="category-title" data-i18n="categories.development">Developpement</span>
+          <span class="category-toggle">▼</span>
+        </div>
+        <div class="tools-grid">
+          <button class="tool-icon" data-tool="resize" data-title="Redimensionner">
+            <span class="tool-emoji">📐</span>
+            <span class="tool-label" data-i18n="tools.resize.label">Resize</span>
+          </button>
+          <button class="tool-icon" data-tool="css" data-title="Injection CSS">
+            <span class="tool-emoji">🎭</span>
+            <span class="tool-label" data-i18n="tools.css.label">CSS</span>
+          </button>
+          <button class="tool-icon" data-tool="js" data-title="Injection JavaScript">
+            <span class="tool-emoji">⚡</span>
+            <span class="tool-label" data-i18n="tools.js.label">JS</span>
+          </button>
+          <button class="tool-icon" data-tool="headers" data-title="Headers HTTP">
+            <span class="tool-emoji">📋</span>
+            <span class="tool-label" data-i18n="tools.headers.label">Headers</span>
+          </button>
+          <button class="tool-icon" data-tool="lorem" data-title="Lorem Ipsum">
+            <span class="tool-emoji">📝</span>
+            <span class="tool-label" data-i18n="tools.lorem.label">Lorem</span>
+          </button>
+          <button class="tool-icon" data-tool="fonts" data-title="Polices detectees">
+            <span class="tool-emoji">🔤</span>
+            <span class="tool-label" data-i18n="tools.fonts.label">Fonts</span>
+          </button>
+        </div>
+      </div>
 
-        <!-- Browser -->
-        <button class="tool-icon" data-tool="bookmarks" data-title="Favoris du domaine">
-          <span class="tool-emoji">⭐</span>
-          <span class="tool-label">Favoris</span>
-        </button>
-        <button class="tool-icon" data-tool="folders" data-title="Dossiers de favoris">
-          <span class="tool-emoji">📁</span>
-          <span class="tool-label">Dossiers</span>
-        </button>
-        <button class="tool-icon" data-tool="history" data-title="Historique du domaine">
-          <span class="tool-emoji">🕐</span>
-          <span class="tool-label">Historique</span>
-        </button>
+      <!-- Browser Category -->
+      <div id="category-browser" class="category-section">
+        <div class="category-header" data-collapsed="false">
+          <span class="category-emoji">🌍</span>
+          <span class="category-title" data-i18n="categories.browser">Navigateur</span>
+          <span class="category-toggle">▼</span>
+        </div>
+        <div class="tools-grid">
+          <button class="tool-icon" data-tool="bookmarks" data-title="Favoris du domaine">
+            <span class="tool-emoji">⭐</span>
+            <span class="tool-label" data-i18n="tools.bookmarks.label">Favoris</span>
+          </button>
+          <button class="tool-icon" data-tool="folders" data-title="Dossiers de favoris">
+            <span class="tool-emoji">📁</span>
+            <span class="tool-label" data-i18n="tools.folders.label">Dossiers</span>
+          </button>
+          <button class="tool-icon" data-tool="history" data-title="Historique du domaine">
+            <span class="tool-emoji">🕐</span>
+            <span class="tool-label" data-i18n="tools.history.label">Historique</span>
+          </button>
+          <button class="tool-icon" data-tool="cookies" data-title="Cookies">
+            <span class="tool-emoji">🍪</span>
+            <span class="tool-label" data-i18n="tools.cookies.label">Cookies</span>
+          </button>
+          <button class="tool-icon" data-tool="cleardata" data-title="Vider les donnees">
+            <span class="tool-emoji">🧹</span>
+            <span class="tool-label" data-i18n="tools.cleardata.label">Clear</span>
+          </button>
+        </div>
+      </div>
 
-        <!-- Dev -->
-        <button class="tool-icon" data-tool="resize" data-title="Redimensionner">
-          <span class="tool-emoji">📐</span>
-          <span class="tool-label">Resize</span>
-        </button>
-        <button class="tool-icon" data-tool="css" data-title="Injection CSS">
-          <span class="tool-emoji">🎭</span>
-          <span class="tool-label">CSS</span>
-        </button>
-        <button class="tool-icon" data-tool="js" data-title="Injection JavaScript">
-          <span class="tool-emoji">⚡</span>
-          <span class="tool-label">JS</span>
-        </button>
-
-        <!-- SEO/Web Analysis -->
-        <button class="tool-icon" data-tool="qrcode" data-title="QR Code">
-          <span class="tool-emoji">📱</span>
-          <span class="tool-label">QR Code</span>
-        </button>
-        <button class="tool-icon" data-tool="metatags" data-title="Meta Tags">
-          <span class="tool-emoji">🏷️</span>
-          <span class="tool-label">Meta</span>
-        </button>
-        <button class="tool-icon" data-tool="links" data-title="Liens de la page">
-          <span class="tool-emoji">🔗</span>
-          <span class="tool-label">Liens</span>
-        </button>
-        <button class="tool-icon" data-tool="images" data-title="Images de la page">
-          <span class="tool-emoji">🖼️</span>
-          <span class="tool-label">Images</span>
-        </button>
-        <button class="tool-icon" data-tool="sitemap" data-title="Sitemap">
-          <span class="tool-emoji">🗺️</span>
-          <span class="tool-label">Sitemap</span>
-        </button>
-
-        <!-- Performance (direct) -->
-        <button class="tool-icon" data-tool="pagespeed" data-action="direct">
-          <span class="tool-emoji">⚡</span>
-          <span class="tool-label">PageSpeed</span>
-        </button>
-        <button class="tool-icon" data-tool="lighthouse" data-action="direct">
-          <span class="tool-emoji">🔦</span>
-          <span class="tool-label">Lighthouse</span>
-        </button>
-
-        <!-- Security -->
-        <button class="tool-icon" data-tool="headers" data-title="Headers HTTP">
-          <span class="tool-emoji">📋</span>
-          <span class="tool-label">Headers</span>
-        </button>
-        <button class="tool-icon" data-tool="cookies" data-title="Cookies">
-          <span class="tool-emoji">🍪</span>
-          <span class="tool-label">Cookies</span>
-        </button>
-        <button class="tool-icon" data-tool="cleardata" data-title="Vider les donnees">
-          <span class="tool-emoji">🧹</span>
-          <span class="tool-label">Clear</span>
-        </button>
-        <button class="tool-icon" data-tool="ssl" data-title="SSL/TLS">
-          <span class="tool-emoji">🔒</span>
-          <span class="tool-label">SSL</span>
-        </button>
-
-        <!-- Utils -->
-        <button class="tool-icon" data-tool="lorem" data-title="Lorem Ipsum">
-          <span class="tool-emoji">📝</span>
-          <span class="tool-label">Lorem</span>
-        </button>
-        <button class="tool-icon" data-tool="fonts" data-title="Polices detectees">
-          <span class="tool-emoji">🔤</span>
-          <span class="tool-label">Fonts</span>
-        </button>
-        <button class="tool-icon" data-tool="translate" data-title="Traducteur">
-          <span class="tool-emoji">🌍</span>
-          <span class="tool-label">Traduire</span>
-        </button>
+      <!-- Utilities Category -->
+      <div id="category-utilities" class="category-section">
+        <div class="category-header" data-collapsed="false">
+          <span class="category-emoji">🛠️</span>
+          <span class="category-title" data-i18n="categories.utilities">Utilitaires</span>
+          <span class="category-toggle">▼</span>
+        </div>
+        <div class="tools-grid">
+          <button class="tool-icon" data-tool="desktop" data-action="direct">
+            <span class="tool-emoji">🖥️</span>
+            <span class="tool-label" data-i18n="tools.desktop.label">Raccourci</span>
+          </button>
+          <button class="tool-icon" data-tool="colorpicker" data-title="Color Picker">
+            <span class="tool-emoji">🎨</span>
+            <span class="tool-label" data-i18n="tools.colorpicker.label">Couleurs</span>
+          </button>
+          <button class="tool-icon" data-tool="qrcode" data-title="QR Code">
+            <span class="tool-emoji">📱</span>
+            <span class="tool-label" data-i18n="tools.qrcode.label">QR Code</span>
+          </button>
+          <button class="tool-icon" data-tool="downloads" data-title="Telechargements">
+            <span class="tool-emoji">📥</span>
+            <span class="tool-label" data-i18n="tools.downloads.label">Downloads</span>
+          </button>
+          <button class="tool-icon" data-tool="emails" data-title="Extracteur d'Emails">
+            <span class="tool-emoji">📧</span>
+            <span class="tool-label" data-i18n="tools.emails.label">Emails</span>
+          </button>
+          <button class="tool-icon" data-tool="speech" data-title="Synthese Vocale">
+            <span class="tool-emoji">🔊</span>
+            <span class="tool-label" data-i18n="tools.speech.label">Voix</span>
+          </button>
+          <button class="tool-icon" data-tool="translate" data-title="Traducteur">
+            <span class="tool-emoji">🌍</span>
+            <span class="tool-label" data-i18n="tools.translate.label">Traduire</span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -189,20 +233,20 @@
   <!-- Tool Templates (hidden, used for dynamic loading) -->
   <template id="tpl-colorpicker">
     <div class="tool-content">
-      <button id="btn-pick-color" class="action-btn">Choisir une couleur</button>
+      <button id="btn-pick-color" class="action-btn" data-i18n="colorpicker.pickColor">Choisir une couleur</button>
       <div id="color-list"></div>
       <div class="tool-actions">
-        <button id="btn-clear-colors" class="small-btn">Tout effacer</button>
+        <button id="btn-clear-colors" class="small-btn" data-i18n="actions.clearAll">Tout effacer</button>
       </div>
     </div>
   </template>
 
   <template id="tpl-downloads">
     <div class="tool-content">
-      <textarea id="dl-urls" placeholder="Entrez les URLs (une par ligne)..." rows="5"></textarea>
+      <textarea id="dl-urls" data-i18n-placeholder="downloads.placeholder" placeholder="Entrez les URLs (une par ligne)..." rows="5"></textarea>
       <div class="dl-controls">
-        <label>Simultanes: <input type="number" id="dl-concurrent" value="3" min="1" max="10"></label>
-        <button id="btn-download" class="action-btn">Telecharger</button>
+        <label><span data-i18n="downloads.concurrent">Simultanes</span>: <input type="number" id="dl-concurrent" value="3" min="1" max="10"></label>
+        <button id="btn-download" class="action-btn" data-i18n="downloads.download">Telecharger</button>
       </div>
       <div id="dl-log"></div>
     </div>
@@ -210,13 +254,13 @@
 
   <template id="tpl-emails">
     <div class="tool-content">
-      <button id="btn-extract-emails" class="action-btn">Extraire les emails</button>
+      <button id="btn-extract-emails" class="action-btn" data-i18n="emails.extract">Extraire les emails</button>
       <div id="email-count"></div>
       <div id="email-list"></div>
       <div class="tool-actions">
-        <button id="btn-copy-emails-lines" class="small-btn">Copier (lignes)</button>
-        <button id="btn-copy-emails-semicolon" class="small-btn">Copier (;)</button>
-        <button id="btn-clear-emails" class="small-btn">Effacer</button>
+        <button id="btn-copy-emails-lines" class="small-btn" data-i18n="emails.copyLines">Copier (lignes)</button>
+        <button id="btn-copy-emails-semicolon" class="small-btn" data-i18n="emails.copySemicolon">Copier (;)</button>
+        <button id="btn-clear-emails" class="small-btn" data-i18n="actions.clear">Effacer</button>
       </div>
     </div>
   </template>
@@ -224,16 +268,16 @@
   <template id="tpl-speech">
     <div class="tool-content">
       <select id="voice-select">
-        <option value="">Chargement des voix...</option>
+        <option value="" data-i18n="speech.loadingVoices">Chargement des voix...</option>
       </select>
-      <button id="btn-save-voice" class="action-btn">Sauvegarder la voix</button>
+      <button id="btn-save-voice" class="action-btn" data-i18n="speech.saveVoice">Sauvegarder la voix</button>
     </div>
   </template>
 
   <template id="tpl-bookmarks">
     <div class="tool-content">
       <div id="domain-bookmarks">
-        <div class="loading">Chargement...</div>
+        <div class="loading" data-i18n="messages.loading">Chargement...</div>
       </div>
     </div>
   </template>
@@ -241,14 +285,14 @@
   <template id="tpl-folders">
     <div class="tool-content">
       <div id="bookmark-folders">
-        <div class="loading">Chargement...</div>
+        <div class="loading" data-i18n="messages.loading">Chargement...</div>
       </div>
     </div>
   </template>
 
   <template id="tpl-history">
     <div class="tool-content">
-      <button id="btn-load-history" class="action-btn">Charger l'historique</button>
+      <button id="btn-load-history" class="action-btn" data-i18n="history.load">Charger l'historique</button>
       <div id="domain-history"></div>
     </div>
   </template>
@@ -271,15 +315,15 @@
   <template id="tpl-css">
     <div class="tool-content">
       <div id="css-domain" class="domain-indicator"></div>
-      <textarea id="css-code" placeholder="Entrez le CSS..." rows="8"></textarea>
-      <button id="btn-inject-css" class="action-btn">Injecter CSS</button>
+      <textarea id="css-code" data-i18n-placeholder="css.placeholder" placeholder="Entrez le CSS..." rows="8"></textarea>
+      <button id="btn-inject-css" class="action-btn" data-i18n="css.inject">Injecter CSS</button>
     </div>
   </template>
 
   <template id="tpl-js">
     <div class="tool-content">
-      <textarea id="js-code" placeholder="Entrez le JavaScript..." rows="8"></textarea>
-      <button id="btn-inject-js" class="action-btn">Executer JS</button>
+      <textarea id="js-code" data-i18n-placeholder="js.placeholder" placeholder="Entrez le JavaScript..." rows="8"></textarea>
+      <button id="btn-inject-js" class="action-btn" data-i18n="js.execute">Executer JS</button>
     </div>
   </template>
 
@@ -290,44 +334,44 @@
         <canvas id="qr-canvas"></canvas>
       </div>
       <div class="tool-actions">
-        <button id="btn-copy-qr" class="action-btn">Copier l'image</button>
-        <button id="btn-download-qr" class="small-btn">Telecharger</button>
+        <button id="btn-copy-qr" class="action-btn" data-i18n="qrcode.copyImage">Copier l'image</button>
+        <button id="btn-download-qr" class="small-btn" data-i18n="qrcode.download">Telecharger</button>
       </div>
     </div>
   </template>
 
   <template id="tpl-metatags">
     <div class="tool-content">
-      <button id="btn-extract-meta" class="action-btn">Extraire les meta tags</button>
+      <button id="btn-extract-meta" class="action-btn" data-i18n="metatags.extract">Extraire les meta tags</button>
       <div id="meta-list" class="meta-list"></div>
     </div>
   </template>
 
   <template id="tpl-links">
     <div class="tool-content">
-      <button id="btn-extract-links" class="action-btn">Extraire les liens</button>
+      <button id="btn-extract-links" class="action-btn" data-i18n="links.extract">Extraire les liens</button>
       <div id="links-stats"></div>
       <div id="links-list" class="links-list"></div>
       <div class="tool-actions">
-        <button id="btn-copy-links" class="small-btn">Copier tous</button>
+        <button id="btn-copy-links" class="small-btn" data-i18n="links.copyAll">Copier tous</button>
       </div>
     </div>
   </template>
 
   <template id="tpl-images">
     <div class="tool-content">
-      <button id="btn-extract-images" class="action-btn">Extraire les images</button>
+      <button id="btn-extract-images" class="action-btn" data-i18n="images.extract">Extraire les images</button>
       <div id="images-stats"></div>
       <div id="images-list" class="images-list"></div>
       <div class="tool-actions">
-        <button id="btn-copy-images" class="small-btn">Copier URLs</button>
+        <button id="btn-copy-images" class="small-btn" data-i18n="images.copyUrls">Copier URLs</button>
       </div>
     </div>
   </template>
 
   <template id="tpl-sitemap">
     <div class="tool-content">
-      <button id="btn-load-sitemap" class="action-btn">Charger sitemap.xml</button>
+      <button id="btn-load-sitemap" class="action-btn" data-i18n="sitemap.load">Charger sitemap.xml</button>
       <div id="sitemap-status"></div>
       <div id="sitemap-list" class="sitemap-list"></div>
     </div>
@@ -335,7 +379,7 @@
 
   <template id="tpl-headers">
     <div class="tool-content">
-      <button id="btn-fetch-headers" class="action-btn">Charger les headers</button>
+      <button id="btn-fetch-headers" class="action-btn" data-i18n="headers.load">Charger les headers</button>
       <div id="headers-list" class="headers-list"></div>
     </div>
   </template>
@@ -345,7 +389,7 @@
       <div id="cookies-domain" class="domain-indicator"></div>
       <div id="cookies-list" class="cookies-list"></div>
       <div class="tool-actions">
-        <button id="btn-copy-cookies" class="small-btn">Copier JSON</button>
+        <button id="btn-copy-cookies" class="small-btn" data-i18n="cookies.copyJson">Copier JSON</button>
       </div>
     </div>
   </template>
@@ -354,11 +398,11 @@
     <div class="tool-content">
       <div id="clear-domain" class="domain-indicator"></div>
       <div class="clear-options">
-        <label><input type="checkbox" id="clear-cookies" checked> Cookies</label>
-        <label><input type="checkbox" id="clear-cache" checked> Cache</label>
-        <label><input type="checkbox" id="clear-storage" checked> Local Storage</label>
+        <label><input type="checkbox" id="clear-cookies" checked> <span data-i18n="cleardata.cookies">Cookies</span></label>
+        <label><input type="checkbox" id="clear-cache" checked> <span data-i18n="cleardata.cache">Cache</span></label>
+        <label><input type="checkbox" id="clear-storage" checked> <span data-i18n="cleardata.storage">Local Storage</span></label>
       </div>
-      <button id="btn-clear-data" class="action-btn danger">Vider les donnees</button>
+      <button id="btn-clear-data" class="action-btn danger" data-i18n="cleardata.clear">Vider les donnees</button>
       <div id="clear-status"></div>
     </div>
   </template>
@@ -367,46 +411,48 @@
     <div class="tool-content">
       <div id="ssl-domain" class="domain-indicator"></div>
       <div id="ssl-info" class="ssl-info"></div>
-      <button id="btn-check-ssl" class="action-btn">Verifier SSL</button>
+      <button id="btn-check-ssl" class="action-btn" data-i18n="actions.check">Verifier SSL</button>
     </div>
   </template>
 
   <template id="tpl-lorem">
     <div class="tool-content">
       <div class="lorem-options">
-        <label>Paragraphes: <input type="number" id="lorem-count" value="3" min="1" max="20"></label>
+        <label><span data-i18n="lorem.paragraphs">Paragraphes</span>: <input type="number" id="lorem-count" value="3" min="1" max="20"></label>
       </div>
-      <button id="btn-generate-lorem" class="action-btn">Generer</button>
+      <button id="btn-generate-lorem" class="action-btn" data-i18n="lorem.generate">Generer</button>
       <div id="lorem-output" class="lorem-output"></div>
-      <button id="btn-copy-lorem" class="small-btn">Copier</button>
+      <button id="btn-copy-lorem" class="small-btn" data-i18n="lorem.copy">Copier</button>
     </div>
   </template>
 
   <template id="tpl-fonts">
     <div class="tool-content">
-      <button id="btn-detect-fonts" class="action-btn">Detecter les polices</button>
+      <button id="btn-detect-fonts" class="action-btn" data-i18n="fonts.detect">Detecter les polices</button>
       <div id="fonts-list" class="fonts-list"></div>
     </div>
   </template>
 
   <template id="tpl-translate">
     <div class="tool-content">
-      <textarea id="translate-input" placeholder="Texte a traduire..." rows="4"></textarea>
+      <textarea id="translate-input" data-i18n-placeholder="translate.placeholder" placeholder="Texte a traduire..." rows="4"></textarea>
       <div class="translate-controls">
         <select id="translate-lang">
-          <option value="en">Anglais</option>
-          <option value="fr">Francais</option>
-          <option value="es">Espagnol</option>
-          <option value="de">Allemand</option>
-          <option value="it">Italien</option>
-          <option value="pt">Portugais</option>
+          <option value="en" data-i18n="translate.languages.en">Anglais</option>
+          <option value="fr" data-i18n="translate.languages.fr">Francais</option>
+          <option value="es" data-i18n="translate.languages.es">Espagnol</option>
+          <option value="de" data-i18n="translate.languages.de">Allemand</option>
+          <option value="it" data-i18n="translate.languages.it">Italien</option>
+          <option value="pt" data-i18n="translate.languages.pt">Portugais</option>
         </select>
-        <button id="btn-translate" class="action-btn">Traduire</button>
+        <button id="btn-translate" class="action-btn" data-i18n="actions.translate">Traduire</button>
       </div>
       <div id="translate-output" class="translate-output"></div>
     </div>
   </template>
 
+  <script src="modules/i18n.js"></script>
+  <script src="modules/module-config.js"></script>
   <script src="modules/auto-updater.js"></script>
   <script src="modules/panel-loader.js"></script>
   <script src="popup.js"></script>

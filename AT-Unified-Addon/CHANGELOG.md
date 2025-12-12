@@ -7,6 +7,36 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.8.0] - 2025-12-12
+
+### Ajoute
+- **Support multi-langue** :
+  - Francais et Anglais disponibles
+  - Systeme de localisation (i18n.js)
+  - Fichiers de traduction dans /locales
+  - Selecteur de langue dans les options
+
+- **Outils organises par categories** :
+  - 🔗 Liens personnalises
+  - 🌐 Domaine & DNS (Whois, DNS, Mail Test, SSL)
+  - 📊 SEO & Analyse (Meta, Liens, Images, Sitemap, PageSpeed, Lighthouse)
+  - 💻 Developpement (Resize, CSS, JS, Headers, Lorem, Fonts)
+  - 🌍 Navigateur (Favoris, Dossiers, Historique, Cookies, Clear Data)
+  - 🛠️ Utilitaires (Raccourci, Couleurs, QR Code, Downloads, Emails, Voix, Traducteur)
+  - Categories collapsables avec sauvegarde de l'etat
+
+- **Gestion des modules** :
+  - Activer/desactiver chaque outil individuellement
+  - Interface d'administration dans les options
+  - Boutons "Tout activer" et "Tout desactiver"
+  - Les outils desactives sont masques dans le popup
+
+### Modifie
+- Export/Import mis a jour (version 2.0) avec langue et modules
+- Nouveau layout CSS pour les categories
+
+---
+
 ## [1.7.0] - 2025-12-12
 
 ### Ajoute
