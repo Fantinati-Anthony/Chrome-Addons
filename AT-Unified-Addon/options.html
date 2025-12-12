@@ -223,13 +223,38 @@
 
     .button-item {
       display: grid;
-      grid-template-columns: 1fr 2fr auto auto;
+      grid-template-columns: auto 1fr 2fr auto auto;
       gap: 10px;
       align-items: center;
       padding: 12px;
       background: #f8f9fa;
       border-radius: 6px;
       margin-bottom: 10px;
+    }
+
+    .btn-order-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .btn-move-up, .btn-move-down {
+      background: #95a5a6;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      font-size: 10px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .btn-move-up:hover, .btn-move-down:hover {
+      background: #7f8c8d;
+    }
+
+    .btn-move-up:disabled, .btn-move-down:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
     }
 
     .button-item input {
