@@ -7,6 +7,21 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [1.9.1] - 2025-12-12
+
+### Ajoute
+- **Favoris pour boutons personnalises** :
+  - Les boutons personnalises peuvent maintenant etre ajoutes aux favoris
+  - Meme systeme d'etoile que pour les outils integres
+  - Les favoris personnalises apparaissent dans la section Favoris
+
+### Ameliore
+- **Recherche etendue** :
+  - La recherche inclut maintenant les boutons personnalises
+  - Recherche par nom et URL
+
+---
+
 ## [1.9.0] - 2025-12-12
 
 ### Ajoute
