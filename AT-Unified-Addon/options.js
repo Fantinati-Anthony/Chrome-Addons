@@ -207,6 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const item = document.createElement('div');
       item.className = 'button-item';
       item.innerHTML = `
+        <div class="btn-order-controls">
+          <button class="btn-move-up" data-index="${index}" title="Monter" ${index === 0 ? 'disabled' : ''}>▲</button>
+          <button class="btn-move-down" data-index="${index}" title="Descendre" ${index === customButtons.length - 1 ? 'disabled' : ''}>▼</button>
+        </div>
         <input type="text" value="${escapeHtml(btn.name)}" data-field="name" data-index="${index}" placeholder="Nom">
         <input type="url" value="${escapeHtml(btn.url)}" data-field="url" data-index="${index}" placeholder="URL">
         <div class="btn-icon-preview" title="${btn.icon ? 'Emoji' : 'Favicon automatique'}">
@@ -237,6 +241,34 @@ document.addEventListener('DOMContentLoaded', () => {
         customButtons.splice(index, 1);
         saveButtons();
         renderButtons();
+      });
+    });
+
+    // Add event listeners for move up
+    buttonsList.querySelectorAll('.btn-move-up').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const index = parseInt(e.target.dataset.index);
+        if (index > 0) {
+          const temp = customButtons[index];
+          customButtons[index] = customButtons[index - 1];
+          customButtons[index - 1] = temp;
+          saveButtons();
+          renderButtons();
+        }
+      });
+    });
+
+    // Add event listeners for move down
+    buttonsList.querySelectorAll('.btn-move-down').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const index = parseInt(e.target.dataset.index);
+        if (index < customButtons.length - 1) {
+          const temp = customButtons[index];
+          customButtons[index] = customButtons[index + 1];
+          customButtons[index + 1] = temp;
+          saveButtons();
+          renderButtons();
+        }
       });
     });
   }
