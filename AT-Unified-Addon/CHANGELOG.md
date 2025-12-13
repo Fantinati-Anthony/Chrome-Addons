@@ -7,6 +7,24 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.1.0] - 2025-12-13
+
+### Amélioré
+- **Architecture modulaire** : Refactorisation complète pour une meilleure lisibilité par les IA
+  - Chaque outil est maintenant dans son propre fichier (`modules/tools/*.js`)
+  - 52 fichiers de modules individuels créés
+  - Fichier index centralisé pour les exports (`modules/tools/index.js`)
+  - Utilisation des ES Modules pour une meilleure organisation du code
+  - Réduction de `panel-loader.js` de 2900+ lignes à ~440 lignes
+
+### Technique
+- Migration vers ES Modules (`type="module"` pour le script principal)
+- Fichier `utils.js` partagé pour les fonctions communes (escapeHtml, getDomainFromUrl, etc.)
+- Organisation par catégorie dans l'index des outils
+- Support du chargement dynamique via `toolRegistry`
+
+---
+
 ## [3.0.0] - 2025-12-13
 
 ### Ajouté
