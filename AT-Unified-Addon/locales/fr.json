@@ -19,6 +19,7 @@
     "domainDns": "Domaine & DNS",
     "seoAnalysis": "SEO & Analyse",
     "development": "Developpement",
+    "social": "Social & Marketing",
     "browser": "Navigateur",
     "utilities": "Utilitaires"
   },
@@ -57,7 +58,27 @@
     "cleardata": { "label": "Clear", "title": "Vider les donnees" },
     "lorem": { "label": "Lorem", "title": "Lorem Ipsum" },
     "fonts": { "label": "Fonts", "title": "Polices detectees" },
-    "translate": { "label": "Traduire", "title": "Traducteur" }
+    "translate": { "label": "Traduire", "title": "Traducteur" },
+    "wordcount": { "label": "Mots", "title": "Compteur de mots" },
+    "keywords": { "label": "Mots-cles", "title": "Densite mots-cles" },
+    "headings": { "label": "Titres", "title": "Analyseur H1-H6" },
+    "brokenlinks": { "label": "Liens 404", "title": "Liens casses" },
+    "readability": { "label": "Lisibilite", "title": "Score de lisibilite" },
+    "schema": { "label": "Schema", "title": "Schema.org Validator" },
+    "robotstxt": { "label": "Robots", "title": "robots.txt" },
+    "palette": { "label": "Palette", "title": "Palette couleurs" },
+    "measure": { "label": "Mesure", "title": "Mesurer elements" },
+    "gridoverlay": { "label": "Grille", "title": "Grille overlay" },
+    "loadtime": { "label": "Perf", "title": "Temps de chargement" },
+    "webvitals": { "label": "Vitals", "title": "Core Web Vitals" },
+    "socialpreview": { "label": "Apercu", "title": "Apercu reseaux sociaux" },
+    "charcount": { "label": "Caracteres", "title": "Compteur caracteres" },
+    "utmbuilder": { "label": "UTM", "title": "Generateur UTM" },
+    "textdiff": { "label": "Diff", "title": "Comparateur texte" },
+    "notes": { "label": "Notes", "title": "Notes rapides" },
+    "pomodoro": { "label": "Pomodoro", "title": "Minuteur Pomodoro" },
+    "jsonformat": { "label": "JSON", "title": "Formateur JSON" },
+    "base64": { "label": "Base64", "title": "Encodeur Base64" }
   },
 
   "actions": {
@@ -215,6 +236,104 @@
       "it": "Italien",
       "pt": "Portugais"
     }
+  },
+
+  "wordcount": {
+    "analyze": "Analyser la page"
+  },
+
+  "keywords": {
+    "analyze": "Analyser les mots-cles",
+    "minLength": "Longueur min"
+  },
+
+  "headings": {
+    "analyze": "Analyser les titres"
+  },
+
+  "brokenlinks": {
+    "check": "Verifier les liens"
+  },
+
+  "readability": {
+    "analyze": "Analyser la lisibilite"
+  },
+
+  "robotstxt": {
+    "load": "Charger robots.txt"
+  },
+
+  "palette": {
+    "extract": "Extraire les couleurs",
+    "copyAll": "Copier tout"
+  },
+
+  "measure": {
+    "start": "Activer la mesure",
+    "instructions": "Cliquez sur un element pour voir ses dimensions"
+  },
+
+  "gridoverlay": {
+    "columns": "Colonnes",
+    "gutter": "Gouttiere",
+    "color": "Couleur",
+    "show": "Afficher la grille",
+    "hide": "Masquer"
+  },
+
+  "loadtime": {
+    "analyze": "Analyser les performances"
+  },
+
+  "webvitals": {
+    "analyze": "Mesurer Web Vitals"
+  },
+
+  "socialpreview": {
+    "preview": "Previsualiser"
+  },
+
+  "charcount": {
+    "placeholder": "Entrez votre texte ici..."
+  },
+
+  "utmbuilder": {
+    "generate": "Generer l'URL",
+    "copy": "Copier"
+  },
+
+  "textdiff": {
+    "text1": "Texte original...",
+    "text2": "Texte modifie...",
+    "compare": "Comparer"
+  },
+
+  "notes": {
+    "placeholder": "Vos notes pour ce site...",
+    "save": "Sauvegarder",
+    "clear": "Effacer"
+  },
+
+  "pomodoro": {
+    "work": "Travail (25min)",
+    "break": "Pause (5min)",
+    "start": "Demarrer",
+    "stop": "Arreter"
+  },
+
+  "jsonformat": {
+    "placeholder": "Collez votre JSON ici...",
+    "format": "Formater",
+    "minify": "Minifier",
+    "validate": "Valider",
+    "copy": "Copier"
+  },
+
+  "base64": {
+    "placeholder": "Texte a encoder/decoder...",
+    "encode": "Encoder",
+    "decode": "Decoder",
+    "copy": "Copier"
   },
 
   "options": {

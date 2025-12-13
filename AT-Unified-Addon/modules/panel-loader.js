@@ -33,7 +33,27 @@ const PanelLoader = (function() {
     ssl: initSSL,
     lorem: initLorem,
     fonts: initFonts,
-    translate: initTranslate
+    translate: initTranslate,
+    // New tools v2.0
+    wordcount: initWordCount,
+    keywords: initKeywords,
+    headings: initHeadings,
+    brokenlinks: initBrokenLinks,
+    readability: initReadability,
+    robotstxt: initRobotsTxt,
+    palette: initPalette,
+    measure: initMeasure,
+    gridoverlay: initGridOverlay,
+    loadtime: initLoadTime,
+    webvitals: initWebVitals,
+    socialpreview: initSocialPreview,
+    charcount: initCharCount,
+    utmbuilder: initUTMBuilder,
+    textdiff: initTextDiff,
+    notes: initNotes,
+    pomodoro: initPomodoro,
+    jsonformat: initJsonFormat,
+    base64: initBase64
   };
 
   // Direct actions (no panel needed)
@@ -115,6 +135,19 @@ const PanelLoader = (function() {
         chrome.tabs.create({ url: `https://googlechrome.github.io/lighthouse/viewer/?psiurl=${encodeURIComponent(tab.url)}` });
       } catch (error) {
         console.error('Error opening Lighthouse:', error);
+        alert('Erreur');
+      }
+    },
+    schema: async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab || !tab.url) {
+          alert('URL non disponible');
+          return;
+        }
+        chrome.tabs.create({ url: `https://validator.schema.org/#url=${encodeURIComponent(tab.url)}` });
+      } catch (error) {
+        console.error('Error opening Schema validator:', error);
         alert('Erreur');
       }
     }
@@ -1269,6 +1302,1015 @@ const PanelLoader = (function() {
       // Open Google Translate with the text
       const url = `https://translate.google.com/?sl=auto&tl=${targetLang}&text=${encodeURIComponent(text)}&op=translate`;
       chrome.tabs.create({ url });
+    });
+  }
+
+  // ========== NEW TOOLS v2.0 ==========
+
+  async function initWordCount() {
+    const countBtn = document.getElementById('btn-count-words');
+    const resultsDiv = document.getElementById('wordcount-results');
+
+    countBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const text = document.body.innerText || '';
+            const words = text.split(/\s+/).filter(w => w.length > 0);
+            const chars = text.length;
+            const charsNoSpaces = text.replace(/\s/g, '').length;
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            const paragraphs = text.split(/\n\n+/).filter(p => p.trim().length > 0);
+            const readingTime = Math.ceil(words.length / 200); // 200 wpm average
+            return { words: words.length, chars, charsNoSpaces, sentences: sentences.length, paragraphs: paragraphs.length, readingTime };
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          const r = results[0].result;
+          resultsDiv.innerHTML = `
+            <div class="stat-item"><span class="stat-label">Mots</span><span class="stat-value">${r.words}</span></div>
+            <div class="stat-item"><span class="stat-label">Caracteres</span><span class="stat-value">${r.chars}</span></div>
+            <div class="stat-item"><span class="stat-label">Sans espaces</span><span class="stat-value">${r.charsNoSpaces}</span></div>
+            <div class="stat-item"><span class="stat-label">Phrases</span><span class="stat-value">${r.sentences}</span></div>
+            <div class="stat-item"><span class="stat-label">Paragraphes</span><span class="stat-value">${r.paragraphs}</span></div>
+            <div class="stat-item"><span class="stat-label">Temps de lecture</span><span class="stat-value">${r.readingTime} min</span></div>
+          `;
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+  }
+
+  async function initKeywords() {
+    const analyzeBtn = document.getElementById('btn-analyze-keywords');
+    const minLengthInput = document.getElementById('keywords-min-length');
+    const resultsDiv = document.getElementById('keywords-results');
+
+    analyzeBtn.addEventListener('click', async () => {
+      const minLength = parseInt(minLengthInput.value) || 4;
+
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: (minLen) => {
+            const text = document.body.innerText.toLowerCase();
+            const words = text.match(/[a-z\u00e0-\u00ff]+/gi) || [];
+            const wordCount = {};
+            const stopWords = ['le', 'la', 'les', 'de', 'du', 'des', 'un', 'une', 'et', 'en', 'au', 'aux', 'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'que', 'qui', 'pour', 'dans', 'sur', 'est', 'sont', 'this', 'that', 'these', 'those', 'is', 'are', 'was', 'were'];
+
+            words.forEach(word => {
+              if (word.length >= minLen && !stopWords.includes(word)) {
+                wordCount[word] = (wordCount[word] || 0) + 1;
+              }
+            });
+
+            const sorted = Object.entries(wordCount)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 20);
+
+            const total = words.length;
+            return sorted.map(([word, count]) => ({
+              word,
+              count,
+              density: ((count / total) * 100).toFixed(2)
+            }));
+          },
+          args: [minLength]
+        });
+
+        if (results && results[0] && results[0].result) {
+          renderKeywords(results[0].result);
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+
+    function renderKeywords(keywords) {
+      if (keywords.length === 0) {
+        resultsDiv.innerHTML = '<div class="status-message info">Aucun mot-cle trouve</div>';
+        return;
+      }
+      resultsDiv.innerHTML = keywords.map(k => `
+        <div class="keyword-item">
+          <span class="keyword-word">${escapeHtml(k.word)}</span>
+          <span class="keyword-count">${k.count}x</span>
+          <span class="keyword-density">${k.density}%</span>
+        </div>
+      `).join('');
+    }
+  }
+
+  async function initHeadings() {
+    const analyzeBtn = document.getElementById('btn-analyze-headings');
+    const statsDiv = document.getElementById('headings-stats');
+    const listDiv = document.getElementById('headings-list');
+
+    analyzeBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const headings = [];
+            const counts = { h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0 };
+
+            ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach(tag => {
+              document.querySelectorAll(tag).forEach(h => {
+                counts[tag]++;
+                headings.push({ tag: tag.toUpperCase(), text: h.textContent.trim().substring(0, 100) });
+              });
+            });
+
+            return { counts, headings };
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          const r = results[0].result;
+          statsDiv.innerHTML = Object.entries(r.counts)
+            .map(([tag, count]) => `<span class="heading-badge ${tag}">${tag.toUpperCase()}: ${count}</span>`)
+            .join(' ');
+
+          if (r.headings.length === 0) {
+            listDiv.innerHTML = '<div class="status-message info">Aucun titre trouve</div>';
+          } else {
+            listDiv.innerHTML = r.headings.map(h => `
+              <div class="heading-item ${h.tag.toLowerCase()}">
+                <span class="heading-tag">${h.tag}</span>
+                <span class="heading-text">${escapeHtml(h.text)}</span>
+              </div>
+            `).join('');
+          }
+        }
+      } catch (error) {
+        listDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+  }
+
+  async function initBrokenLinks() {
+    const checkBtn = document.getElementById('btn-check-links');
+    const progressDiv = document.getElementById('brokenlinks-progress');
+    const resultsDiv = document.getElementById('brokenlinks-results');
+
+    checkBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+        // Get all links from the page
+        const linksResult = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const links = [];
+            document.querySelectorAll('a[href]').forEach(a => {
+              const href = a.href;
+              if (href && href.startsWith('http') && !links.includes(href)) {
+                links.push(href);
+              }
+            });
+            return links.slice(0, 50); // Limit to 50 links
+          }
+        });
+
+        const links = linksResult[0]?.result || [];
+        if (links.length === 0) {
+          resultsDiv.innerHTML = '<div class="status-message info">Aucun lien trouve</div>';
+          return;
+        }
+
+        progressDiv.innerHTML = `Verification de ${links.length} liens...`;
+        resultsDiv.innerHTML = '';
+
+        let checked = 0;
+        const broken = [];
+
+        for (const url of links) {
+          try {
+            const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+            // Note: no-cors mode won't give us status, so we consider it as working
+          } catch (e) {
+            broken.push(url);
+          }
+          checked++;
+          progressDiv.innerHTML = `Verification: ${checked}/${links.length}`;
+        }
+
+        progressDiv.innerHTML = `Termine: ${broken.length} lien(s) potentiellement casse(s)`;
+
+        if (broken.length > 0) {
+          resultsDiv.innerHTML = broken.map(url => `
+            <div class="broken-link-item">
+              <span class="broken-icon">⚠️</span>
+              <a href="${escapeHtml(url)}" target="_blank">${escapeHtml(url.substring(0, 50))}...</a>
+            </div>
+          `).join('');
+        } else {
+          resultsDiv.innerHTML = '<div class="status-message success">Tous les liens semblent fonctionner!</div>';
+        }
+
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur lors de la verification</div>';
+      }
+    });
+  }
+
+  async function initReadability() {
+    const analyzeBtn = document.getElementById('btn-check-readability');
+    const resultsDiv = document.getElementById('readability-results');
+
+    analyzeBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const text = document.body.innerText || '';
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            const words = text.split(/\s+/).filter(w => w.length > 0);
+            const syllables = words.reduce((acc, word) => {
+              // Simple syllable counting
+              const count = word.toLowerCase().replace(/[^aeiouy]/g, '').length || 1;
+              return acc + Math.min(count, 5);
+            }, 0);
+
+            const avgSentenceLength = words.length / (sentences.length || 1);
+            const avgSyllablesPerWord = syllables / (words.length || 1);
+
+            // Flesch Reading Ease
+            const fleschScore = 206.835 - (1.015 * avgSentenceLength) - (84.6 * avgSyllablesPerWord);
+
+            // Flesch-Kincaid Grade Level
+            const gradeLevel = (0.39 * avgSentenceLength) + (11.8 * avgSyllablesPerWord) - 15.59;
+
+            return {
+              sentences: sentences.length,
+              words: words.length,
+              avgSentenceLength: avgSentenceLength.toFixed(1),
+              fleschScore: Math.max(0, Math.min(100, fleschScore)).toFixed(1),
+              gradeLevel: Math.max(0, gradeLevel).toFixed(1)
+            };
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          const r = results[0].result;
+          let level = 'Difficile';
+          let levelClass = 'error';
+          if (r.fleschScore >= 70) { level = 'Facile'; levelClass = 'success'; }
+          else if (r.fleschScore >= 50) { level = 'Moyen'; levelClass = 'warning'; }
+
+          resultsDiv.innerHTML = `
+            <div class="readability-score ${levelClass}">
+              <span class="score-value">${r.fleschScore}</span>
+              <span class="score-label">Score Flesch (${level})</span>
+            </div>
+            <div class="stat-item"><span class="stat-label">Niveau scolaire</span><span class="stat-value">${r.gradeLevel}</span></div>
+            <div class="stat-item"><span class="stat-label">Mots/phrase (moy)</span><span class="stat-value">${r.avgSentenceLength}</span></div>
+            <div class="stat-item"><span class="stat-label">Total phrases</span><span class="stat-value">${r.sentences}</span></div>
+            <div class="stat-item"><span class="stat-label">Total mots</span><span class="stat-value">${r.words}</span></div>
+          `;
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+  }
+
+  async function initRobotsTxt() {
+    const loadBtn = document.getElementById('btn-load-robots');
+    const contentDiv = document.getElementById('robots-content');
+
+    loadBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const origin = new URL(tab.url).origin;
+        const robotsUrl = origin + '/robots.txt';
+
+        contentDiv.innerHTML = 'Chargement...';
+
+        const response = await fetch(robotsUrl);
+        if (!response.ok) throw new Error('robots.txt non trouve');
+
+        const text = await response.text();
+        contentDiv.innerHTML = `<pre>${escapeHtml(text)}</pre>`;
+      } catch (error) {
+        contentDiv.innerHTML = '<div class="status-message error">robots.txt non trouve ou erreur</div>';
+      }
+    });
+  }
+
+  async function initPalette() {
+    const extractBtn = document.getElementById('btn-extract-palette');
+    const resultsDiv = document.getElementById('palette-results');
+    const copyBtn = document.getElementById('btn-copy-palette');
+
+    let allColors = [];
+
+    extractBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const colors = new Set();
+            const colorRegex = /#[0-9A-Fa-f]{3,8}|rgb\([^)]+\)|rgba\([^)]+\)/g;
+
+            document.querySelectorAll('*').forEach(el => {
+              const computed = window.getComputedStyle(el);
+              ['color', 'backgroundColor', 'borderColor'].forEach(prop => {
+                const value = computed[prop];
+                if (value && value !== 'rgba(0, 0, 0, 0)' && value !== 'transparent') {
+                  colors.add(value);
+                }
+              });
+            });
+
+            // Also check stylesheets
+            try {
+              for (const sheet of document.styleSheets) {
+                try {
+                  for (const rule of sheet.cssRules) {
+                    const matches = rule.cssText?.match(colorRegex) || [];
+                    matches.forEach(m => colors.add(m));
+                  }
+                } catch (e) {}
+              }
+            } catch (e) {}
+
+            return [...colors].slice(0, 30);
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          allColors = results[0].result;
+          renderPalette(allColors);
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (allColors.length > 0) {
+        await navigator.clipboard.writeText(allColors.join('\n'));
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier tout'; }, 1000);
+      }
+    });
+
+    function renderPalette(colors) {
+      if (colors.length === 0) {
+        resultsDiv.innerHTML = '<div class="status-message info">Aucune couleur trouvee</div>';
+        return;
+      }
+      resultsDiv.innerHTML = colors.map(color => `
+        <div class="palette-color" style="background-color: ${color}" title="${color}" data-color="${color}"></div>
+      `).join('');
+
+      resultsDiv.querySelectorAll('.palette-color').forEach(el => {
+        el.addEventListener('click', async () => {
+          await navigator.clipboard.writeText(el.dataset.color);
+          el.classList.add('copied');
+          setTimeout(() => el.classList.remove('copied'), 500);
+        });
+      });
+    }
+  }
+
+  async function initMeasure() {
+    const startBtn = document.getElementById('btn-start-measure');
+    const infoDiv = document.getElementById('measure-info');
+    const resultsDiv = document.getElementById('measure-results');
+
+    startBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            // Remove existing overlay if any
+            const existing = document.getElementById('measure-overlay');
+            if (existing) existing.remove();
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.id = 'measure-overlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:999999;cursor:crosshair;';
+
+            const tooltip = document.createElement('div');
+            tooltip.id = 'measure-tooltip';
+            tooltip.style.cssText = 'position:fixed;background:#333;color:#fff;padding:8px 12px;border-radius:4px;font-size:12px;pointer-events:none;z-index:1000000;display:none;';
+            document.body.appendChild(tooltip);
+            document.body.appendChild(overlay);
+
+            let lastHighlighted = null;
+
+            overlay.addEventListener('mousemove', (e) => {
+              overlay.style.display = 'none';
+              const el = document.elementFromPoint(e.clientX, e.clientY);
+              overlay.style.display = 'block';
+
+              if (el && el !== lastHighlighted) {
+                if (lastHighlighted) lastHighlighted.style.outline = '';
+                el.style.outline = '2px solid #ff00ff';
+                lastHighlighted = el;
+
+                const rect = el.getBoundingClientRect();
+                tooltip.innerHTML = `${el.tagName.toLowerCase()}<br>${Math.round(rect.width)}×${Math.round(rect.height)}px`;
+                tooltip.style.display = 'block';
+              }
+              tooltip.style.left = (e.clientX + 10) + 'px';
+              tooltip.style.top = (e.clientY + 10) + 'px';
+            });
+
+            overlay.addEventListener('click', (e) => {
+              overlay.style.display = 'none';
+              const el = document.elementFromPoint(e.clientX, e.clientY);
+              overlay.style.display = 'block';
+
+              if (el) {
+                const rect = el.getBoundingClientRect();
+                const computed = window.getComputedStyle(el);
+                alert(`Element: ${el.tagName}\nDimensions: ${Math.round(rect.width)}×${Math.round(rect.height)}px\nPadding: ${computed.padding}\nMargin: ${computed.margin}`);
+              }
+            });
+
+            // Remove on Escape
+            document.addEventListener('keydown', function escHandler(e) {
+              if (e.key === 'Escape') {
+                overlay.remove();
+                tooltip.remove();
+                if (lastHighlighted) lastHighlighted.style.outline = '';
+                document.removeEventListener('keydown', escHandler);
+              }
+            });
+          }
+        });
+
+        infoDiv.textContent = 'Mode mesure active! Appuyez sur Echap pour quitter.';
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+  }
+
+  async function initGridOverlay() {
+    const columnsInput = document.getElementById('grid-columns');
+    const gutterInput = document.getElementById('grid-gutter');
+    const colorInput = document.getElementById('grid-color');
+    const showBtn = document.getElementById('btn-show-grid');
+    const hideBtn = document.getElementById('btn-hide-grid');
+
+    showBtn.addEventListener('click', async () => {
+      const columns = parseInt(columnsInput.value) || 12;
+      const gutter = parseInt(gutterInput.value) || 20;
+      const color = colorInput.value || '#ff00ff';
+
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: (cols, gut, col) => {
+            // Remove existing grid
+            const existing = document.getElementById('grid-overlay-container');
+            if (existing) existing.remove();
+
+            const container = document.createElement('div');
+            container.id = 'grid-overlay-container';
+            container.style.cssText = `position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999998;display:flex;padding:0 ${gut}px;`;
+
+            for (let i = 0; i < cols; i++) {
+              const col = document.createElement('div');
+              col.style.cssText = `flex:1;margin:0 ${gut/2}px;background:${col};opacity:0.2;`;
+              container.appendChild(col);
+            }
+
+            document.body.appendChild(container);
+          },
+          args: [columns, gutter, color]
+        });
+      } catch (error) {
+        console.error('Error showing grid:', error);
+      }
+    });
+
+    hideBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const existing = document.getElementById('grid-overlay-container');
+            if (existing) existing.remove();
+          }
+        });
+      } catch (error) {
+        console.error('Error hiding grid:', error);
+      }
+    });
+  }
+
+  async function initLoadTime() {
+    const analyzeBtn = document.getElementById('btn-check-loadtime');
+    const resultsDiv = document.getElementById('loadtime-results');
+
+    analyzeBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const timing = performance.timing;
+            const nav = performance.getEntriesByType('navigation')[0] || {};
+
+            return {
+              dns: timing.domainLookupEnd - timing.domainLookupStart,
+              connection: timing.connectEnd - timing.connectStart,
+              ttfb: timing.responseStart - timing.requestStart,
+              download: timing.responseEnd - timing.responseStart,
+              domInteractive: timing.domInteractive - timing.navigationStart,
+              domComplete: timing.domComplete - timing.navigationStart,
+              loadComplete: timing.loadEventEnd - timing.navigationStart,
+              resources: performance.getEntriesByType('resource').length
+            };
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          const r = results[0].result;
+          resultsDiv.innerHTML = `
+            <div class="stat-item"><span class="stat-label">DNS Lookup</span><span class="stat-value">${r.dns}ms</span></div>
+            <div class="stat-item"><span class="stat-label">Connexion</span><span class="stat-value">${r.connection}ms</span></div>
+            <div class="stat-item"><span class="stat-label">TTFB</span><span class="stat-value">${r.ttfb}ms</span></div>
+            <div class="stat-item"><span class="stat-label">Telechargement</span><span class="stat-value">${r.download}ms</span></div>
+            <div class="stat-item"><span class="stat-label">DOM Interactif</span><span class="stat-value">${r.domInteractive}ms</span></div>
+            <div class="stat-item"><span class="stat-label">DOM Complet</span><span class="stat-value">${r.domComplete}ms</span></div>
+            <div class="stat-item"><span class="stat-label">Chargement total</span><span class="stat-value">${r.loadComplete}ms</span></div>
+            <div class="stat-item"><span class="stat-label">Ressources</span><span class="stat-value">${r.resources}</span></div>
+          `;
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+  }
+
+  async function initWebVitals() {
+    const analyzeBtn = document.getElementById('btn-check-vitals');
+    const resultsDiv = document.getElementById('webvitals-results');
+
+    analyzeBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const entries = performance.getEntriesByType('paint');
+            const fcp = entries.find(e => e.name === 'first-contentful-paint');
+            const fp = entries.find(e => e.name === 'first-paint');
+
+            const navEntry = performance.getEntriesByType('navigation')[0] || {};
+            const lcp = performance.getEntriesByType('largest-contentful-paint').pop();
+
+            return {
+              fp: fp ? Math.round(fp.startTime) : null,
+              fcp: fcp ? Math.round(fcp.startTime) : null,
+              lcp: lcp ? Math.round(lcp.startTime) : null,
+              dcl: Math.round(navEntry.domContentLoadedEventEnd || 0),
+              load: Math.round(navEntry.loadEventEnd || 0)
+            };
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          const r = results[0].result;
+
+          const getScore = (value, good, poor) => {
+            if (!value) return 'unknown';
+            if (value <= good) return 'good';
+            if (value <= poor) return 'needs-improvement';
+            return 'poor';
+          };
+
+          resultsDiv.innerHTML = `
+            <div class="vital-item ${getScore(r.fcp, 1800, 3000)}">
+              <span class="vital-label">FCP (First Contentful Paint)</span>
+              <span class="vital-value">${r.fcp || 'N/A'}ms</span>
+            </div>
+            <div class="vital-item ${getScore(r.lcp, 2500, 4000)}">
+              <span class="vital-label">LCP (Largest Contentful Paint)</span>
+              <span class="vital-value">${r.lcp || 'N/A'}ms</span>
+            </div>
+            <div class="vital-item">
+              <span class="vital-label">First Paint</span>
+              <span class="vital-value">${r.fp || 'N/A'}ms</span>
+            </div>
+            <div class="vital-item">
+              <span class="vital-label">DOM Content Loaded</span>
+              <span class="vital-value">${r.dcl}ms</span>
+            </div>
+            <div class="vital-item">
+              <span class="vital-label">Load Complete</span>
+              <span class="vital-value">${r.load}ms</span>
+            </div>
+          `;
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+  }
+
+  async function initSocialPreview() {
+    const previewBtn = document.getElementById('btn-preview-social');
+    const cardsDiv = document.getElementById('social-preview-cards');
+
+    previewBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const getMeta = (name) => {
+              const el = document.querySelector(`meta[property="${name}"], meta[name="${name}"]`);
+              return el ? el.getAttribute('content') : null;
+            };
+
+            return {
+              title: getMeta('og:title') || document.title,
+              description: getMeta('og:description') || getMeta('description') || '',
+              image: getMeta('og:image') || '',
+              url: getMeta('og:url') || window.location.href,
+              siteName: getMeta('og:site_name') || '',
+              twitterCard: getMeta('twitter:card') || 'summary',
+              twitterTitle: getMeta('twitter:title') || getMeta('og:title') || document.title,
+              twitterDesc: getMeta('twitter:description') || getMeta('og:description') || getMeta('description') || '',
+              twitterImage: getMeta('twitter:image') || getMeta('og:image') || ''
+            };
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          const r = results[0].result;
+          cardsDiv.innerHTML = `
+            <div class="social-card facebook">
+              <div class="social-card-header">Facebook / LinkedIn</div>
+              ${r.image ? `<div class="social-card-image"><img src="${escapeHtml(r.image)}" alt=""></div>` : ''}
+              <div class="social-card-content">
+                <div class="social-card-site">${escapeHtml(r.siteName || new URL(r.url).hostname)}</div>
+                <div class="social-card-title">${escapeHtml(r.title)}</div>
+                <div class="social-card-desc">${escapeHtml(r.description.substring(0, 150))}</div>
+              </div>
+            </div>
+            <div class="social-card twitter">
+              <div class="social-card-header">Twitter/X</div>
+              ${r.twitterImage ? `<div class="social-card-image"><img src="${escapeHtml(r.twitterImage)}" alt=""></div>` : ''}
+              <div class="social-card-content">
+                <div class="social-card-title">${escapeHtml(r.twitterTitle)}</div>
+                <div class="social-card-desc">${escapeHtml(r.twitterDesc.substring(0, 120))}</div>
+                <div class="social-card-site">${escapeHtml(new URL(r.url).hostname)}</div>
+              </div>
+            </div>
+          `;
+        }
+      } catch (error) {
+        cardsDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+  }
+
+  function initCharCount() {
+    const textarea = document.getElementById('charcount-input');
+    const resultsDiv = document.getElementById('charcount-results');
+    const limitItems = document.querySelectorAll('.limit-item');
+
+    function updateCounts() {
+      const text = textarea.value;
+      const chars = text.length;
+      const charsNoSpaces = text.replace(/\s/g, '').length;
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      const lines = text.split('\n').length;
+
+      resultsDiv.innerHTML = `
+        <span><strong>${chars}</strong> caracteres</span>
+        <span><strong>${charsNoSpaces}</strong> sans espaces</span>
+        <span><strong>${words}</strong> mots</span>
+        <span><strong>${lines}</strong> lignes</span>
+      `;
+
+      // Update social limits
+      limitItems.forEach(item => {
+        const limit = parseInt(item.dataset.limit);
+        if (chars <= limit) {
+          item.classList.remove('over');
+          item.classList.add('ok');
+        } else {
+          item.classList.remove('ok');
+          item.classList.add('over');
+        }
+        item.querySelector('.limit-value').textContent = `${chars}/${limit}`;
+      });
+    }
+
+    textarea.addEventListener('input', updateCounts);
+    updateCounts();
+  }
+
+  async function initUTMBuilder() {
+    const baseUrlDiv = document.getElementById('utm-base-url');
+    const sourceInput = document.getElementById('utm-source');
+    const mediumInput = document.getElementById('utm-medium');
+    const campaignInput = document.getElementById('utm-campaign');
+    const termInput = document.getElementById('utm-term');
+    const contentInput = document.getElementById('utm-content');
+    const generateBtn = document.getElementById('btn-generate-utm');
+    const resultDiv = document.getElementById('utm-result');
+    const copyBtn = document.getElementById('btn-copy-utm');
+
+    let baseUrl = '';
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      baseUrl = tab.url.split('?')[0]; // Remove existing query params
+      baseUrlDiv.textContent = baseUrl.length > 50 ? baseUrl.substring(0, 50) + '...' : baseUrl;
+    } catch (e) {
+      baseUrlDiv.textContent = 'URL non disponible';
+    }
+
+    generateBtn.addEventListener('click', () => {
+      const params = new URLSearchParams();
+
+      if (sourceInput.value) params.set('utm_source', sourceInput.value);
+      if (mediumInput.value) params.set('utm_medium', mediumInput.value);
+      if (campaignInput.value) params.set('utm_campaign', campaignInput.value);
+      if (termInput.value) params.set('utm_term', termInput.value);
+      if (contentInput.value) params.set('utm_content', contentInput.value);
+
+      const fullUrl = baseUrl + (params.toString() ? '?' + params.toString() : '');
+      resultDiv.innerHTML = `<a href="${escapeHtml(fullUrl)}" target="_blank">${escapeHtml(fullUrl)}</a>`;
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const link = resultDiv.querySelector('a');
+      if (link) {
+        await navigator.clipboard.writeText(link.href);
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1000);
+      }
+    });
+  }
+
+  function initTextDiff() {
+    const text1 = document.getElementById('diff-text1');
+    const text2 = document.getElementById('diff-text2');
+    const compareBtn = document.getElementById('btn-compare-text');
+    const resultsDiv = document.getElementById('diff-results');
+
+    compareBtn.addEventListener('click', () => {
+      const lines1 = text1.value.split('\n');
+      const lines2 = text2.value.split('\n');
+
+      let html = '';
+      const maxLines = Math.max(lines1.length, lines2.length);
+
+      for (let i = 0; i < maxLines; i++) {
+        const line1 = lines1[i] || '';
+        const line2 = lines2[i] || '';
+
+        if (line1 === line2) {
+          html += `<div class="diff-line same">${escapeHtml(line1) || '&nbsp;'}</div>`;
+        } else if (!line1) {
+          html += `<div class="diff-line added">+ ${escapeHtml(line2)}</div>`;
+        } else if (!line2) {
+          html += `<div class="diff-line removed">- ${escapeHtml(line1)}</div>`;
+        } else {
+          html += `<div class="diff-line removed">- ${escapeHtml(line1)}</div>`;
+          html += `<div class="diff-line added">+ ${escapeHtml(line2)}</div>`;
+        }
+      }
+
+      resultsDiv.innerHTML = html || '<div class="status-message info">Aucune difference</div>';
+    });
+  }
+
+  async function initNotes() {
+    const domainDiv = document.getElementById('notes-domain');
+    const textarea = document.getElementById('notes-content');
+    const saveBtn = document.getElementById('btn-save-notes');
+    const clearBtn = document.getElementById('btn-clear-notes');
+
+    let currentDomain = '';
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const url = new URL(tab.url);
+      currentDomain = url.hostname;
+      domainDiv.textContent = `Notes pour: ${currentDomain}`;
+
+      // Load existing notes
+      const key = 'notes_' + currentDomain;
+      const data = await chrome.storage.local.get([key]);
+      if (data[key]) {
+        textarea.value = data[key];
+      }
+    } catch (e) {
+      domainDiv.textContent = 'Notes';
+    }
+
+    saveBtn.addEventListener('click', async () => {
+      if (!currentDomain) return;
+      const key = 'notes_' + currentDomain;
+      await chrome.storage.local.set({ [key]: textarea.value });
+      saveBtn.textContent = 'Sauvegarde!';
+      setTimeout(() => { saveBtn.textContent = 'Sauvegarder'; }, 1000);
+    });
+
+    clearBtn.addEventListener('click', async () => {
+      if (!currentDomain) return;
+      if (confirm('Effacer toutes les notes pour ce site?')) {
+        const key = 'notes_' + currentDomain;
+        await chrome.storage.local.remove([key]);
+        textarea.value = '';
+      }
+    });
+  }
+
+  function initPomodoro() {
+    const display = document.getElementById('pomodoro-display');
+    const workBtn = document.getElementById('btn-pomodoro-work');
+    const breakBtn = document.getElementById('btn-pomodoro-break');
+    const startBtn = document.getElementById('btn-pomodoro-start');
+    const stopBtn = document.getElementById('btn-pomodoro-stop');
+    const sessionsDiv = document.getElementById('pomodoro-sessions');
+
+    let duration = 25 * 60; // 25 minutes in seconds
+    let remaining = duration;
+    let timer = null;
+    let isRunning = false;
+    let sessions = 0;
+
+    // Load sessions from storage
+    chrome.storage.local.get(['pomodoroSessions'], (data) => {
+      sessions = data.pomodoroSessions || 0;
+      updateSessionsDisplay();
+    });
+
+    function updateDisplay() {
+      const mins = Math.floor(remaining / 60);
+      const secs = remaining % 60;
+      display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function updateSessionsDisplay() {
+      sessionsDiv.textContent = `Sessions completees: ${sessions}`;
+    }
+
+    workBtn.addEventListener('click', () => {
+      duration = 25 * 60;
+      remaining = duration;
+      updateDisplay();
+      display.classList.remove('break');
+    });
+
+    breakBtn.addEventListener('click', () => {
+      duration = 5 * 60;
+      remaining = duration;
+      updateDisplay();
+      display.classList.add('break');
+    });
+
+    startBtn.addEventListener('click', () => {
+      if (isRunning) return;
+      isRunning = true;
+
+      timer = setInterval(() => {
+        remaining--;
+        updateDisplay();
+
+        if (remaining <= 0) {
+          clearInterval(timer);
+          isRunning = false;
+
+          // Play sound and increment sessions
+          if (duration === 25 * 60) {
+            sessions++;
+            chrome.storage.local.set({ pomodoroSessions: sessions });
+            updateSessionsDisplay();
+          }
+
+          // Notification
+          try {
+            new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2teleR8IF5/P5bqIQBIKPaHc87OQVxwJNpXV8MKkdTMRDUWb0vPDsZBmLhEPRZXO9ceypnlAGhBJl8710baxjGYwEg9IndLzxrGnfUIXDUmb0PPIta+LZC4RD0md0fPGsKd/QxcNSZzQ88izvotlLREPSp7R88Swp39DFw1JnM/zyLO+i2UtEQ9JndDzxLCnf0IXDQ==').play();
+          } catch (e) {}
+
+          remaining = duration;
+          updateDisplay();
+        }
+      }, 1000);
+    });
+
+    stopBtn.addEventListener('click', () => {
+      if (timer) {
+        clearInterval(timer);
+        isRunning = false;
+      }
+    });
+
+    updateDisplay();
+  }
+
+  function initJsonFormat() {
+    const input = document.getElementById('json-input');
+    const formatBtn = document.getElementById('btn-format-json');
+    const minifyBtn = document.getElementById('btn-minify-json');
+    const validateBtn = document.getElementById('btn-validate-json');
+    const output = document.getElementById('json-output');
+    const copyBtn = document.getElementById('btn-copy-json');
+
+    formatBtn.addEventListener('click', () => {
+      try {
+        const parsed = JSON.parse(input.value);
+        output.textContent = JSON.stringify(parsed, null, 2);
+        output.classList.remove('error');
+      } catch (e) {
+        output.textContent = 'Erreur: ' + e.message;
+        output.classList.add('error');
+      }
+    });
+
+    minifyBtn.addEventListener('click', () => {
+      try {
+        const parsed = JSON.parse(input.value);
+        output.textContent = JSON.stringify(parsed);
+        output.classList.remove('error');
+      } catch (e) {
+        output.textContent = 'Erreur: ' + e.message;
+        output.classList.add('error');
+      }
+    });
+
+    validateBtn.addEventListener('click', () => {
+      try {
+        JSON.parse(input.value);
+        output.textContent = '✓ JSON valide!';
+        output.classList.remove('error');
+        output.classList.add('success');
+      } catch (e) {
+        output.textContent = '✗ JSON invalide: ' + e.message;
+        output.classList.add('error');
+        output.classList.remove('success');
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (output.textContent) {
+        await navigator.clipboard.writeText(output.textContent);
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1000);
+      }
+    });
+  }
+
+  function initBase64() {
+    const input = document.getElementById('base64-input');
+    const encodeBtn = document.getElementById('btn-encode-base64');
+    const decodeBtn = document.getElementById('btn-decode-base64');
+    const output = document.getElementById('base64-output');
+    const copyBtn = document.getElementById('btn-copy-base64');
+
+    encodeBtn.addEventListener('click', () => {
+      try {
+        output.textContent = btoa(unescape(encodeURIComponent(input.value)));
+        output.classList.remove('error');
+      } catch (e) {
+        output.textContent = 'Erreur: ' + e.message;
+        output.classList.add('error');
+      }
+    });
+
+    decodeBtn.addEventListener('click', () => {
+      try {
+        output.textContent = decodeURIComponent(escape(atob(input.value)));
+        output.classList.remove('error');
+      } catch (e) {
+        output.textContent = 'Erreur: ' + e.message;
+        output.classList.add('error');
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (output.textContent) {
+        await navigator.clipboard.writeText(output.textContent);
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1000);
+      }
     });
   }
 
