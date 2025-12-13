@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Toolkit</title>
+  <title>Toolkit - Sidebar</title>
   <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="sidebar.css">
 </head>
-<body>
-  <div class="container">
+<body data-mode="sidebar">
+  <div class="container sidebar-container">
     <header>
       <div class="header-top">
         <h1 id="popup-title">Toolkit</h1>
         <div class="header-actions">
-          <button id="btn-switch-mode" class="settings-btn" title="Ouvrir en barre laterale">📐</button>
+          <button id="btn-switch-mode" class="settings-btn" title="Passer en mode Popup">📌</button>
           <button id="btn-reload" class="settings-btn" data-i18n-title="app.reload" title="Recharger l'extension">🔄</button>
           <button id="btn-settings" class="settings-btn" data-i18n-title="app.settings" title="Reglages">⚙️</button>
           <div id="update-badge" class="update-badge hidden" title="Mise a jour disponible">

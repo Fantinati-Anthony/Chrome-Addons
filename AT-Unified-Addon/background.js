@@ -1,7 +1,45 @@
 // AT Unified Toolkit - Background Service Worker
 
+// ========== DISPLAY MODE MANAGEMENT ==========
+// Mode: 'popup' (default) or 'sidebar'
+let currentMode = 'popup';
+
+// Initialize mode on startup
+async function initDisplayMode() {
+  const data = await chrome.storage.local.get(['displayMode']);
+  currentMode = data.displayMode || 'popup';
+  await applyDisplayMode();
+}
+
+// Apply the current display mode
+async function applyDisplayMode() {
+  if (currentMode === 'sidebar') {
+    // Sidebar mode: disable popup, enable side panel on click
+    await chrome.action.setPopup({ popup: '' });
+    // Side panel will open on action click
+  } else {
+    // Popup mode: enable popup
+    await chrome.action.setPopup({ popup: 'popup.html' });
+  }
+  console.log('Display mode set to:', currentMode);
+}
+
+// Handle action click (only triggered when popup is disabled)
+chrome.action.onClicked.addListener(async (tab) => {
+  if (currentMode === 'sidebar') {
+    // Open side panel
+    await chrome.sidePanel.open({ tabId: tab.id });
+  }
+});
+
+// Initialize display mode on startup
+initDisplayMode();
+
 // Context menu for GPT text correction
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
+  // Initialize display mode
+  await initDisplayMode();
+
   // Create context menu for text correction
   chrome.contextMenus.create({
     id: 'correct-with-gpt',
@@ -198,6 +236,35 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       chrome.storage.local.get(['hasUpdate', 'remoteVersion', 'changelog'], (data) => {
         sendResponse(data);
       });
+    });
+    return true;
+  }
+});
+
+// ========== DISPLAY MODE SWITCHING ==========
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'switchDisplayMode') {
+    const newMode = message.mode;
+    currentMode = newMode;
+    chrome.storage.local.set({ displayMode: newMode }).then(() => {
+      applyDisplayMode().then(() => {
+        sendResponse({ success: true, mode: newMode });
+      });
+    });
+    return true;
+  }
+
+  if (message.type === 'getDisplayMode') {
+    sendResponse({ mode: currentMode });
+    return true;
+  }
+
+  if (message.type === 'openSidePanel') {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      if (tabs[0]) {
+        await chrome.sidePanel.open({ tabId: tabs[0].id });
+        sendResponse({ success: true });
+      }
     });
     return true;
   }

@@ -1,0 +1,73 @@
+/* Sidebar-specific styles for AT Unified Toolkit */
+
+/* Body in sidebar mode */
+body[data-mode="sidebar"] {
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Container adjustments for sidebar */
+.sidebar-container {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  border-radius: 0;
+}
+
+/* Header adjustments */
+body[data-mode="sidebar"] .header-top {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-primary);
+  padding-top: 10px;
+}
+
+/* Grid adjustments for wider sidebar */
+body[data-mode="sidebar"] .tools-grid {
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 8px;
+}
+
+/* Tool panel full height */
+body[data-mode="sidebar"] .tool-panel {
+  min-height: calc(100vh - 60px);
+}
+
+/* Panel content scrollable */
+body[data-mode="sidebar"] .panel-content {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+/* Search bar sticky */
+body[data-mode="sidebar"] .search-container {
+  position: sticky;
+  top: 50px;
+  z-index: 99;
+  background: var(--bg-primary);
+  padding: 5px 0;
+}
+
+/* Category sections */
+body[data-mode="sidebar"] .category-section {
+  margin-bottom: 10px;
+}
+
+/* Scrollbar styling */
+body[data-mode="sidebar"]::-webkit-scrollbar {
+  width: 8px;
+}
+
+body[data-mode="sidebar"]::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+body[data-mode="sidebar"]::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+body[data-mode="sidebar"]::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
