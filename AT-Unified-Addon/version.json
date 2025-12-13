@@ -1,5 +1,5 @@
 {
-  "version": "1.9.1",
-  "releaseDate": "2025-12-12",
-  "changelog": "Custom buttons can now be added to favorites, search includes custom buttons"
+  "version": "2.0.0",
+  "releaseDate": "2025-12-13",
+  "changelog": "20 new tools: Word count, Keywords, Headings, Broken links, Readability, Schema, robots.txt, Palette, Measure, Grid, Load time, Web Vitals, Social preview, Character count, UTM builder, Text diff, Notes, Pomodoro, JSON formatter, Base64"
 }

@@ -7,6 +7,46 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [2.0.0] - 2025-12-13
+
+### Ajoute
+- **20 nouveaux mini-outils pour agences de communication** :
+
+  **SEO & Analyse** :
+  - **Compteur de mots** : Analyse complete (mots, caracteres, phrases, paragraphes, temps de lecture)
+  - **Densite mots-cles** : Analyse des mots-cles avec frequence et pourcentage
+  - **Analyseur H1-H6** : Visualisation hierarchique de tous les titres
+  - **Liens casses** : Verification automatique des liens 404
+  - **Score de lisibilite** : Score Flesch et niveau scolaire
+  - **Schema.org** : Lien vers le validateur Schema.org
+  - **robots.txt** : Affichage du fichier robots.txt du site
+
+  **Developpement** :
+  - **Extracteur de palette** : Extraction des couleurs utilisees sur la page
+  - **Mesure d'elements** : Mesure interactive des dimensions (padding, margin)
+  - **Grille overlay** : Affichage d'une grille personnalisable (colonnes, gouttiere, couleur)
+  - **Temps de chargement** : Metriques de performance detaillees
+  - **Core Web Vitals** : FCP, LCP et autres metriques vitales
+
+  **Social & Marketing** (nouvelle categorie) :
+  - **Apercu social** : Previsualisation des meta tags Open Graph (Facebook, Twitter)
+  - **Compteur de caracteres** : Avec limites Twitter, Instagram, Facebook, LinkedIn
+  - **Generateur UTM** : Creation d'URLs avec parametres UTM
+  - **Comparateur de texte** : Diff ligne par ligne entre deux textes
+
+  **Utilitaires** :
+  - **Notes rapides** : Notes par domaine sauvegardees localement
+  - **Minuteur Pomodoro** : Travail 25min / Pause 5min avec compteur de sessions
+  - **Formateur JSON** : Formatage, minification et validation JSON
+  - **Encodeur Base64** : Encodage/decodage Base64
+
+### Ameliore
+- Nouvelle categorie **Social & Marketing** pour regrouper les outils marketing
+- Interface enrichie avec plus de 40 outils au total
+- Styles CSS ameliores pour tous les nouveaux outils
+
+---
+
 ## [1.9.1] - 2025-12-12
 
 ### Ajoute
