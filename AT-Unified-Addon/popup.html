@@ -65,6 +65,49 @@
         </div>
       </div>
 
+      <!-- Network & Remote Category -->
+      <div id="category-network" class="category-section">
+        <div class="category-header" data-collapsed="true">
+          <span class="category-emoji">🖥️</span>
+          <span class="category-title" data-i18n="categories.network">Reseau & Remote</span>
+          <span class="category-toggle">▼</span>
+        </div>
+        <div class="tools-grid">
+          <button class="tool-icon" data-tool="remotedesktop" data-title="Remote Desktop">
+            <span class="tool-emoji">🖥️</span>
+            <span class="tool-label" data-i18n="tools.remotedesktop.label">Remote</span>
+          </button>
+          <button class="tool-icon" data-tool="myip" data-title="Mon IP">
+            <span class="tool-emoji">📍</span>
+            <span class="tool-label" data-i18n="tools.myip.label">Mon IP</span>
+          </button>
+          <button class="tool-icon" data-tool="speedtest" data-action="direct">
+            <span class="tool-emoji">⚡</span>
+            <span class="tool-label" data-i18n="tools.speedtest.label">Speed</span>
+          </button>
+          <button class="tool-icon" data-tool="ping" data-action="direct">
+            <span class="tool-emoji">📶</span>
+            <span class="tool-label" data-i18n="tools.ping.label">Ping</span>
+          </button>
+          <button class="tool-icon" data-tool="traceroute" data-action="direct">
+            <span class="tool-emoji">🛤️</span>
+            <span class="tool-label" data-i18n="tools.traceroute.label">Trace</span>
+          </button>
+          <button class="tool-icon" data-tool="portscan" data-action="direct">
+            <span class="tool-emoji">🔌</span>
+            <span class="tool-label" data-i18n="tools.portscan.label">Ports</span>
+          </button>
+          <button class="tool-icon" data-tool="dnslookup" data-action="direct">
+            <span class="tool-emoji">🔎</span>
+            <span class="tool-label" data-i18n="tools.dnslookup.label">DNS</span>
+          </button>
+          <button class="tool-icon" data-tool="mailtester" data-action="direct">
+            <span class="tool-emoji">✉️</span>
+            <span class="tool-label" data-i18n="tools.mailtester.label">Mail Test</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Domain & DNS Category -->
       <div id="category-domainDns" class="category-section">
         <div class="category-header" data-collapsed="true">
@@ -79,15 +122,15 @@
           </button>
           <button class="tool-icon" data-tool="dnschecker" data-action="direct">
             <span class="tool-emoji">🌐</span>
-            <span class="tool-label" data-i18n="tools.dnschecker.label">DNS</span>
-          </button>
-          <button class="tool-icon" data-tool="mailtester" data-action="direct">
-            <span class="tool-emoji">✉️</span>
-            <span class="tool-label" data-i18n="tools.mailtester.label">Mail Test</span>
+            <span class="tool-label" data-i18n="tools.dnschecker.label">DNS Check</span>
           </button>
           <button class="tool-icon" data-tool="ssl" data-title="SSL/TLS">
             <span class="tool-emoji">🔒</span>
             <span class="tool-label" data-i18n="tools.ssl.label">SSL</span>
+          </button>
+          <button class="tool-icon" data-tool="redirect" data-title="Redirect Checker">
+            <span class="tool-emoji">↪️</span>
+            <span class="tool-label" data-i18n="tools.redirect.label">Redirect</span>
           </button>
         </div>
       </div>
@@ -179,17 +222,21 @@
             <span class="tool-emoji">📋</span>
             <span class="tool-label" data-i18n="tools.headers.label">Headers</span>
           </button>
-          <button class="tool-icon" data-tool="lorem" data-title="Lorem Ipsum">
-            <span class="tool-emoji">📝</span>
-            <span class="tool-label" data-i18n="tools.lorem.label">Lorem</span>
+          <button class="tool-icon" data-tool="regex" data-title="Regex Tester">
+            <span class="tool-emoji">🔣</span>
+            <span class="tool-label" data-i18n="tools.regex.label">Regex</span>
           </button>
-          <button class="tool-icon" data-tool="fonts" data-title="Polices detectees">
-            <span class="tool-emoji">🔤</span>
-            <span class="tool-label" data-i18n="tools.fonts.label">Fonts</span>
+          <button class="tool-icon" data-tool="mixedcontent" data-title="Mixed Content">
+            <span class="tool-emoji">🔀</span>
+            <span class="tool-label" data-i18n="tools.mixedcontent.label">Mixed</span>
           </button>
-          <button class="tool-icon" data-tool="palette" data-title="Palette couleurs">
-            <span class="tool-emoji">🎨</span>
-            <span class="tool-label" data-i18n="tools.palette.label">Palette</span>
+          <button class="tool-icon" data-tool="accessibility" data-title="Accessibilite">
+            <span class="tool-emoji">♿</span>
+            <span class="tool-label" data-i18n="tools.accessibility.label">A11y</span>
+          </button>
+          <button class="tool-icon" data-tool="mobiletest" data-action="direct">
+            <span class="tool-emoji">📱</span>
+            <span class="tool-label" data-i18n="tools.mobiletest.label">Mobile</span>
           </button>
           <button class="tool-icon" data-tool="measure" data-title="Mesurer elements">
             <span class="tool-emoji">📏</span>
@@ -268,6 +315,41 @@
         </div>
       </div>
 
+      <!-- Design & Media Category -->
+      <div id="category-design" class="category-section">
+        <div class="category-header" data-collapsed="true">
+          <span class="category-emoji">🎨</span>
+          <span class="category-title" data-i18n="categories.design">Design & Medias</span>
+          <span class="category-toggle">▼</span>
+        </div>
+        <div class="tools-grid">
+          <button class="tool-icon" data-tool="colorpicker" data-title="Color Picker">
+            <span class="tool-emoji">🎨</span>
+            <span class="tool-label" data-i18n="tools.colorpicker.label">Couleurs</span>
+          </button>
+          <button class="tool-icon" data-tool="palette" data-title="Palette couleurs">
+            <span class="tool-emoji">🖌️</span>
+            <span class="tool-label" data-i18n="tools.palette.label">Palette</span>
+          </button>
+          <button class="tool-icon" data-tool="colorconvert" data-title="Convertisseur couleurs">
+            <span class="tool-emoji">🔄</span>
+            <span class="tool-label" data-i18n="tools.colorconvert.label">Convert</span>
+          </button>
+          <button class="tool-icon" data-tool="fonts" data-title="Polices detectees">
+            <span class="tool-emoji">🔤</span>
+            <span class="tool-label" data-i18n="tools.fonts.label">Fonts</span>
+          </button>
+          <button class="tool-icon" data-tool="qrcode" data-title="QR Code">
+            <span class="tool-emoji">📱</span>
+            <span class="tool-label" data-i18n="tools.qrcode.label">QR Code</span>
+          </button>
+          <button class="tool-icon" data-tool="favicon" data-title="Favicon Generator">
+            <span class="tool-emoji">🖼️</span>
+            <span class="tool-label" data-i18n="tools.favicon.label">Favicon</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Utilities Category -->
       <div id="category-utilities" class="category-section">
         <div class="category-header" data-collapsed="true">
@@ -279,14 +361,6 @@
           <button class="tool-icon" data-tool="desktop" data-action="direct">
             <span class="tool-emoji">🖥️</span>
             <span class="tool-label" data-i18n="tools.desktop.label">Raccourci</span>
-          </button>
-          <button class="tool-icon" data-tool="colorpicker" data-title="Color Picker">
-            <span class="tool-emoji">🎨</span>
-            <span class="tool-label" data-i18n="tools.colorpicker.label">Couleurs</span>
-          </button>
-          <button class="tool-icon" data-tool="qrcode" data-title="QR Code">
-            <span class="tool-emoji">📱</span>
-            <span class="tool-label" data-i18n="tools.qrcode.label">QR Code</span>
           </button>
           <button class="tool-icon" data-tool="downloads" data-title="Telechargements">
             <span class="tool-emoji">📥</span>
@@ -304,6 +378,10 @@
             <span class="tool-emoji">🌍</span>
             <span class="tool-label" data-i18n="tools.translate.label">Traduire</span>
           </button>
+          <button class="tool-icon" data-tool="lorem" data-title="Lorem Ipsum">
+            <span class="tool-emoji">📝</span>
+            <span class="tool-label" data-i18n="tools.lorem.label">Lorem</span>
+          </button>
           <button class="tool-icon" data-tool="notes" data-title="Notes rapides">
             <span class="tool-emoji">📋</span>
             <span class="tool-label" data-i18n="tools.notes.label">Notes</span>
@@ -319,6 +397,18 @@
           <button class="tool-icon" data-tool="base64" data-title="Encodeur Base64">
             <span class="tool-emoji">🔐</span>
             <span class="tool-label" data-i18n="tools.base64.label">Base64</span>
+          </button>
+          <button class="tool-icon" data-tool="hashgen" data-title="Hash Generator">
+            <span class="tool-emoji">#️⃣</span>
+            <span class="tool-label" data-i18n="tools.hashgen.label">Hash</span>
+          </button>
+          <button class="tool-icon" data-tool="urlencoder" data-title="URL Encoder">
+            <span class="tool-emoji">🔗</span>
+            <span class="tool-label" data-i18n="tools.urlencoder.label">URL Enc</span>
+          </button>
+          <button class="tool-icon" data-tool="passwordgen" data-title="Password Generator">
+            <span class="tool-emoji">🔑</span>
+            <span class="tool-label" data-i18n="tools.passwordgen.label">Password</span>
           </button>
         </div>
       </div>
@@ -750,6 +840,129 @@
       </div>
       <div id="base64-output" class="base64-output"></div>
       <button id="btn-copy-base64" class="small-btn" data-i18n="base64.copy">Copier</button>
+    </div>
+  </template>
+
+  <!-- NEW TOOLS v3.0 TEMPLATES -->
+
+  <template id="tpl-remotedesktop">
+    <div class="tool-content">
+      <div id="remote-os-info" class="os-info"></div>
+      <div class="remote-options">
+        <button id="btn-remote-web" class="action-btn" data-i18n="remotedesktop.webAccess">Acces Web</button>
+        <button id="btn-remote-download" class="action-btn" data-i18n="remotedesktop.download">Telecharger</button>
+      </div>
+      <div id="remote-qr" class="remote-qr-container">
+        <p data-i18n="remotedesktop.mobileApp">Application Mobile:</p>
+        <canvas id="remote-qr-canvas"></canvas>
+        <div class="remote-store-links">
+          <a href="#" id="link-android" target="_blank">Android</a>
+          <a href="#" id="link-ios" target="_blank">iOS</a>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tpl-myip">
+    <div class="tool-content">
+      <button id="btn-get-ip" class="action-btn" data-i18n="myip.detect">Detecter mon IP</button>
+      <div id="ip-results" class="ip-info"></div>
+    </div>
+  </template>
+
+  <template id="tpl-redirect">
+    <div class="tool-content">
+      <div id="redirect-url" class="domain-indicator"></div>
+      <button id="btn-check-redirect" class="action-btn" data-i18n="redirect.check">Verifier les redirections</button>
+      <div id="redirect-results" class="redirect-chain"></div>
+    </div>
+  </template>
+
+  <template id="tpl-mixedcontent">
+    <div class="tool-content">
+      <button id="btn-check-mixed" class="action-btn" data-i18n="mixedcontent.check">Scanner le contenu mixte</button>
+      <div id="mixed-results" class="mixed-list"></div>
+    </div>
+  </template>
+
+  <template id="tpl-accessibility">
+    <div class="tool-content">
+      <button id="btn-check-a11y" class="action-btn" data-i18n="accessibility.check">Analyser l'accessibilite</button>
+      <div id="a11y-results" class="a11y-report"></div>
+    </div>
+  </template>
+
+  <template id="tpl-regex">
+    <div class="tool-content">
+      <input type="text" id="regex-pattern" placeholder="Expression reguliere..." class="regex-input">
+      <div class="regex-flags">
+        <label><input type="checkbox" id="regex-g" checked> g</label>
+        <label><input type="checkbox" id="regex-i"> i</label>
+        <label><input type="checkbox" id="regex-m"> m</label>
+      </div>
+      <textarea id="regex-test" placeholder="Texte a tester..." rows="4"></textarea>
+      <button id="btn-test-regex" class="action-btn" data-i18n="regex.test">Tester</button>
+      <div id="regex-results" class="regex-matches"></div>
+    </div>
+  </template>
+
+  <template id="tpl-colorconvert">
+    <div class="tool-content">
+      <input type="text" id="color-input" placeholder="#FF5733 ou rgb(255,87,51)..." class="color-input-field">
+      <input type="color" id="color-visual" value="#FF5733">
+      <button id="btn-convert-color" class="action-btn" data-i18n="colorconvert.convert">Convertir</button>
+      <div id="color-results" class="color-formats"></div>
+    </div>
+  </template>
+
+  <template id="tpl-favicon">
+    <div class="tool-content">
+      <div id="favicon-current" class="favicon-preview"></div>
+      <button id="btn-extract-favicon" class="action-btn" data-i18n="favicon.extract">Extraire le favicon</button>
+      <div id="favicon-results" class="favicon-sizes"></div>
+      <button id="btn-generate-favicon" class="small-btn" data-i18n="favicon.generate">Generer multi-tailles</button>
+    </div>
+  </template>
+
+  <template id="tpl-hashgen">
+    <div class="tool-content">
+      <textarea id="hash-input" placeholder="Texte a hasher..." rows="3"></textarea>
+      <div class="tool-actions">
+        <button id="btn-hash-md5" class="small-btn">MD5</button>
+        <button id="btn-hash-sha1" class="small-btn">SHA-1</button>
+        <button id="btn-hash-sha256" class="action-btn">SHA-256</button>
+        <button id="btn-hash-sha512" class="small-btn">SHA-512</button>
+      </div>
+      <div id="hash-output" class="hash-result"></div>
+      <button id="btn-copy-hash" class="small-btn" data-i18n="actions.copy">Copier</button>
+    </div>
+  </template>
+
+  <template id="tpl-urlencoder">
+    <div class="tool-content">
+      <textarea id="url-input" placeholder="Texte ou URL a encoder/decoder..." rows="3"></textarea>
+      <div class="tool-actions">
+        <button id="btn-url-encode" class="action-btn" data-i18n="urlencoder.encode">Encoder</button>
+        <button id="btn-url-decode" class="small-btn" data-i18n="urlencoder.decode">Decoder</button>
+      </div>
+      <div id="url-output" class="url-result"></div>
+      <button id="btn-copy-url" class="small-btn" data-i18n="actions.copy">Copier</button>
+    </div>
+  </template>
+
+  <template id="tpl-passwordgen">
+    <div class="tool-content">
+      <div class="password-options">
+        <label><span data-i18n="passwordgen.length">Longueur</span>: <input type="number" id="pwd-length" value="16" min="4" max="128"></label>
+        <label><input type="checkbox" id="pwd-upper" checked> A-Z</label>
+        <label><input type="checkbox" id="pwd-lower" checked> a-z</label>
+        <label><input type="checkbox" id="pwd-numbers" checked> 0-9</label>
+        <label><input type="checkbox" id="pwd-symbols" checked> !@#$</label>
+      </div>
+      <button id="btn-generate-pwd" class="action-btn" data-i18n="passwordgen.generate">Generer</button>
+      <div id="password-output" class="password-result"></div>
+      <div class="password-strength" id="pwd-strength"></div>
+      <button id="btn-copy-pwd" class="small-btn" data-i18n="actions.copy">Copier</button>
     </div>
   </template>
 

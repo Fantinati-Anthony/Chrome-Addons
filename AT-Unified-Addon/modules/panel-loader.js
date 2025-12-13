@@ -53,7 +53,19 @@ const PanelLoader = (function() {
     notes: initNotes,
     pomodoro: initPomodoro,
     jsonformat: initJsonFormat,
-    base64: initBase64
+    base64: initBase64,
+    // New tools v3.0
+    remotedesktop: initRemoteDesktop,
+    myip: initMyIP,
+    redirect: initRedirect,
+    mixedcontent: initMixedContent,
+    accessibility: initAccessibility,
+    regex: initRegex,
+    colorconvert: initColorConvert,
+    favicon: initFavicon,
+    hashgen: initHashGen,
+    urlencoder: initUrlEncoder,
+    passwordgen: initPasswordGen
   };
 
   // Direct actions (no panel needed)
@@ -148,6 +160,74 @@ const PanelLoader = (function() {
         chrome.tabs.create({ url: `https://validator.schema.org/#url=${encodeURIComponent(tab.url)}` });
       } catch (error) {
         console.error('Error opening Schema validator:', error);
+        alert('Erreur');
+      }
+    },
+    // New direct actions v3.0
+    speedtest: () => {
+      chrome.tabs.create({ url: 'https://www.speedtest.net/' });
+    },
+    ping: async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab || !tab.url) {
+          alert('URL non disponible');
+          return;
+        }
+        const domain = new URL(tab.url).hostname;
+        chrome.tabs.create({ url: `https://ping.eu/ping/?host=${encodeURIComponent(domain)}` });
+      } catch (error) {
+        alert('Erreur');
+      }
+    },
+    traceroute: async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab || !tab.url) {
+          alert('URL non disponible');
+          return;
+        }
+        const domain = new URL(tab.url).hostname;
+        chrome.tabs.create({ url: `https://ping.eu/traceroute/?host=${encodeURIComponent(domain)}` });
+      } catch (error) {
+        alert('Erreur');
+      }
+    },
+    portscan: async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab || !tab.url) {
+          alert('URL non disponible');
+          return;
+        }
+        const domain = new URL(tab.url).hostname;
+        chrome.tabs.create({ url: `https://ping.eu/port-chk/?host=${encodeURIComponent(domain)}` });
+      } catch (error) {
+        alert('Erreur');
+      }
+    },
+    dnslookup: async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab || !tab.url) {
+          alert('URL non disponible');
+          return;
+        }
+        const domain = new URL(tab.url).hostname;
+        chrome.tabs.create({ url: `https://mxtoolbox.com/SuperTool.aspx?action=dns%3a${encodeURIComponent(domain)}&run=toolpage` });
+      } catch (error) {
+        alert('Erreur');
+      }
+    },
+    mobiletest: async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab || !tab.url) {
+          alert('URL non disponible');
+          return;
+        }
+        chrome.tabs.create({ url: `https://search.google.com/test/mobile-friendly?url=${encodeURIComponent(tab.url)}` });
+      } catch (error) {
         alert('Erreur');
       }
     }
@@ -2307,6 +2387,526 @@ const PanelLoader = (function() {
 
     copyBtn.addEventListener('click', async () => {
       if (output.textContent) {
+        await navigator.clipboard.writeText(output.textContent);
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1000);
+      }
+    });
+  }
+
+  // ========== NEW TOOLS v3.0 INITIALIZERS ==========
+
+  function initRemoteDesktop() {
+    const osInfo = document.getElementById('remote-os-info');
+    const webBtn = document.getElementById('btn-remote-web');
+    const downloadBtn = document.getElementById('btn-remote-download');
+    const qrCanvas = document.getElementById('remote-qr-canvas');
+    const androidLink = document.getElementById('link-android');
+    const iosLink = document.getElementById('link-ios');
+
+    // Detect OS
+    const platform = navigator.platform.toLowerCase();
+    const userAgent = navigator.userAgent.toLowerCase();
+    let osName = 'Unknown';
+    let osIcon = '💻';
+
+    if (platform.includes('win') || userAgent.includes('windows')) {
+      osName = 'Windows';
+      osIcon = '🪟';
+    } else if (platform.includes('mac') || userAgent.includes('macintosh')) {
+      osName = 'macOS';
+      osIcon = '🍎';
+    } else if (platform.includes('linux') || userAgent.includes('linux')) {
+      osName = 'Linux';
+      osIcon = '🐧';
+    }
+
+    osInfo.innerHTML = `<div class="os-icon">${osIcon}</div><div class="os-name">${osName}</div>`;
+
+    webBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'https://remotedesktop.google.com/access/' });
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'https://remotedesktop.google.com/access/' });
+    });
+
+    androidLink.href = 'https://play.google.com/store/apps/details?id=com.google.chromeremotedesktop';
+    iosLink.href = 'https://apps.apple.com/app/chrome-remote-desktop/id944025852';
+
+    generateQRCode(qrCanvas, 'https://remotedesktop.google.com/');
+  }
+
+  async function initMyIP() {
+    const getIpBtn = document.getElementById('btn-get-ip');
+    const resultsDiv = document.getElementById('ip-results');
+
+    getIpBtn.addEventListener('click', async () => {
+      resultsDiv.innerHTML = '<div class="loading">Detection en cours...</div>';
+
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+
+        resultsDiv.innerHTML = `
+          <div class="ip-item"><span class="ip-label">IP</span><span class="ip-value" data-copy="${data.ip}">${data.ip}</span></div>
+          <div class="ip-item"><span class="ip-label">Ville</span><span class="ip-value">${data.city || 'N/A'}</span></div>
+          <div class="ip-item"><span class="ip-label">Region</span><span class="ip-value">${data.region || 'N/A'}</span></div>
+          <div class="ip-item"><span class="ip-label">Pays</span><span class="ip-value">${data.country_name || 'N/A'}</span></div>
+          <div class="ip-item"><span class="ip-label">FAI</span><span class="ip-value">${data.org || 'N/A'}</span></div>
+        `;
+
+        resultsDiv.querySelectorAll('.ip-value[data-copy]').forEach(el => {
+          el.addEventListener('click', async () => {
+            await navigator.clipboard.writeText(el.dataset.copy);
+            el.textContent = 'Copie!';
+            setTimeout(() => { el.textContent = el.dataset.copy; }, 1000);
+          });
+        });
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur de detection</div>';
+      }
+    });
+  }
+
+  async function initRedirect() {
+    const urlDiv = document.getElementById('redirect-url');
+    const checkBtn = document.getElementById('btn-check-redirect');
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab && tab.url) {
+        urlDiv.textContent = tab.url.substring(0, 50) + (tab.url.length > 50 ? '...' : '');
+      }
+    } catch (e) {
+      urlDiv.textContent = 'URL non disponible';
+    }
+
+    checkBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab || !tab.url) return;
+        chrome.tabs.create({ url: `https://wheregoes.com/retracer.php?url=${encodeURIComponent(tab.url)}` });
+      } catch (error) {
+        console.error('Redirect check error:', error);
+      }
+    });
+  }
+
+  async function initMixedContent() {
+    const checkBtn = document.getElementById('btn-check-mixed');
+    const resultsDiv = document.getElementById('mixed-results');
+
+    checkBtn.addEventListener('click', async () => {
+      resultsDiv.innerHTML = '<div class="loading">Analyse en cours...</div>';
+
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const mixed = [];
+            document.querySelectorAll('img[src^="http://"]').forEach(el => {
+              mixed.push({ type: 'Image', url: el.src });
+            });
+            document.querySelectorAll('script[src^="http://"]').forEach(el => {
+              mixed.push({ type: 'Script', url: el.src });
+            });
+            document.querySelectorAll('link[rel="stylesheet"][href^="http://"]').forEach(el => {
+              mixed.push({ type: 'CSS', url: el.href });
+            });
+            document.querySelectorAll('iframe[src^="http://"]').forEach(el => {
+              mixed.push({ type: 'Iframe', url: el.src });
+            });
+            return mixed;
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          const mixed = results[0].result;
+          if (mixed.length === 0) {
+            resultsDiv.innerHTML = '<div class="mixed-success">Aucun contenu mixte detecte!</div>';
+          } else {
+            resultsDiv.innerHTML = mixed.map(item => `
+              <div class="mixed-item">
+                <div class="mixed-type">${escapeHtml(item.type)}</div>
+                <div class="mixed-url">${escapeHtml(item.url)}</div>
+              </div>
+            `).join('');
+          }
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur d\'analyse</div>';
+      }
+    });
+  }
+
+  async function initAccessibility() {
+    const checkBtn = document.getElementById('btn-check-a11y');
+    const resultsDiv = document.getElementById('a11y-results');
+
+    checkBtn.addEventListener('click', async () => {
+      resultsDiv.innerHTML = '<div class="loading">Analyse en cours...</div>';
+
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const results = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            const issues = { errors: [], warnings: [], passes: [] };
+
+            const imgsWithoutAlt = document.querySelectorAll('img:not([alt])');
+            if (imgsWithoutAlt.length > 0) {
+              issues.errors.push(`${imgsWithoutAlt.length} image(s) sans attribut alt`);
+            } else {
+              issues.passes.push('Toutes les images ont un alt');
+            }
+
+            const h1Count = document.querySelectorAll('h1').length;
+            if (h1Count === 0) {
+              issues.warnings.push('Aucune balise H1');
+            } else if (h1Count > 1) {
+              issues.warnings.push(`${h1Count} balises H1 (recommande: 1)`);
+            } else {
+              issues.passes.push('Hierarchie H1 correcte');
+            }
+
+            if (!document.documentElement.lang) {
+              issues.warnings.push('Attribut lang manquant sur <html>');
+            } else {
+              issues.passes.push(`Langue: ${document.documentElement.lang}`);
+            }
+
+            return issues;
+          }
+        });
+
+        if (results && results[0] && results[0].result) {
+          const issues = results[0].result;
+          const score = Math.max(0, 100 - (issues.errors.length * 15) - (issues.warnings.length * 5));
+          let scoreClass = score >= 80 ? 'good' : score >= 50 ? 'medium' : 'bad';
+
+          let html = `<div class="a11y-score ${scoreClass}"><span class="score-value">${score}/100</span></div>`;
+
+          if (issues.errors.length > 0) {
+            html += '<div class="a11y-section"><h4>Erreurs</h4>';
+            issues.errors.forEach(e => {
+              html += `<div class="a11y-item error"><span class="a11y-icon">❌</span><span class="a11y-text">${escapeHtml(e)}</span></div>`;
+            });
+            html += '</div>';
+          }
+
+          if (issues.warnings.length > 0) {
+            html += '<div class="a11y-section"><h4>Avertissements</h4>';
+            issues.warnings.forEach(w => {
+              html += `<div class="a11y-item warning"><span class="a11y-icon">⚠️</span><span class="a11y-text">${escapeHtml(w)}</span></div>`;
+            });
+            html += '</div>';
+          }
+
+          if (issues.passes.length > 0) {
+            html += '<div class="a11y-section"><h4>OK</h4>';
+            issues.passes.forEach(p => {
+              html += `<div class="a11y-item pass"><span class="a11y-icon">✅</span><span class="a11y-text">${escapeHtml(p)}</span></div>`;
+            });
+            html += '</div>';
+          }
+
+          resultsDiv.innerHTML = html;
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur d\'analyse</div>';
+      }
+    });
+  }
+
+  function initRegex() {
+    const patternInput = document.getElementById('regex-pattern');
+    const testTextarea = document.getElementById('regex-test');
+    const gFlag = document.getElementById('regex-g');
+    const iFlag = document.getElementById('regex-i');
+    const mFlag = document.getElementById('regex-m');
+    const testBtn = document.getElementById('btn-test-regex');
+    const resultsDiv = document.getElementById('regex-results');
+
+    testBtn.addEventListener('click', () => {
+      const pattern = patternInput.value;
+      const text = testTextarea.value;
+
+      if (!pattern) {
+        resultsDiv.innerHTML = '<div class="regex-no-match">Entrez une expression reguliere</div>';
+        return;
+      }
+
+      try {
+        let flags = '';
+        if (gFlag.checked) flags += 'g';
+        if (iFlag.checked) flags += 'i';
+        if (mFlag.checked) flags += 'm';
+
+        const regex = new RegExp(pattern, flags);
+        const matches = text.match(regex);
+
+        if (!matches || matches.length === 0) {
+          resultsDiv.innerHTML = '<div class="regex-no-match">Aucune correspondance</div>';
+        } else {
+          resultsDiv.innerHTML = matches.map((m, i) => `
+            <div class="regex-match"><span class="regex-match-index">[${i}]</span>${escapeHtml(m)}</div>
+          `).join('');
+        }
+      } catch (e) {
+        resultsDiv.innerHTML = `<div class="status-message error">Regex invalide: ${escapeHtml(e.message)}</div>`;
+      }
+    });
+  }
+
+  function initColorConvert() {
+    const colorInput = document.getElementById('color-input');
+    const colorVisual = document.getElementById('color-visual');
+    const convertBtn = document.getElementById('btn-convert-color');
+    const resultsDiv = document.getElementById('color-results');
+
+    colorVisual.addEventListener('input', () => {
+      colorInput.value = colorVisual.value;
+    });
+
+    convertBtn.addEventListener('click', () => {
+      let color = colorInput.value.trim();
+      let r, g, b;
+
+      if (color.match(/^#?[0-9a-f]{6}$/i)) {
+        color = color.replace('#', '');
+        r = parseInt(color.substr(0, 2), 16);
+        g = parseInt(color.substr(2, 2), 16);
+        b = parseInt(color.substr(4, 2), 16);
+      } else if (color.match(/^#?[0-9a-f]{3}$/i)) {
+        color = color.replace('#', '');
+        r = parseInt(color[0] + color[0], 16);
+        g = parseInt(color[1] + color[1], 16);
+        b = parseInt(color[2] + color[2], 16);
+      } else if (color.match(/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i)) {
+        const match = color.match(/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i);
+        r = parseInt(match[1]);
+        g = parseInt(match[2]);
+        b = parseInt(match[3]);
+      } else {
+        resultsDiv.innerHTML = '<div class="status-message error">Format non reconnu</div>';
+        return;
+      }
+
+      const hex = '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+      const rgb = `rgb(${r}, ${g}, ${b})`;
+      const rgba = `rgba(${r}, ${g}, ${b}, 1)`;
+
+      const rN = r / 255, gN = g / 255, bN = b / 255;
+      const max = Math.max(rN, gN, bN), min = Math.min(rN, gN, bN);
+      let h, s, l = (max + min) / 2;
+
+      if (max === min) {
+        h = s = 0;
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case rN: h = ((gN - bN) / d + (gN < bN ? 6 : 0)) / 6; break;
+          case gN: h = ((bN - rN) / d + 2) / 6; break;
+          case bN: h = ((rN - gN) / d + 4) / 6; break;
+        }
+      }
+      const hsl = `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
+
+      colorVisual.value = hex;
+
+      resultsDiv.innerHTML = `
+        <div class="color-format-item"><span class="format-name">HEX</span><span class="format-value" data-copy="${hex}">${hex}</span></div>
+        <div class="color-format-item"><span class="format-name">RGB</span><span class="format-value" data-copy="${rgb}">${rgb}</span></div>
+        <div class="color-format-item"><span class="format-name">RGBA</span><span class="format-value" data-copy="${rgba}">${rgba}</span></div>
+        <div class="color-format-item"><span class="format-name">HSL</span><span class="format-value" data-copy="${hsl}">${hsl}</span></div>
+      `;
+
+      resultsDiv.querySelectorAll('.format-value').forEach(el => {
+        el.addEventListener('click', async () => {
+          await navigator.clipboard.writeText(el.dataset.copy);
+          el.textContent = 'Copie!';
+          setTimeout(() => { el.textContent = el.dataset.copy; }, 1000);
+        });
+      });
+    });
+  }
+
+  async function initFavicon() {
+    const previewDiv = document.getElementById('favicon-current');
+    const extractBtn = document.getElementById('btn-extract-favicon');
+    const resultsDiv = document.getElementById('favicon-results');
+    const generateBtn = document.getElementById('btn-generate-favicon');
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab && tab.favIconUrl) {
+        previewDiv.innerHTML = `<img src="${tab.favIconUrl}" style="width:32px;height:32px;"> <img src="${tab.favIconUrl}" style="width:48px;height:48px;">`;
+      } else {
+        previewDiv.innerHTML = '<div class="status-message info">Aucun favicon detecte</div>';
+      }
+    } catch (e) {
+      previewDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+    }
+
+    extractBtn.addEventListener('click', async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const domain = new URL(tab.url).origin;
+        const sizes = [16, 32, 48, 64, 128];
+        resultsDiv.innerHTML = sizes.map(size => `
+          <div class="favicon-size-item" data-url="https://www.google.com/s2/favicons?domain=${domain}&sz=${size}">
+            <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=${size}" width="${Math.min(size, 48)}">
+            <span>${size}x${size}</span>
+          </div>
+        `).join('');
+
+        resultsDiv.querySelectorAll('.favicon-size-item').forEach(item => {
+          item.addEventListener('click', () => window.open(item.dataset.url, '_blank'));
+        });
+      } catch (e) {
+        resultsDiv.innerHTML = '<div class="status-message error">Erreur</div>';
+      }
+    });
+
+    generateBtn.addEventListener('click', async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      chrome.tabs.create({ url: `https://realfavicongenerator.net/favicon_checker?site=${encodeURIComponent(tab.url)}` });
+    });
+  }
+
+  function initHashGen() {
+    const input = document.getElementById('hash-input');
+    const sha256Btn = document.getElementById('btn-hash-sha256');
+    const sha512Btn = document.getElementById('btn-hash-sha512');
+    const sha1Btn = document.getElementById('btn-hash-sha1');
+    const md5Btn = document.getElementById('btn-hash-md5');
+    const output = document.getElementById('hash-output');
+    const copyBtn = document.getElementById('btn-copy-hash');
+
+    async function computeHash(algorithm, text) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      const hashBuffer = await crypto.subtle.digest(algorithm, data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    sha256Btn.addEventListener('click', async () => {
+      const hash = await computeHash('SHA-256', input.value);
+      output.innerHTML = `<div class="hash-type">SHA-256</div>${hash}`;
+    });
+
+    sha512Btn.addEventListener('click', async () => {
+      const hash = await computeHash('SHA-512', input.value);
+      output.innerHTML = `<div class="hash-type">SHA-512</div>${hash}`;
+    });
+
+    sha1Btn.addEventListener('click', async () => {
+      const hash = await computeHash('SHA-1', input.value);
+      output.innerHTML = `<div class="hash-type">SHA-1</div>${hash}`;
+    });
+
+    md5Btn.addEventListener('click', () => {
+      output.innerHTML = '<div class="hash-type">MD5</div><div class="status-message info">MD5 non disponible (utilisez SHA-256)</div>';
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const hashText = output.textContent.replace(/^(MD5|SHA-1|SHA-256|SHA-512)/, '').trim();
+      if (hashText && !hashText.includes('non disponible')) {
+        await navigator.clipboard.writeText(hashText);
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1000);
+      }
+    });
+  }
+
+  function initUrlEncoder() {
+    const input = document.getElementById('url-input');
+    const encodeBtn = document.getElementById('btn-url-encode');
+    const decodeBtn = document.getElementById('btn-url-decode');
+    const output = document.getElementById('url-output');
+    const copyBtn = document.getElementById('btn-copy-url');
+
+    encodeBtn.addEventListener('click', () => {
+      output.textContent = encodeURIComponent(input.value);
+    });
+
+    decodeBtn.addEventListener('click', () => {
+      try {
+        output.textContent = decodeURIComponent(input.value);
+      } catch (e) {
+        output.textContent = 'Erreur: ' + e.message;
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (output.textContent) {
+        await navigator.clipboard.writeText(output.textContent);
+        copyBtn.textContent = 'Copie!';
+        setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1000);
+      }
+    });
+  }
+
+  function initPasswordGen() {
+    const lengthInput = document.getElementById('pwd-length');
+    const upperCheck = document.getElementById('pwd-upper');
+    const lowerCheck = document.getElementById('pwd-lower');
+    const numbersCheck = document.getElementById('pwd-numbers');
+    const symbolsCheck = document.getElementById('pwd-symbols');
+    const generateBtn = document.getElementById('btn-generate-pwd');
+    const output = document.getElementById('password-output');
+    const strengthDiv = document.getElementById('pwd-strength');
+    const copyBtn = document.getElementById('btn-copy-pwd');
+
+    generateBtn.addEventListener('click', () => {
+      const length = parseInt(lengthInput.value) || 16;
+      let chars = '';
+
+      if (upperCheck.checked) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      if (lowerCheck.checked) chars += 'abcdefghijklmnopqrstuvwxyz';
+      if (numbersCheck.checked) chars += '0123456789';
+      if (symbolsCheck.checked) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+      if (!chars) {
+        output.textContent = 'Selectionnez au moins une option';
+        return;
+      }
+
+      let password = '';
+      const array = new Uint32Array(length);
+      crypto.getRandomValues(array);
+      for (let i = 0; i < length; i++) {
+        password += chars[array[i] % chars.length];
+      }
+
+      output.textContent = password;
+
+      let strength = 0;
+      if (length >= 8) strength++;
+      if (length >= 12) strength++;
+      if (length >= 16) strength++;
+      if (upperCheck.checked && lowerCheck.checked) strength++;
+      if (numbersCheck.checked) strength++;
+      if (symbolsCheck.checked) strength++;
+
+      if (strength <= 2) {
+        strengthDiv.textContent = 'Faible';
+        strengthDiv.className = 'password-strength weak';
+      } else if (strength <= 4) {
+        strengthDiv.textContent = 'Moyen';
+        strengthDiv.className = 'password-strength medium';
+      } else {
+        strengthDiv.textContent = 'Fort';
+        strengthDiv.className = 'password-strength strong';
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (output.textContent && output.textContent !== 'Selectionnez au moins une option') {
         await navigator.clipboard.writeText(output.textContent);
         copyBtn.textContent = 'Copie!';
         setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1000);

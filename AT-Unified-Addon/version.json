@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "3.0.0",
   "releaseDate": "2025-12-13",
-  "changelog": "20 new tools: Word count, Keywords, Headings, Broken links, Readability, Schema, robots.txt, Palette, Measure, Grid, Load time, Web Vitals, Social preview, Character count, UTM builder, Text diff, Notes, Pomodoro, JSON formatter, Base64"
+  "changelog": "17 new tools + reorganization: Remote Desktop, My IP, Speed Test, Ping, Traceroute, Port Scanner, DNS Lookup, Redirect Checker, Mixed Content, Accessibility, Mobile Test, Regex Tester, Color Converter, Favicon, Hash Generator, URL Encoder, Password Generator. New categories: Network & Remote, Design & Media."
 }
