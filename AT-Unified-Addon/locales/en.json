@@ -16,9 +16,11 @@
   "categories": {
     "favorites": "Favorites",
     "customLinks": "Custom Links",
+    "network": "Network & Remote",
     "domainDns": "Domain & DNS",
     "seoAnalysis": "SEO & Analysis",
     "development": "Development",
+    "design": "Design & Media",
     "social": "Social & Marketing",
     "browser": "Browser",
     "utilities": "Utilities"
@@ -78,7 +80,24 @@
     "notes": { "label": "Notes", "title": "Quick Notes" },
     "pomodoro": { "label": "Pomodoro", "title": "Pomodoro Timer" },
     "jsonformat": { "label": "JSON", "title": "JSON Formatter" },
-    "base64": { "label": "Base64", "title": "Base64 Encoder" }
+    "base64": { "label": "Base64", "title": "Base64 Encoder" },
+    "remotedesktop": { "label": "Remote", "title": "Chrome Remote Desktop" },
+    "myip": { "label": "My IP", "title": "My IP Address" },
+    "speedtest": { "label": "Speed", "title": "Speed Test" },
+    "ping": { "label": "Ping", "title": "Ping" },
+    "traceroute": { "label": "Trace", "title": "Traceroute" },
+    "portscan": { "label": "Ports", "title": "Port Scanner" },
+    "dnslookup": { "label": "DNS", "title": "DNS Lookup" },
+    "redirect": { "label": "Redirect", "title": "Redirect Checker" },
+    "mixedcontent": { "label": "Mixed", "title": "Mixed Content" },
+    "accessibility": { "label": "A11y", "title": "Accessibility" },
+    "mobiletest": { "label": "Mobile", "title": "Mobile Test" },
+    "regex": { "label": "Regex", "title": "Regex Tester" },
+    "colorconvert": { "label": "Convert", "title": "Color Converter" },
+    "favicon": { "label": "Favicon", "title": "Favicon Generator" },
+    "hashgen": { "label": "Hash", "title": "Hash Generator" },
+    "urlencoder": { "label": "URL Enc", "title": "URL Encoder" },
+    "passwordgen": { "label": "Password", "title": "Password Generator" }
   },
 
   "actions": {
@@ -397,5 +416,54 @@
     "dataDesc": "Manage the data stored by the extension.",
     "clearAllData": "Clear all data",
     "clearConfirm": "Are you sure you want to clear all data? This action is irreversible."
+  },
+
+  "remotedesktop": {
+    "webAccess": "Web Access",
+    "download": "Download",
+    "mobileApp": "Mobile App:"
+  },
+
+  "myip": {
+    "detect": "Detect my IP"
+  },
+
+  "redirect": {
+    "check": "Check redirects"
+  },
+
+  "mixedcontent": {
+    "check": "Scan mixed content"
+  },
+
+  "accessibility": {
+    "check": "Analyze accessibility"
+  },
+
+  "regex": {
+    "test": "Test"
+  },
+
+  "colorconvert": {
+    "convert": "Convert"
+  },
+
+  "favicon": {
+    "extract": "Extract favicon",
+    "generate": "Generate multi-sizes"
+  },
+
+  "hashgen": {
+    "generate": "Generate"
+  },
+
+  "urlencoder": {
+    "encode": "Encode",
+    "decode": "Decode"
+  },
+
+  "passwordgen": {
+    "length": "Length",
+    "generate": "Generate"
   }
 }

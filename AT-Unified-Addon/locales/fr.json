@@ -16,9 +16,11 @@
   "categories": {
     "favorites": "Favoris",
     "customLinks": "Liens personnalises",
+    "network": "Reseau & Remote",
     "domainDns": "Domaine & DNS",
     "seoAnalysis": "SEO & Analyse",
     "development": "Developpement",
+    "design": "Design & Medias",
     "social": "Social & Marketing",
     "browser": "Navigateur",
     "utilities": "Utilitaires"
@@ -78,7 +80,24 @@
     "notes": { "label": "Notes", "title": "Notes rapides" },
     "pomodoro": { "label": "Pomodoro", "title": "Minuteur Pomodoro" },
     "jsonformat": { "label": "JSON", "title": "Formateur JSON" },
-    "base64": { "label": "Base64", "title": "Encodeur Base64" }
+    "base64": { "label": "Base64", "title": "Encodeur Base64" },
+    "remotedesktop": { "label": "Remote", "title": "Chrome Remote Desktop" },
+    "myip": { "label": "Mon IP", "title": "Mon adresse IP" },
+    "speedtest": { "label": "Speed", "title": "Test de vitesse" },
+    "ping": { "label": "Ping", "title": "Ping" },
+    "traceroute": { "label": "Trace", "title": "Traceroute" },
+    "portscan": { "label": "Ports", "title": "Scanner de ports" },
+    "dnslookup": { "label": "DNS", "title": "DNS Lookup" },
+    "redirect": { "label": "Redirect", "title": "Verifier redirections" },
+    "mixedcontent": { "label": "Mixed", "title": "Contenu mixte" },
+    "accessibility": { "label": "A11y", "title": "Accessibilite" },
+    "mobiletest": { "label": "Mobile", "title": "Test mobile" },
+    "regex": { "label": "Regex", "title": "Testeur Regex" },
+    "colorconvert": { "label": "Convert", "title": "Convertisseur couleurs" },
+    "favicon": { "label": "Favicon", "title": "Generateur Favicon" },
+    "hashgen": { "label": "Hash", "title": "Generateur Hash" },
+    "urlencoder": { "label": "URL Enc", "title": "Encodeur URL" },
+    "passwordgen": { "label": "Password", "title": "Generateur mot de passe" }
   },
 
   "actions": {
@@ -397,5 +416,54 @@
     "dataDesc": "Gerez les donnees stockees par l'extension.",
     "clearAllData": "Effacer toutes les donnees",
     "clearConfirm": "Etes-vous sur de vouloir effacer toutes les donnees? Cette action est irreversible."
+  },
+
+  "remotedesktop": {
+    "webAccess": "Acces Web",
+    "download": "Telecharger",
+    "mobileApp": "Application Mobile:"
+  },
+
+  "myip": {
+    "detect": "Detecter mon IP"
+  },
+
+  "redirect": {
+    "check": "Verifier les redirections"
+  },
+
+  "mixedcontent": {
+    "check": "Scanner le contenu mixte"
+  },
+
+  "accessibility": {
+    "check": "Analyser l'accessibilite"
+  },
+
+  "regex": {
+    "test": "Tester"
+  },
+
+  "colorconvert": {
+    "convert": "Convertir"
+  },
+
+  "favicon": {
+    "extract": "Extraire le favicon",
+    "generate": "Generer multi-tailles"
+  },
+
+  "hashgen": {
+    "generate": "Generer"
+  },
+
+  "urlencoder": {
+    "encode": "Encoder",
+    "decode": "Decoder"
+  },
+
+  "passwordgen": {
+    "length": "Longueur",
+    "generate": "Generer"
   }
 }

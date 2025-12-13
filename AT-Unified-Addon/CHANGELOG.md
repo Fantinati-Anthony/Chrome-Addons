@@ -7,6 +7,63 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.1.0] - 2025-12-13
+
+### Amélioré
+- **Architecture modulaire** : Refactorisation complète pour une meilleure lisibilité par les IA
+  - Chaque outil est maintenant dans son propre fichier (`modules/tools/*.js`)
+  - 52 fichiers de modules individuels créés
+  - Fichier index centralisé pour les exports (`modules/tools/index.js`)
+  - Utilisation des ES Modules pour une meilleure organisation du code
+  - Réduction de `panel-loader.js` de 2900+ lignes à ~440 lignes
+
+### Technique
+- Migration vers ES Modules (`type="module"` pour le script principal)
+- Fichier `utils.js` partagé pour les fonctions communes (escapeHtml, getDomainFromUrl, etc.)
+- Organisation par catégorie dans l'index des outils
+- Support du chargement dynamique via `toolRegistry`
+
+---
+
+## [3.0.0] - 2025-12-13
+
+### Ajouté
+- **17 nouveaux outils** pour une suite complète de plus de 55 outils :
+
+  **Réseau & Remote** (nouvelle catégorie) :
+  - **Chrome Remote Desktop** : Accès rapide avec détection OS et QR code pour apps mobiles
+  - **Mon IP** : Détection d'adresse IP avec géolocalisation (API ipapi.co)
+  - **Speed Test** : Lien direct vers Speedtest.net
+  - **Ping** : Test ping vers le domaine actuel (ping.eu)
+  - **Traceroute** : Tracé de route vers le domaine (ping.eu)
+  - **Port Scanner** : Scan des ports du domaine (ping.eu)
+  - **DNS Lookup** : Recherche DNS avancée (MXToolbox)
+
+  **Design & Médias** (nouvelle catégorie) :
+  - **Générateur Favicon** : Extraction et génération multi-tailles (16, 32, 48, 64, 128, 256px)
+  - **Convertisseur de couleurs** : Conversion HEX ↔ RGB ↔ HSL avec aperçu
+  - **Testeur Regex** : Test d'expressions régulières avec highlighting des matches
+
+  **SEO & Analyse** :
+  - **Redirect Checker** : Vérification de chaîne de redirections (wheregoes.com)
+  - **Mixed Content** : Détection des contenus HTTP sur pages HTTPS
+  - **Accessibilité** : Analyse A11y avec score et recommandations
+  - **Test Mobile** : Test mobile-friendly via Google
+
+  **Utilitaires** :
+  - **Générateur Hash** : SHA-256, SHA-512, SHA-1 (Web Crypto API)
+  - **Encodeur URL** : Encodage/décodage URL
+  - **Générateur de mot de passe** : Mots de passe sécurisés avec indicateur de force
+
+### Amélioré
+- **Réorganisation complète** des catégories pour un workflow optimisé
+- Nouvelle catégorie **Réseau & Remote** avec 8 outils réseau
+- Nouvelle catégorie **Design & Médias** avec 6 outils créatifs
+- Plus de 55 outils au total organisés en 8 catégories
+- Traductions complètes en 4 langues (FR, EN, ES, PT)
+
+---
+
 ## [2.0.0] - 2025-12-13
 
 ### Ajoute
