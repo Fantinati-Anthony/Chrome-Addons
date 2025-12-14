@@ -625,4 +625,171 @@ document.addEventListener('DOMContentLoaded', () => {
       return '';
     }
   }
+
+  // ========== REORDER CATEGORIES AND TOOLS ==========
+  const CATEGORIES_CONFIG = {
+    network: { emoji: '🖥️', name: 'Reseau & Remote', tools: ['myip', 'remotedesktop', 'speedtest', 'ping', 'traceroute', 'portscan', 'dnslookup'] },
+    domainDns: { emoji: '🌐', name: 'Domaine & DNS', tools: ['whois', 'dnschecker', 'mailtester', 'ssl'] },
+    seoAnalysis: { emoji: '📊', name: 'SEO & Analyse', tools: ['metatags', 'links', 'images', 'sitemap', 'pagespeed', 'lighthouse', 'keywords', 'headings', 'brokenlinks', 'readability', 'robotstxt', 'schema', 'socialpreview', 'mobiletest'] },
+    development: { emoji: '💻', name: 'Developpement', tools: ['resize', 'css', 'js', 'headers', 'lorem', 'fonts', 'cookies', 'mixedcontent', 'accessibility', 'loadtime', 'webvitals'] },
+    social: { emoji: '📱', name: 'Social & Marketing', tools: ['charcount', 'utmbuilder', 'textdiff', 'redirect'] },
+    browser: { emoji: '🌍', name: 'Navigateur', tools: ['bookmarks', 'folders', 'history', 'downloads', 'cleardata'] },
+    design: { emoji: '🎨', name: 'Design & Medias', tools: ['colorpicker', 'colorconvert', 'palette', 'measure', 'gridoverlay', 'favicon'] },
+    utilities: { emoji: '🛠️', name: 'Utilitaires', tools: ['desktop', 'qrcode', 'emails', 'speech', 'translate', 'notes', 'pomodoro', 'jsonformat', 'base64', 'hashgen', 'urlencoder', 'passwordgen', 'regex', 'wordcount'] }
+  };
+
+  const TOOLS_CONFIG = {
+    myip: '🌐 Mon IP', remotedesktop: '🖥️ Remote Desktop', speedtest: '⚡ Speed Test', ping: '📡 Ping', traceroute: '🔀 Traceroute', portscan: '🔌 Port Scan', dnslookup: '🔍 DNS Lookup',
+    whois: '🔍 Whois', dnschecker: '🌐 DNS Checker', mailtester: '✉️ Mail Tester', ssl: '🔒 SSL/TLS',
+    metatags: '🏷️ Meta Tags', links: '🔗 Liens', images: '🖼️ Images', sitemap: '🗺️ Sitemap', pagespeed: '⚡ PageSpeed', lighthouse: '🔦 Lighthouse', keywords: '🔑 Mots-cles', headings: '📑 Titres H1-H6', brokenlinks: '🔗 Liens casses', readability: '📖 Lisibilite', robotstxt: '🤖 robots.txt', schema: '📋 Schema.org', socialpreview: '📱 Apercu social', mobiletest: '📱 Test Mobile',
+    resize: '📐 Resize', css: '🎭 CSS Injection', js: '⚡ JS Injection', headers: '📋 Headers', lorem: '📝 Lorem Ipsum', fonts: '🔤 Fonts', cookies: '🍪 Cookies', mixedcontent: '🔀 Mixed Content', accessibility: '♿ Accessibilite', loadtime: '⏱️ Temps de chargement', webvitals: '📊 Web Vitals',
+    charcount: '🔢 Compteur caracteres', utmbuilder: '🏷️ UTM Builder', textdiff: '📝 Comparateur texte', redirect: '↪️ Redirect Checker',
+    bookmarks: '⭐ Favoris', folders: '📁 Dossiers', history: '🕐 Historique', downloads: '📥 Downloads', cleardata: '🧹 Clear Data',
+    colorpicker: '🎨 Color Picker', colorconvert: '🔄 Convertisseur couleurs', palette: '🎨 Palette', measure: '📏 Mesure', gridoverlay: '📐 Grille overlay', favicon: '🖼️ Favicon',
+    desktop: '🖥️ Raccourci Bureau', qrcode: '📱 QR Code', emails: '📧 Emails', speech: '🔊 Synthese Vocale', translate: '🌍 Traducteur', notes: '📝 Notes', pomodoro: '🍅 Pomodoro', jsonformat: '📋 JSON Format', base64: '🔐 Base64', hashgen: '🔒 Hash Gen', urlencoder: '🔗 URL Encoder', passwordgen: '🔑 Password Gen', regex: '🔍 Regex', wordcount: '📊 Compteur mots'
+  };
+
+  const DEFAULT_CATEGORY_ORDER = ['network', 'domainDns', 'seoAnalysis', 'development', 'social', 'browser', 'design', 'utilities'];
+
+  let categoryOrder = [...DEFAULT_CATEGORY_ORDER];
+  let toolOrder = {};
+
+  // Initialize default tool order
+  Object.keys(CATEGORIES_CONFIG).forEach(cat => {
+    toolOrder[cat] = [...CATEGORIES_CONFIG[cat].tools];
+  });
+
+  // Load saved order
+  chrome.storage.sync.get(['categoryOrder', 'toolOrder'], (data) => {
+    if (data.categoryOrder && Array.isArray(data.categoryOrder)) {
+      categoryOrder = data.categoryOrder;
+    }
+    if (data.toolOrder && typeof data.toolOrder === 'object') {
+      toolOrder = { ...toolOrder, ...data.toolOrder };
+    }
+    renderReorderUI();
+  });
+
+  function renderReorderUI() {
+    const container = document.getElementById('reorder-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    categoryOrder.forEach((catId, catIndex) => {
+      const cat = CATEGORIES_CONFIG[catId];
+      if (!cat) return;
+
+      const catEl = document.createElement('div');
+      catEl.className = 'reorder-category';
+      catEl.dataset.category = catId;
+
+      const tools = toolOrder[catId] || cat.tools;
+
+      catEl.innerHTML = `
+        <div class="reorder-category-header">
+          <div class="reorder-arrows">
+            <button class="btn-cat-up" ${catIndex === 0 ? 'disabled' : ''}>▲</button>
+            <button class="btn-cat-down" ${catIndex === categoryOrder.length - 1 ? 'disabled' : ''}>▼</button>
+          </div>
+          <span class="reorder-category-title">${cat.emoji} ${cat.name}</span>
+          <span class="reorder-category-toggle">▼</span>
+        </div>
+        <div class="reorder-tools">
+          ${tools.map((toolId, toolIndex) => `
+            <div class="reorder-tool" data-tool="${toolId}">
+              <div class="reorder-arrows">
+                <button class="btn-tool-up" ${toolIndex === 0 ? 'disabled' : ''}>▲</button>
+                <button class="btn-tool-down" ${toolIndex === tools.length - 1 ? 'disabled' : ''}>▼</button>
+              </div>
+              <span class="reorder-tool-name">${TOOLS_CONFIG[toolId] || toolId}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      // Category expand/collapse
+      const header = catEl.querySelector('.reorder-category-header');
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('.reorder-arrows')) return;
+        catEl.classList.toggle('expanded');
+      });
+
+      // Category up/down
+      catEl.querySelector('.btn-cat-up').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (catIndex > 0) {
+          [categoryOrder[catIndex - 1], categoryOrder[catIndex]] = [categoryOrder[catIndex], categoryOrder[catIndex - 1]];
+          renderReorderUI();
+        }
+      });
+
+      catEl.querySelector('.btn-cat-down').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (catIndex < categoryOrder.length - 1) {
+          [categoryOrder[catIndex], categoryOrder[catIndex + 1]] = [categoryOrder[catIndex + 1], categoryOrder[catIndex]];
+          renderReorderUI();
+        }
+      });
+
+      // Tool up/down
+      catEl.querySelectorAll('.reorder-tool').forEach((toolEl, toolIndex) => {
+        const toolId = toolEl.dataset.tool;
+
+        toolEl.querySelector('.btn-tool-up').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tools = toolOrder[catId];
+          if (toolIndex > 0) {
+            [tools[toolIndex - 1], tools[toolIndex]] = [tools[toolIndex], tools[toolIndex - 1]];
+            renderReorderUI();
+            // Re-expand this category
+            setTimeout(() => {
+              document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
+            }, 0);
+          }
+        });
+
+        toolEl.querySelector('.btn-tool-down').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tools = toolOrder[catId];
+          if (toolIndex < tools.length - 1) {
+            [tools[toolIndex], tools[toolIndex + 1]] = [tools[toolIndex + 1], tools[toolIndex]];
+            renderReorderUI();
+            // Re-expand this category
+            setTimeout(() => {
+              document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
+            }, 0);
+          }
+        });
+      });
+
+      container.appendChild(catEl);
+    });
+  }
+
+  // Save order
+  const saveOrderBtn = document.getElementById('btn-save-order');
+  const resetOrderBtn = document.getElementById('btn-reset-order');
+  const orderStatus = document.getElementById('order-status');
+
+  if (saveOrderBtn) {
+    saveOrderBtn.addEventListener('click', () => {
+      chrome.storage.sync.set({ categoryOrder, toolOrder }, () => {
+        showStatus(orderStatus, 'Ordre sauvegarde! Rechargez le popup pour voir les changements.', 'success');
+      });
+    });
+  }
+
+  if (resetOrderBtn) {
+    resetOrderBtn.addEventListener('click', () => {
+      categoryOrder = [...DEFAULT_CATEGORY_ORDER];
+      Object.keys(CATEGORIES_CONFIG).forEach(cat => {
+        toolOrder[cat] = [...CATEGORIES_CONFIG[cat].tools];
+      });
+      chrome.storage.sync.remove(['categoryOrder', 'toolOrder'], () => {
+        renderReorderUI();
+        showStatus(orderStatus, 'Ordre reinitialise!', 'success');
+      });
+    });
+  }
 });

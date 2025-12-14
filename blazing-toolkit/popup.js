@@ -101,6 +101,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  // ========== APPLY CUSTOM ORDER ==========
+  await applyCustomOrder();
+
   // ========== APPLY TOOL VISIBILITY (MODULAR) ==========
   await refreshToolGrid();
 
@@ -616,6 +619,70 @@ async function applyButtonSize() {
   const data = await chrome.storage.sync.get(['buttonSize']);
   const size = data.buttonSize || 1;
   document.documentElement.style.setProperty('--button-size', size);
+}
+
+// ========== CUSTOM ORDER ==========
+async function applyCustomOrder() {
+  const data = await chrome.storage.sync.get(['categoryOrder', 'toolOrder']);
+  const gridView = document.getElementById('grid-view');
+  if (!gridView) return;
+
+  // Apply category order
+  if (data.categoryOrder && Array.isArray(data.categoryOrder)) {
+    const categoryOrder = data.categoryOrder;
+
+    // Get all category sections (exclude favorites and custom links which stay at top)
+    const categories = Array.from(gridView.querySelectorAll('.category-section:not(.favorites-section):not(#category-customLinks)'));
+
+    // Sort categories based on saved order
+    categories.sort((a, b) => {
+      const aId = a.id.replace('category-', '');
+      const bId = b.id.replace('category-', '');
+      const aIndex = categoryOrder.indexOf(aId);
+      const bIndex = categoryOrder.indexOf(bId);
+      // If not in order list, put at end
+      return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+    });
+
+    // Find insertion point (after customLinks if it exists, or at start)
+    const customLinks = document.getElementById('category-customLinks');
+    const insertAfter = customLinks || document.getElementById('category-favorites');
+
+    // Re-append categories in new order
+    categories.forEach(cat => {
+      if (insertAfter && insertAfter.nextSibling) {
+        gridView.insertBefore(cat, insertAfter.nextSibling);
+      } else {
+        gridView.appendChild(cat);
+      }
+    });
+  }
+
+  // Apply tool order within each category
+  if (data.toolOrder && typeof data.toolOrder === 'object') {
+    Object.keys(data.toolOrder).forEach(categoryId => {
+      const toolOrder = data.toolOrder[categoryId];
+      const category = document.getElementById(`category-${categoryId}`);
+      if (!category) return;
+
+      const grid = category.querySelector('.tools-grid');
+      if (!grid) return;
+
+      const tools = Array.from(grid.querySelectorAll('.tool-icon[data-tool]'));
+
+      // Sort tools based on saved order
+      tools.sort((a, b) => {
+        const aId = a.dataset.tool;
+        const bId = b.dataset.tool;
+        const aIndex = toolOrder.indexOf(aId);
+        const bIndex = toolOrder.indexOf(bId);
+        return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+      });
+
+      // Re-append tools in new order
+      tools.forEach(tool => grid.appendChild(tool));
+    });
+  }
 }
 
 // ========== MODULE VISIBILITY ==========
