@@ -510,7 +510,7 @@
       }
     }
 
-    /* Reorder section styles */
+    /* Reorder section styles - Drag & Drop */
     .reorder-container {
       display: flex;
       flex-direction: column;
@@ -522,6 +522,17 @@
       border: 1px solid #e0e0e0;
       border-radius: 8px;
       overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .reorder-category.dragging {
+      opacity: 0.5;
+      transform: scale(0.98);
+    }
+
+    .reorder-category.drag-over {
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
     }
 
     .reorder-category-header {
@@ -530,39 +541,26 @@
       gap: 10px;
       padding: 10px 12px;
       background: #fff;
-      cursor: pointer;
+      cursor: grab;
       user-select: none;
+    }
+
+    .reorder-category-header:active {
+      cursor: grabbing;
     }
 
     .reorder-category-header:hover {
       background: #f0f0f0;
     }
 
-    .reorder-arrows {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+    .drag-handle {
+      color: #999;
+      font-size: 16px;
+      cursor: grab;
     }
 
-    .reorder-arrows button {
-      width: 24px;
-      height: 16px;
-      padding: 0;
-      border: 1px solid #ccc;
-      background: #fff;
-      cursor: pointer;
-      font-size: 10px;
-      line-height: 1;
-      border-radius: 3px;
-    }
-
-    .reorder-arrows button:hover {
-      background: #e0e0e0;
-    }
-
-    .reorder-arrows button:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
+    .drag-handle:active {
+      cursor: grabbing;
     }
 
     .reorder-category-title {
@@ -575,6 +573,12 @@
       font-size: 12px;
       color: #666;
       transition: transform 0.2s;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .reorder-category-toggle:hover {
+      color: #333;
     }
 
     .reorder-category.expanded .reorder-category-toggle {
@@ -596,15 +600,35 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 6px 8px;
+      padding: 8px 10px;
       margin: 4px 0;
       background: #fff;
       border: 1px solid #e8e8e8;
       border-radius: 4px;
+      cursor: grab;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .reorder-tool:active {
+      cursor: grabbing;
     }
 
     .reorder-tool:hover {
       border-color: #3498db;
+    }
+
+    .reorder-tool.dragging {
+      opacity: 0.5;
+      transform: scale(0.98);
+    }
+
+    .reorder-tool.drag-over {
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+    }
+
+    .reorder-tool .drag-handle {
+      font-size: 14px;
     }
 
     .reorder-tool-name {
