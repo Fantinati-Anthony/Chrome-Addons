@@ -1,0 +1,7 @@
+{
+  "label": "Meta",
+  "title": "Meta Tags",
+  "description": "Shows all meta tags (title, description, Open Graph, etc.).",
+  "extract": "Extract meta tags",
+  "noMeta": "No meta tags"
+}

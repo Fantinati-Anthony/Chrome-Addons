@@ -1,0 +1,10 @@
+{
+  "label": "JSON",
+  "title": "JSON Formatter",
+  "description": "Formats, validates, and minifies JSON code.",
+  "placeholder": "Paste your JSON here...",
+  "format": "Format",
+  "minify": "Minify",
+  "validate": "Validate",
+  "copy": "Copy"
+}

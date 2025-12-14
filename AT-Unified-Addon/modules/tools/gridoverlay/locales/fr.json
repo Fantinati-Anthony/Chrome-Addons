@@ -1,0 +1,10 @@
+{
+  "label": "Grille",
+  "title": "Grille overlay",
+  "description": "Affiche une grille superposee pour verifier l'alignement.",
+  "columns": "Colonnes",
+  "gutter": "Gouttiere",
+  "color": "Couleur",
+  "show": "Afficher la grille",
+  "hide": "Masquer"
+}

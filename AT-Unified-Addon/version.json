@@ -1,5 +1,5 @@
 {
-  "version": "3.0.0",
-  "releaseDate": "2025-12-13",
-  "changelog": "17 new tools + reorganization: Remote Desktop, My IP, Speed Test, Ping, Traceroute, Port Scanner, DNS Lookup, Redirect Checker, Mixed Content, Accessibility, Mobile Test, Regex Tester, Color Converter, Favicon, Hash Generator, URL Encoder, Password Generator. New categories: Network & Remote, Design & Media."
+  "version": "3.3.0",
+  "releaseDate": "2025-12-14",
+  "changelog": "Modular tool architecture: Per-tool locale files and changelogs, Tool Store with on-demand activation, lazy loading for performance, multilingual descriptions for all 55+ tools."
 }

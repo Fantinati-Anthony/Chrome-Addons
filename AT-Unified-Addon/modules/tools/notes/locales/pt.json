@@ -1,0 +1,8 @@
+{
+  "label": "Notas",
+  "title": "Notas rapidas",
+  "description": "Toma notas associadas ao dominio atual.",
+  "placeholder": "Suas notas para este site...",
+  "save": "Salvar",
+  "clear": "Limpar"
+}

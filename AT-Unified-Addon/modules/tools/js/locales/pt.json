@@ -1,0 +1,8 @@
+{
+  "label": "JS",
+  "title": "Injecao JavaScript",
+  "description": "Executa codigo JavaScript personalizado no contexto da pagina.",
+  "placeholder": "Digite o JavaScript...",
+  "execute": "Executar JS",
+  "executed": "Executado!"
+}

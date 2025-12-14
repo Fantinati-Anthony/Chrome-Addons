@@ -1,0 +1,7 @@
+{
+  "label": "Mesure",
+  "title": "Mesurer elements",
+  "description": "Mesure les dimensions des elements en cliquant dessus.",
+  "start": "Activer la mesure",
+  "instructions": "Cliquez sur un element pour voir ses dimensions"
+}

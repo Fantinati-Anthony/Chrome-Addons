@@ -1,0 +1,8 @@
+{
+  "label": "CSS",
+  "title": "CSS Injection",
+  "description": "Injects custom CSS into the current page to modify its appearance.",
+  "placeholder": "Enter CSS...",
+  "inject": "Inject CSS",
+  "injected": "Injected!"
+}

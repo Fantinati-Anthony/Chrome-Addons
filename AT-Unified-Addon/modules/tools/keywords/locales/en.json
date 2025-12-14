@@ -1,0 +1,7 @@
+{
+  "label": "Keywords",
+  "title": "Keyword Density",
+  "description": "Analyzes keyword density on the page for SEO.",
+  "analyze": "Analyze keywords",
+  "minLength": "Min length"
+}

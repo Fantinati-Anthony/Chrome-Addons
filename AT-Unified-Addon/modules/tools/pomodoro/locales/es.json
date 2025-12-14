@@ -1,0 +1,9 @@
+{
+  "label": "Pomodoro",
+  "title": "Temporizador Pomodoro",
+  "description": "Temporizador de productividad con ciclos trabajo/descanso.",
+  "work": "Trabajo (25min)",
+  "break": "Descanso (5min)",
+  "start": "Iniciar",
+  "stop": "Detener"
+}

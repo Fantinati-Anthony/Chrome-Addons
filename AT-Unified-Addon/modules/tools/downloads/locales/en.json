@@ -1,0 +1,11 @@
+{
+  "label": "Downloads",
+  "title": "Downloads",
+  "description": "Download multiple files simultaneously from a URL list.",
+  "placeholder": "Enter URLs (one per line)...",
+  "concurrent": "Concurrent",
+  "download": "Download",
+  "starting": "Starting",
+  "files": "file(s)",
+  "done": "Done!"
+}

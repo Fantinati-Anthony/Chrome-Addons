@@ -1,0 +1,7 @@
+{
+  "label": "Medir",
+  "title": "Medir elementos",
+  "description": "Mede as dimensoes dos elementos ao clicar.",
+  "start": "Ativar medicao",
+  "instructions": "Clique em um elemento para ver suas dimensoes"
+}

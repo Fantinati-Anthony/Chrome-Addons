@@ -1,0 +1,7 @@
+{
+  "label": "QR Code",
+  "title": "QR Code",
+  "description": "Generates a QR code for the current page URL.",
+  "copyImage": "Copy image",
+  "download": "Download"
+}

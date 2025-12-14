@@ -1,0 +1,7 @@
+{
+  "label": "Historique",
+  "title": "Historique du domaine",
+  "description": "Affiche votre historique de navigation pour le domaine actuel.",
+  "load": "Charger l'historique",
+  "noHistory": "Aucun historique"
+}

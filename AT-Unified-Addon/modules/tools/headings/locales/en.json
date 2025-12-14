@@ -1,0 +1,6 @@
+{
+  "label": "Headings",
+  "title": "H1-H6 Analyzer",
+  "description": "Analyzes heading structure (H1-H6) to verify hierarchy.",
+  "analyze": "Analyze headings"
+}

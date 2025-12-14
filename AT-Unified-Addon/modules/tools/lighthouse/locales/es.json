@@ -1,0 +1,5 @@
+{
+  "label": "Lighthouse",
+  "title": "Lighthouse Audit",
+  "description": "Ejecuta auditoria Lighthouse completa (rendimiento, accesibilidad, SEO)."
+}

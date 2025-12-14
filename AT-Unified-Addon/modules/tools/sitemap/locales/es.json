@@ -1,0 +1,9 @@
+{
+  "label": "Sitemap",
+  "title": "Sitemap",
+  "description": "Carga y muestra el contenido del archivo sitemap.xml.",
+  "load": "Cargar sitemap.xml",
+  "urls": "URLs",
+  "sitemaps": "sitemaps",
+  "notFound": "Sitemap no encontrado o error"
+}

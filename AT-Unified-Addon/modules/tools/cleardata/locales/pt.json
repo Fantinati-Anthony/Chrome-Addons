@@ -1,0 +1,11 @@
+{
+  "label": "Limpar",
+  "title": "Limpar dados",
+  "description": "Apaga cookies, cache e armazenamento local do dominio.",
+  "cookies": "Cookies",
+  "cache": "Cache",
+  "storage": "Local Storage",
+  "clear": "Limpar dados",
+  "cleared": "Limpo",
+  "cacheReload": "cache (requer recarregar)"
+}

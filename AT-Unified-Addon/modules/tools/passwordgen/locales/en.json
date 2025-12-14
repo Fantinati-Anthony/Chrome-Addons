@@ -1,0 +1,7 @@
+{
+  "label": "Password",
+  "title": "Password Generator",
+  "description": "Generates secure passwords with customizable options.",
+  "length": "Length",
+  "generate": "Generate"
+}

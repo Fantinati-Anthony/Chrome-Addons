@@ -1,0 +1,8 @@
+{
+  "label": "Diff",
+  "title": "Comparateur texte",
+  "description": "Compare deux textes et met en evidence les differences.",
+  "text1": "Texte original...",
+  "text2": "Texte modifie...",
+  "compare": "Comparer"
+}

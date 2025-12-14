@@ -1,0 +1,9 @@
+{
+  "label": "Pomodoro",
+  "title": "Pomodoro Timer",
+  "description": "Productivity timer with work/break cycles.",
+  "work": "Work (25min)",
+  "break": "Break (5min)",
+  "start": "Start",
+  "stop": "Stop"
+}

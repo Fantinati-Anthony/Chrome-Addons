@@ -1,0 +1,6 @@
+{
+  "label": "Titulos",
+  "title": "Analisador H1-H6",
+  "description": "Analisa a estrutura de titulos (H1-H6) para verificar hierarquia.",
+  "analyze": "Analisar titulos"
+}

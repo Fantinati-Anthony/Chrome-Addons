@@ -1,0 +1,6 @@
+{
+  "label": "Redirect",
+  "title": "Verificar redirecionamentos",
+  "description": "Traca a cadeia de redirecionamentos de uma URL.",
+  "check": "Verificar redirecionamentos"
+}

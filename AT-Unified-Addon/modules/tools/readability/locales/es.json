@@ -1,0 +1,6 @@
+{
+  "label": "Legibilidad",
+  "title": "Puntuacion de legibilidad",
+  "description": "Calcula la puntuacion de legibilidad del contenido.",
+  "analyze": "Analizar legibilidad"
+}

@@ -1,0 +1,11 @@
+{
+  "label": "Clear",
+  "title": "Clear Data",
+  "description": "Clears cookies, cache, and local storage for the domain.",
+  "cookies": "Cookies",
+  "cache": "Cache",
+  "storage": "Local Storage",
+  "clear": "Clear data",
+  "cleared": "Cleared",
+  "cacheReload": "cache (reload required)"
+}

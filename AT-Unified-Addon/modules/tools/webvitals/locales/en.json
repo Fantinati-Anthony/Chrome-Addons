@@ -1,0 +1,6 @@
+{
+  "label": "Vitals",
+  "title": "Core Web Vitals",
+  "description": "Measures Google's Core Web Vitals (LCP, FID, CLS).",
+  "analyze": "Measure Web Vitals"
+}

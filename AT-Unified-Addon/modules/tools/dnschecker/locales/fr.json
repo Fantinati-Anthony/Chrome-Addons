@@ -1,0 +1,5 @@
+{
+  "label": "DNS",
+  "title": "DNS Checker",
+  "description": "Verifie la propagation DNS du domaine sur differents serveurs mondiaux."
+}

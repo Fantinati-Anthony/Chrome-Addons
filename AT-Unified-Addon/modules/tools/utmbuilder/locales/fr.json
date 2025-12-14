@@ -1,0 +1,7 @@
+{
+  "label": "UTM",
+  "title": "Generateur UTM",
+  "description": "Cree des URLs avec parametres UTM pour le tracking marketing.",
+  "generate": "Generer l'URL",
+  "copy": "Copier"
+}

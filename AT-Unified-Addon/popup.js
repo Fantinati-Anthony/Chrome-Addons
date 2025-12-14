@@ -1,12 +1,89 @@
 // Main popup initialization
 // All modules are loaded via script tags in popup.html
 
+// Global function to refresh the tool grid based on activated tools
+async function refreshToolGrid() {
+  if (typeof toolStore === 'undefined') return;
+
+  const activatedTools = toolStore.getActivatedToolsList();
+  const allToolIcons = document.querySelectorAll('.tool-icon[data-tool]');
+  const gridView = document.getElementById('grid-view');
+
+  // Hide all tools initially
+  allToolIcons.forEach(icon => {
+    const toolId = icon.dataset.tool;
+    const isActivated = activatedTools.some(t => t.id === toolId);
+
+    if (isActivated) {
+      icon.style.display = '';
+      icon.classList.remove('tool-hidden');
+
+      // Add description tooltip if available
+      const locale = toolStore.getToolLocale(toolId);
+      if (locale.description) {
+        icon.dataset.description = locale.description;
+      }
+    } else {
+      icon.style.display = 'none';
+      icon.classList.add('tool-hidden');
+    }
+  });
+
+  // Update category visibility
+  document.querySelectorAll('.category-section').forEach(section => {
+    const toolsGrid = section.querySelector('.tools-grid');
+    if (!toolsGrid) return;
+
+    const visibleTools = toolsGrid.querySelectorAll('.tool-icon:not(.tool-hidden)');
+    if (visibleTools.length === 0) {
+      section.classList.add('hidden');
+    } else {
+      section.classList.remove('hidden');
+    }
+  });
+
+  // Show/hide empty state
+  const hasActiveTools = activatedTools.length > 0;
+  let emptyState = document.getElementById('empty-tools-state');
+
+  if (!hasActiveTools) {
+    if (!emptyState) {
+      emptyState = document.createElement('div');
+      emptyState.id = 'empty-tools-state';
+      emptyState.className = 'empty-tools-state';
+      emptyState.innerHTML = `
+        <div class="empty-icon">🧰</div>
+        <h3 data-i18n="toolStore.noTools">Aucun outil active</h3>
+        <p data-i18n="toolStore.noToolsDesc">Cliquez sur "Ajouter des outils" pour commencer</p>
+      `;
+      gridView.insertBefore(emptyState, gridView.firstChild);
+
+      // Apply i18n to new element
+      if (typeof I18n !== 'undefined') {
+        I18n.applyToElement(emptyState);
+      }
+    }
+    emptyState.style.display = 'block';
+  } else if (emptyState) {
+    emptyState.style.display = 'none';
+  }
+}
+
+// Make it available globally
+window.refreshToolGrid = refreshToolGrid;
+
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('Toolkit loaded');
 
   // ========== INITIALIZE I18N ==========
   if (typeof I18n !== 'undefined') {
     await I18n.init();
+  }
+
+  // ========== INITIALIZE TOOL STORE ==========
+  if (typeof toolStore !== 'undefined') {
+    await toolStore.init();
+    toolStore.setupEventListeners();
   }
 
   // ========== APPLY CUSTOM COLORS ==========
@@ -23,6 +100,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       popupTitleEl.textContent = data.popupTitle;
     }
   }
+
+  // ========== APPLY TOOL VISIBILITY (MODULAR) ==========
+  await refreshToolGrid();
 
   // ========== APPLY MODULE VISIBILITY ==========
   await applyModuleVisibility();

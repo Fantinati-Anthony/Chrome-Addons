@@ -1,0 +1,6 @@
+{
+  "label": "Regex",
+  "title": "Testeur Regex",
+  "description": "Teste des expressions regulieres avec mise en evidence des correspondances.",
+  "test": "Tester"
+}

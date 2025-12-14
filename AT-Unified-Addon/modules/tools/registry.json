@@ -1,0 +1,122 @@
+{
+  "version": "1.0.0",
+  "categories": {
+    "design": {
+      "emoji": "🎨",
+      "order": 1,
+      "i18n": "category_design"
+    },
+    "browser": {
+      "emoji": "🌐",
+      "order": 2,
+      "i18n": "category_browser"
+    },
+    "analysis": {
+      "emoji": "🔍",
+      "order": 3,
+      "i18n": "category_analysis"
+    },
+    "seo": {
+      "emoji": "📊",
+      "order": 4,
+      "i18n": "category_seo"
+    },
+    "security": {
+      "emoji": "🔒",
+      "order": 5,
+      "i18n": "category_security"
+    },
+    "generators": {
+      "emoji": "⚙️",
+      "order": 6,
+      "i18n": "category_generators"
+    },
+    "text": {
+      "emoji": "📝",
+      "order": 7,
+      "i18n": "category_text"
+    },
+    "marketing": {
+      "emoji": "📢",
+      "order": 8,
+      "i18n": "category_marketing"
+    },
+    "productivity": {
+      "emoji": "⏱️",
+      "order": 9,
+      "i18n": "category_productivity"
+    },
+    "network": {
+      "emoji": "🌍",
+      "order": 10,
+      "i18n": "category_network"
+    }
+  },
+  "tools": {
+    "colorpicker": { "category": "design", "hasPanel": true },
+    "colorconvert": { "category": "design", "hasPanel": true },
+    "palette": { "category": "design", "hasPanel": true },
+    "measure": { "category": "design", "hasPanel": true },
+    "gridoverlay": { "category": "design", "hasPanel": true },
+    "favicon": { "category": "design", "hasPanel": true },
+    "downloads": { "category": "browser", "hasPanel": true },
+    "bookmarks": { "category": "browser", "hasPanel": true },
+    "folders": { "category": "browser", "hasPanel": true },
+    "history": { "category": "browser", "hasPanel": true },
+    "resize": { "category": "browser", "hasPanel": true },
+    "cookies": { "category": "browser", "hasPanel": true },
+    "cleardata": { "category": "browser", "hasPanel": true },
+    "css": { "category": "analysis", "hasPanel": true },
+    "js": { "category": "analysis", "hasPanel": true },
+    "metatags": { "category": "analysis", "hasPanel": true },
+    "links": { "category": "analysis", "hasPanel": true },
+    "images": { "category": "analysis", "hasPanel": true },
+    "headers": { "category": "analysis", "hasPanel": true },
+    "fonts": { "category": "analysis", "hasPanel": true },
+    "headings": { "category": "analysis", "hasPanel": true },
+    "sitemap": { "category": "seo", "hasPanel": false, "externalUrl": "https://www.xml-sitemaps.com/" },
+    "keywords": { "category": "seo", "hasPanel": true },
+    "brokenlinks": { "category": "seo", "hasPanel": true },
+    "readability": { "category": "seo", "hasPanel": true },
+    "robotstxt": { "category": "seo", "hasPanel": true },
+    "socialpreview": { "category": "seo", "hasPanel": true },
+    "ssl": { "category": "security", "hasPanel": true },
+    "mixedcontent": { "category": "security", "hasPanel": true },
+    "accessibility": { "category": "security", "hasPanel": true },
+    "loadtime": { "category": "security", "hasPanel": true },
+    "webvitals": { "category": "security", "hasPanel": true },
+    "qrcode": { "category": "generators", "hasPanel": true },
+    "lorem": { "category": "generators", "hasPanel": true },
+    "jsonformat": { "category": "generators", "hasPanel": true },
+    "base64": { "category": "generators", "hasPanel": true },
+    "hashgen": { "category": "generators", "hasPanel": true },
+    "urlencoder": { "category": "generators", "hasPanel": true },
+    "passwordgen": { "category": "generators", "hasPanel": true },
+    "wordcount": { "category": "text", "hasPanel": true },
+    "charcount": { "category": "text", "hasPanel": true },
+    "textdiff": { "category": "text", "hasPanel": true },
+    "translate": { "category": "text", "hasPanel": true },
+    "speech": { "category": "text", "hasPanel": true },
+    "regex": { "category": "text", "hasPanel": true },
+    "emails": { "category": "marketing", "hasPanel": true },
+    "utmbuilder": { "category": "marketing", "hasPanel": true },
+    "redirect": { "category": "marketing", "hasPanel": true },
+    "notes": { "category": "productivity", "hasPanel": true },
+    "pomodoro": { "category": "productivity", "hasPanel": true },
+    "myip": { "category": "network", "hasPanel": true },
+    "remotedesktop": { "category": "network", "hasPanel": true },
+    "desktop": { "category": "browser", "hasPanel": false },
+    "whois": { "category": "network", "hasPanel": false, "externalUrl": "https://who.is/whois/" },
+    "dnschecker": { "category": "network", "hasPanel": false, "externalUrl": "https://dnschecker.org/" },
+    "mailtester": { "category": "marketing", "hasPanel": false, "externalUrl": "https://www.mail-tester.com/" },
+    "pagespeed": { "category": "seo", "hasPanel": false, "externalUrl": "https://pagespeed.web.dev/report?url=" },
+    "lighthouse": { "category": "seo", "hasPanel": false, "externalUrl": "https://pagespeed.web.dev/report?url=" },
+    "schema": { "category": "seo", "hasPanel": false, "externalUrl": "https://validator.schema.org/" },
+    "speedtest": { "category": "network", "hasPanel": false, "externalUrl": "https://www.speedtest.net/" },
+    "ping": { "category": "network", "hasPanel": false, "externalUrl": "https://ping.eu/ping/" },
+    "traceroute": { "category": "network", "hasPanel": false, "externalUrl": "https://ping.eu/traceroute/" },
+    "portscan": { "category": "network", "hasPanel": false, "externalUrl": "https://www.yougetsignal.com/tools/open-ports/" },
+    "dnslookup": { "category": "network", "hasPanel": false, "externalUrl": "https://mxtoolbox.com/DNSLookup.aspx" },
+    "mobiletest": { "category": "seo", "hasPanel": false, "externalUrl": "https://search.google.com/test/mobile-friendly?url=" }
+  }
+}

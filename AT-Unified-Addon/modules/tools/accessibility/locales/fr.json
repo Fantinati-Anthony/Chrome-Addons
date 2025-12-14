@@ -1,0 +1,6 @@
+{
+  "label": "A11y",
+  "title": "Accessibilite",
+  "description": "Analyse l'accessibilite de la page (alt images, titres, lang, etc.).",
+  "check": "Analyser l'accessibilite"
+}

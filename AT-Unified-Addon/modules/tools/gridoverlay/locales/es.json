@@ -1,0 +1,10 @@
+{
+  "label": "Cuadricula",
+  "title": "Cuadricula overlay",
+  "description": "Muestra una cuadricula superpuesta para verificar alineacion.",
+  "columns": "Columnas",
+  "gutter": "Espacio",
+  "color": "Color",
+  "show": "Mostrar cuadricula",
+  "hide": "Ocultar"
+}

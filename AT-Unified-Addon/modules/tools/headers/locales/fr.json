@@ -1,0 +1,7 @@
+{
+  "label": "Headers",
+  "title": "Headers HTTP",
+  "description": "Affiche les en-tetes HTTP de la reponse du serveur.",
+  "load": "Charger les headers",
+  "noHeaders": "Aucun header"
+}

@@ -1,0 +1,9 @@
+{
+  "label": "Emails",
+  "title": "Extracteur d'Emails",
+  "description": "Extrait toutes les adresses email trouvees sur la page courante.",
+  "extract": "Extraire les emails",
+  "count": "email(s)",
+  "copyLines": "Copier (lignes)",
+  "copySemicolon": "Copier (;)"
+}

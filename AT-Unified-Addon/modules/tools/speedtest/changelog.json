@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2024-01-01",
+      "type": "added",
+      "messages": {
+        "fr": "Version initiale",
+        "en": "Initial release",
+        "es": "Version inicial",
+        "pt": "Versao inicial"
+      }
+    }
+  ]
+}

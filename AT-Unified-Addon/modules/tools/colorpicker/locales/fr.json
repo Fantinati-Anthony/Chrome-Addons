@@ -1,0 +1,8 @@
+{
+  "label": "Couleurs",
+  "title": "Color Picker",
+  "description": "Pipette pour capturer les couleurs de n'importe quel element a l'ecran.",
+  "pickColor": "Choisir une couleur",
+  "noColors": "Aucune couleur",
+  "analyze": "Analyser"
+}

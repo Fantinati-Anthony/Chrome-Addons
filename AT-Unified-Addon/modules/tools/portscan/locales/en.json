@@ -1,0 +1,5 @@
+{
+  "label": "Ports",
+  "title": "Port Scanner",
+  "description": "Scans open ports on the current domain."
+}

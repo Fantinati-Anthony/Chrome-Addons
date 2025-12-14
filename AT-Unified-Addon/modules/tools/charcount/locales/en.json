@@ -1,0 +1,6 @@
+{
+  "label": "Characters",
+  "title": "Character Counter",
+  "description": "Counts characters, words, and lines in real-time.",
+  "placeholder": "Enter your text here..."
+}

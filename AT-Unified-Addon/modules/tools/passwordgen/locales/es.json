@@ -1,0 +1,7 @@
+{
+  "label": "Password",
+  "title": "Generador de contrasena",
+  "description": "Genera contrasenas seguras con opciones personalizables.",
+  "length": "Longitud",
+  "generate": "Generar"
+}

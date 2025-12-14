@@ -1,0 +1,5 @@
+{
+  "label": "Whois",
+  "title": "Whois",
+  "description": "Affiche les informations d'enregistrement du domaine (proprietaire, dates, serveurs DNS)."
+}

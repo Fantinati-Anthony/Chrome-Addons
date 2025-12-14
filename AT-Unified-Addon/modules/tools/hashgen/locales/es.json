@@ -1,0 +1,6 @@
+{
+  "label": "Hash",
+  "title": "Generador Hash",
+  "description": "Genera hashes SHA-256, SHA-512, SHA-1 para texto.",
+  "generate": "Generar"
+}

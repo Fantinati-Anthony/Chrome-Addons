@@ -1,0 +1,8 @@
+{
+  "label": "Colores",
+  "title": "Selector de color",
+  "description": "Cuentagotas para capturar colores de cualquier elemento.",
+  "pickColor": "Elegir un color",
+  "noColors": "Sin colores",
+  "analyze": "Analizar"
+}

@@ -1,0 +1,11 @@
+{
+  "label": "Downloads",
+  "title": "Telechargements",
+  "description": "Telecharge plusieurs fichiers simultanement a partir d'une liste d'URLs.",
+  "placeholder": "Entrez les URLs (une par ligne)...",
+  "concurrent": "Simultanes",
+  "download": "Telecharger",
+  "starting": "Demarrage",
+  "files": "fichier(s)",
+  "done": "Termine!"
+}
