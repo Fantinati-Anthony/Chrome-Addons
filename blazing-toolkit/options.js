@@ -24,29 +24,67 @@ document.addEventListener('DOMContentLoaded', () => {
     '❤️', '💙', '💚', '💛', '🧡', '💜', '🖤', '🤍'
   ];
 
-  // ========== GENERAL SETTINGS (TITLE + LANGUAGE) ==========
+  // ========== GENERAL SETTINGS (TITLE + LANGUAGE + THEME) ==========
   const popupTitleInput = document.getElementById('popup-title-input');
   const languageSelect = document.getElementById('language-select');
+  const themeSelect = document.getElementById('theme-select');
   const saveGeneralBtn = document.getElementById('btn-save-general');
   const generalStatus = document.getElementById('general-status');
 
+  // Theme management
+  function applyTheme(theme) {
+    if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.body.classList.toggle('dark-mode', prefersDark);
+    } else {
+      document.body.classList.toggle('dark-mode', theme === 'dark');
+    }
+  }
+
+  // Listen for system theme changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    chrome.storage.sync.get(['theme'], (data) => {
+      if (data.theme === 'system') {
+        document.body.classList.toggle('dark-mode', e.matches);
+        // Notify sidebar of theme change
+        chrome.runtime.sendMessage({ type: 'themeChanged', theme: 'system', isDark: e.matches });
+      }
+    });
+  });
+
   // Load saved settings
-  chrome.storage.sync.get(['popupTitle', 'language'], (data) => {
+  chrome.storage.sync.get(['popupTitle', 'language', 'theme'], (data) => {
     if (data.popupTitle && popupTitleInput) {
       popupTitleInput.value = data.popupTitle;
     }
     if (data.language && languageSelect) {
       languageSelect.value = data.language;
     }
+    if (data.theme && themeSelect) {
+      themeSelect.value = data.theme;
+    }
+    applyTheme(data.theme || 'light');
   });
+
+  // Apply theme immediately when changed
+  if (themeSelect) {
+    themeSelect.addEventListener('change', () => {
+      applyTheme(themeSelect.value);
+      // Notify sidebar of theme change
+      chrome.runtime.sendMessage({ type: 'themeChanged', theme: themeSelect.value });
+    });
+  }
 
   // Save general settings
   if (saveGeneralBtn) {
     saveGeneralBtn.addEventListener('click', () => {
       const title = popupTitleInput.value.trim() || 'Toolkit';
       const language = languageSelect.value || 'fr';
-      chrome.storage.sync.set({ popupTitle: title, language: language }, () => {
+      const theme = themeSelect.value || 'light';
+      chrome.storage.sync.set({ popupTitle: title, language: language, theme: theme }, () => {
         showStatus(generalStatus, 'Parametres sauvegardes!', 'success');
+        // Notify all windows of settings change
+        chrome.runtime.sendMessage({ type: 'settingsChanged', settings: { popupTitle: title, language, theme } });
       });
     });
   }
@@ -81,6 +119,19 @@ document.addEventListener('DOMContentLoaded', () => {
         colorInputs[key].value = colors[key];
       }
     });
+  });
+
+  // Live preview: broadcast color changes immediately
+  Object.keys(colorInputs).forEach(key => {
+    if (colorInputs[key]) {
+      colorInputs[key].addEventListener('input', () => {
+        const colors = {};
+        Object.keys(colorInputs).forEach(k => {
+          colors[k] = colorInputs[k].value;
+        });
+        chrome.runtime.sendMessage({ type: 'colorsChanged', colors });
+      });
+    }
   });
 
   // Save colors
@@ -128,9 +179,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (radiusLargeValue) radiusLargeValue.textContent = radiusLarge.value + 'px';
   }
 
-  if (radiusSmall) radiusSmall.addEventListener('input', updateRadiusDisplay);
-  if (radiusMedium) radiusMedium.addEventListener('input', updateRadiusDisplay);
-  if (radiusLarge) radiusLarge.addEventListener('input', updateRadiusDisplay);
+  function broadcastRadiusChange() {
+    const radius = {
+      radiusSmall: parseInt(radiusSmall.value),
+      radiusMedium: parseInt(radiusMedium.value),
+      radiusLarge: parseInt(radiusLarge.value)
+    };
+    chrome.runtime.sendMessage({ type: 'radiusChanged', radius });
+  }
+
+  if (radiusSmall) radiusSmall.addEventListener('input', () => { updateRadiusDisplay(); broadcastRadiusChange(); });
+  if (radiusMedium) radiusMedium.addEventListener('input', () => { updateRadiusDisplay(); broadcastRadiusChange(); });
+  if (radiusLarge) radiusLarge.addEventListener('input', () => { updateRadiusDisplay(); broadcastRadiusChange(); });
 
   // Load saved radius
   chrome.storage.sync.get(['customRadius'], (data) => {
@@ -192,7 +252,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (buttonSizeSlider) {
-    buttonSizeSlider.addEventListener('input', updateSizeDisplay);
+    buttonSizeSlider.addEventListener('input', () => {
+      updateSizeDisplay();
+      // Live preview: broadcast size change
+      chrome.runtime.sendMessage({ type: 'sizeChanged', size: parseFloat(buttonSizeSlider.value) });
+    });
   }
 
   // Load saved size
@@ -915,17 +979,27 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       catEl.addEventListener('dragover', (e) => {
-        if (draggedTool) return; // Don't interfere with tool dragging
-        if (!draggedCategory || draggedCategory === catId) return;
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
+        // Handle category drag
+        if (draggedCategory && draggedCategory !== catId) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
 
-        const rect = catEl.getBoundingClientRect();
-        const midY = rect.top + rect.height / 2;
-        const isTop = e.clientY < midY;
+          const rect = catEl.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          const isTop = e.clientY < midY;
 
-        clearDropIndicators();
-        catEl.classList.add(isTop ? 'drag-over-top' : 'drag-over-bottom');
+          clearDropIndicators();
+          catEl.classList.add(isTop ? 'drag-over-top' : 'drag-over-bottom');
+          return;
+        }
+
+        // Handle tool drag to different category (move tool)
+        if (draggedTool && draggedToolCategory !== catId) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          clearDropIndicators();
+          catEl.classList.add('drag-over-bottom');
+        }
       });
 
       catEl.addEventListener('dragleave', (e) => {
@@ -935,7 +1009,34 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       catEl.addEventListener('drop', (e) => {
-        if (draggedTool) return;
+        // Handle tool drop on different category (move tool)
+        if (draggedTool && draggedToolCategory !== catId) {
+          e.preventDefault();
+          clearDropIndicators();
+
+          // Remove from source category
+          const sourceTools = toolOrder[draggedToolCategory] || [];
+          const fromIndex = sourceTools.indexOf(draggedTool);
+          if (fromIndex !== -1) {
+            sourceTools.splice(fromIndex, 1);
+            toolOrder[draggedToolCategory] = sourceTools;
+          }
+
+          // Add to target category
+          if (!toolOrder[catId]) toolOrder[catId] = [];
+          toolOrder[catId].push(draggedTool);
+
+          // Update tool assignment
+          toolAssignment[draggedTool] = catId;
+
+          renderModuleManager();
+          setTimeout(() => {
+            document.querySelector(`#active-modules [data-category="${catId}"]`)?.classList.add('expanded');
+          }, 0);
+          return;
+        }
+
+        // Handle category drop
         if (!draggedCategory || draggedCategory === catId) return;
         e.preventDefault();
 
