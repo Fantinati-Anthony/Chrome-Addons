@@ -7,13 +7,21 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.5.1] - 2025-12-14
+
+### Ameliore
+- **Drag & Drop** : Remplacement des boutons ▲▼ par un systeme de glisser-deposer
+  - Icone ☰ pour indiquer les elements deplacables
+  - Glissez les categories pour les reorganiser
+  - Cliquez sur ▼ pour etendre une categorie et reorganiser ses outils
+  - Feedback visuel pendant le drag (opacite, bordure bleue)
+
+---
+
 ## [3.5.0] - 2025-12-14
 
 ### Ajoute
 - **Ordre d'affichage personnalisable** : Nouvelle section dans les options pour reorganiser les categories et outils
-  - Boutons ▲▼ pour monter/descendre les categories
-  - Cliquez sur une categorie pour voir et reorganiser ses outils
-  - Boutons ▲▼ pour chaque outil dans sa categorie
   - L'ordre est sauvegarde et applique au popup
   - Bouton "Reinitialiser l'ordre" pour revenir a l'ordre par defaut
 

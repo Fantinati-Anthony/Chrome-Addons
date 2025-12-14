@@ -670,96 +670,140 @@ document.addEventListener('DOMContentLoaded', () => {
     renderReorderUI();
   });
 
+  // Drag state
+  let draggedCategory = null;
+  let draggedTool = null;
+  let draggedToolCategory = null;
+
   function renderReorderUI() {
     const container = document.getElementById('reorder-container');
     if (!container) return;
 
     container.innerHTML = '';
 
-    categoryOrder.forEach((catId, catIndex) => {
+    categoryOrder.forEach((catId) => {
       const cat = CATEGORIES_CONFIG[catId];
       if (!cat) return;
 
       const catEl = document.createElement('div');
       catEl.className = 'reorder-category';
       catEl.dataset.category = catId;
+      catEl.draggable = true;
 
       const tools = toolOrder[catId] || cat.tools;
 
       catEl.innerHTML = `
         <div class="reorder-category-header">
-          <div class="reorder-arrows">
-            <button class="btn-cat-up" ${catIndex === 0 ? 'disabled' : ''}>▲</button>
-            <button class="btn-cat-down" ${catIndex === categoryOrder.length - 1 ? 'disabled' : ''}>▼</button>
-          </div>
+          <span class="drag-handle">☰</span>
           <span class="reorder-category-title">${cat.emoji} ${cat.name}</span>
           <span class="reorder-category-toggle">▼</span>
         </div>
         <div class="reorder-tools">
-          ${tools.map((toolId, toolIndex) => `
-            <div class="reorder-tool" data-tool="${toolId}">
-              <div class="reorder-arrows">
-                <button class="btn-tool-up" ${toolIndex === 0 ? 'disabled' : ''}>▲</button>
-                <button class="btn-tool-down" ${toolIndex === tools.length - 1 ? 'disabled' : ''}>▼</button>
-              </div>
+          ${tools.map((toolId) => `
+            <div class="reorder-tool" data-tool="${toolId}" draggable="true">
+              <span class="drag-handle">☰</span>
               <span class="reorder-tool-name">${TOOLS_CONFIG[toolId] || toolId}</span>
             </div>
           `).join('')}
         </div>
       `;
 
-      // Category expand/collapse
-      const header = catEl.querySelector('.reorder-category-header');
-      header.addEventListener('click', (e) => {
-        if (e.target.closest('.reorder-arrows')) return;
+      // Category expand/collapse (click on toggle only)
+      const toggle = catEl.querySelector('.reorder-category-toggle');
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
         catEl.classList.toggle('expanded');
       });
 
-      // Category up/down
-      catEl.querySelector('.btn-cat-up').addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (catIndex > 0) {
-          [categoryOrder[catIndex - 1], categoryOrder[catIndex]] = [categoryOrder[catIndex], categoryOrder[catIndex - 1]];
-          renderReorderUI();
-        }
+      // Category drag & drop
+      catEl.addEventListener('dragstart', (e) => {
+        if (e.target.classList.contains('reorder-tool')) return;
+        draggedCategory = catId;
+        catEl.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', catId);
       });
 
-      catEl.querySelector('.btn-cat-down').addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (catIndex < categoryOrder.length - 1) {
-          [categoryOrder[catIndex], categoryOrder[catIndex + 1]] = [categoryOrder[catIndex + 1], categoryOrder[catIndex]];
-          renderReorderUI();
-        }
+      catEl.addEventListener('dragend', () => {
+        catEl.classList.remove('dragging');
+        draggedCategory = null;
+        container.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
       });
 
-      // Tool up/down
-      catEl.querySelectorAll('.reorder-tool').forEach((toolEl, toolIndex) => {
+      catEl.addEventListener('dragover', (e) => {
+        if (!draggedCategory || draggedCategory === catId) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        catEl.classList.add('drag-over');
+      });
+
+      catEl.addEventListener('dragleave', () => {
+        catEl.classList.remove('drag-over');
+      });
+
+      catEl.addEventListener('drop', (e) => {
+        e.preventDefault();
+        catEl.classList.remove('drag-over');
+        if (!draggedCategory || draggedCategory === catId) return;
+
+        // Reorder categories
+        const fromIndex = categoryOrder.indexOf(draggedCategory);
+        const toIndex = categoryOrder.indexOf(catId);
+        categoryOrder.splice(fromIndex, 1);
+        categoryOrder.splice(toIndex, 0, draggedCategory);
+        renderReorderUI();
+      });
+
+      // Tool drag & drop
+      catEl.querySelectorAll('.reorder-tool').forEach((toolEl) => {
         const toolId = toolEl.dataset.tool;
 
-        toolEl.querySelector('.btn-tool-up').addEventListener('click', (e) => {
+        toolEl.addEventListener('dragstart', (e) => {
           e.stopPropagation();
-          const tools = toolOrder[catId];
-          if (toolIndex > 0) {
-            [tools[toolIndex - 1], tools[toolIndex]] = [tools[toolIndex], tools[toolIndex - 1]];
-            renderReorderUI();
-            // Re-expand this category
-            setTimeout(() => {
-              document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
-            }, 0);
-          }
+          draggedTool = toolId;
+          draggedToolCategory = catId;
+          toolEl.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', toolId);
         });
 
-        toolEl.querySelector('.btn-tool-down').addEventListener('click', (e) => {
+        toolEl.addEventListener('dragend', () => {
+          toolEl.classList.remove('dragging');
+          draggedTool = null;
+          draggedToolCategory = null;
+          document.querySelectorAll('.reorder-tool.drag-over').forEach(el => el.classList.remove('drag-over'));
+        });
+
+        toolEl.addEventListener('dragover', (e) => {
+          if (!draggedTool || draggedToolCategory !== catId || draggedTool === toolId) return;
+          e.preventDefault();
           e.stopPropagation();
+          e.dataTransfer.dropEffect = 'move';
+          toolEl.classList.add('drag-over');
+        });
+
+        toolEl.addEventListener('dragleave', () => {
+          toolEl.classList.remove('drag-over');
+        });
+
+        toolEl.addEventListener('drop', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toolEl.classList.remove('drag-over');
+          if (!draggedTool || draggedToolCategory !== catId || draggedTool === toolId) return;
+
+          // Reorder tools within category
           const tools = toolOrder[catId];
-          if (toolIndex < tools.length - 1) {
-            [tools[toolIndex], tools[toolIndex + 1]] = [tools[toolIndex + 1], tools[toolIndex]];
-            renderReorderUI();
-            // Re-expand this category
-            setTimeout(() => {
-              document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
-            }, 0);
-          }
+          const fromIndex = tools.indexOf(draggedTool);
+          const toIndex = tools.indexOf(toolId);
+          tools.splice(fromIndex, 1);
+          tools.splice(toIndex, 0, draggedTool);
+
+          // Re-render and keep expanded
+          renderReorderUI();
+          setTimeout(() => {
+            document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
+          }, 0);
         });
       });
 
