@@ -7,6 +7,16 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.5.4] - 2025-12-14
+
+### Ameliore
+- **Indicateur de drop visuel** : Une ligne bleue indique maintenant ou l'element sera place
+  - Detection de la position (haut/bas) de la souris sur l'element cible
+  - Insertion avant ou apres selon la position
+  - Fonctionne pour les categories et les outils
+
+---
+
 ## [3.5.3] - 2025-12-14
 
 ### Corrige

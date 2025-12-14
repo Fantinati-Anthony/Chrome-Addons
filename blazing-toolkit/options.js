@@ -675,6 +675,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let draggedTool = null;
   let draggedToolCategory = null;
 
+  function clearDropIndicators() {
+    document.querySelectorAll('.drag-over-top, .drag-over-bottom').forEach(el => {
+      el.classList.remove('drag-over-top', 'drag-over-bottom');
+    });
+  }
+
   function renderReorderUI() {
     const container = document.getElementById('reorder-container');
     if (!container) return;
@@ -728,7 +734,7 @@ document.addEventListener('DOMContentLoaded', () => {
       header.addEventListener('dragend', () => {
         catEl.classList.remove('dragging');
         draggedCategory = null;
-        container.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+        clearDropIndicators();
       });
 
       // Category drop zone - on the whole category element
@@ -736,27 +742,49 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!draggedCategory || draggedCategory === catId) return;
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
-        catEl.classList.add('drag-over');
+
+        // Detect position (top or bottom half)
+        const rect = catEl.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        const isTop = e.clientY < midY;
+
+        // Clear previous indicators and set new one
+        clearDropIndicators();
+        catEl.classList.add(isTop ? 'drag-over-top' : 'drag-over-bottom');
       });
 
       catEl.addEventListener('dragleave', (e) => {
-        // Only remove if leaving the category entirely
         if (!catEl.contains(e.relatedTarget)) {
-          catEl.classList.remove('drag-over');
+          catEl.classList.remove('drag-over-top', 'drag-over-bottom');
         }
       });
 
       catEl.addEventListener('drop', (e) => {
         if (!draggedCategory || draggedCategory === catId) return;
         e.preventDefault();
-        catEl.classList.remove('drag-over');
+
+        // Detect position for insertion
+        const rect = catEl.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        const insertAfter = e.clientY >= midY;
+
+        clearDropIndicators();
 
         // Reorder categories
         const fromIndex = categoryOrder.indexOf(draggedCategory);
-        const toIndex = categoryOrder.indexOf(catId);
+        let toIndex = categoryOrder.indexOf(catId);
+
         if (fromIndex !== -1 && toIndex !== -1) {
+          // Remove from original position
           categoryOrder.splice(fromIndex, 1);
+
+          // Adjust toIndex if needed (after removal)
+          if (fromIndex < toIndex) toIndex--;
+
+          // Insert at new position
+          if (insertAfter) toIndex++;
           categoryOrder.splice(toIndex, 0, draggedCategory);
+
           renderReorderUI();
         }
       });
@@ -779,7 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
           toolEl.classList.remove('dragging');
           draggedTool = null;
           draggedToolCategory = null;
-          document.querySelectorAll('.reorder-tool.drag-over').forEach(el => el.classList.remove('drag-over'));
+          clearDropIndicators();
         });
 
         toolEl.addEventListener('dragover', (e) => {
@@ -787,35 +815,54 @@ document.addEventListener('DOMContentLoaded', () => {
           e.preventDefault();
           e.stopPropagation();
           e.dataTransfer.dropEffect = 'move';
-          toolEl.classList.add('drag-over');
+
+          // Detect position (top or bottom half)
+          const rect = toolEl.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          const isTop = e.clientY < midY;
+
+          // Clear previous indicators and set new one
+          clearDropIndicators();
+          toolEl.classList.add(isTop ? 'drag-over-top' : 'drag-over-bottom');
         });
 
         toolEl.addEventListener('dragleave', () => {
-          toolEl.classList.remove('drag-over');
+          toolEl.classList.remove('drag-over-top', 'drag-over-bottom');
         });
 
         toolEl.addEventListener('drop', (e) => {
           if (!draggedTool || draggedToolCategory !== catId || draggedTool === toolId) return;
           e.preventDefault();
           e.stopPropagation();
-          toolEl.classList.remove('drag-over');
+
+          // Detect position for insertion
+          const rect = toolEl.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          const insertAfter = e.clientY >= midY;
+
+          clearDropIndicators();
 
           // Reorder tools within category
           const tools = toolOrder[catId];
           const fromIndex = tools.indexOf(draggedTool);
-          const toIndex = tools.indexOf(toolId);
+          let toIndex = tools.indexOf(toolId);
+
           if (fromIndex !== -1 && toIndex !== -1) {
+            // Remove from original position
             tools.splice(fromIndex, 1);
+
+            // Adjust toIndex if needed (after removal)
+            if (fromIndex < toIndex) toIndex--;
+
+            // Insert at new position
+            if (insertAfter) toIndex++;
             tools.splice(toIndex, 0, draggedTool);
 
             // Re-render and keep expanded
-            const wasExpanded = catEl.classList.contains('expanded');
             renderReorderUI();
-            if (wasExpanded) {
-              setTimeout(() => {
-                document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
-              }, 0);
-            }
+            setTimeout(() => {
+              document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
+            }, 0);
           }
         });
       });
