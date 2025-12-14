@@ -1,5 +1,5 @@
 {
-  "version": "3.7.4",
+  "version": "3.7.5",
   "releaseDate": "2025-12-14",
-  "changelog": "Feat: Merged 'Gestion des modules' and 'Boutons personnalisés' into tabbed section. Added backup/export button in update modal."
+  "changelog": "Feat: Replaced tabs with modal for custom shortcuts (like category modal)."
 }

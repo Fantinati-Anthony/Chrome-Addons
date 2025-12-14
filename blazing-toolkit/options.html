@@ -929,57 +929,42 @@
       font-style: italic;
     }
 
-    /* Tabs */
-    .tabs-container {
-      display: flex;
-      gap: 10px;
-      border-bottom: 2px solid #e0e0e0;
-      padding-bottom: 0;
-    }
-
-    .tab-btn {
-      padding: 12px 20px;
-      background: transparent;
+    /* New shortcut button */
+    .btn-new-shortcut {
+      background: #9b59b6;
+      color: white;
       border: none;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -2px;
+      padding: 6px 12px;
+      border-radius: 4px;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      color: #666;
+      font-size: 12px;
       transition: all 0.2s;
     }
 
-    .tab-btn:hover {
-      color: #3498db;
-      background: transparent;
+    .btn-new-shortcut:hover {
+      background: #8e44ad;
     }
 
-    .tab-btn.active {
-      color: #3498db;
-      border-bottom-color: #3498db;
-      background: transparent;
+    .btn-emoji-picker {
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 16px;
     }
 
-    .tab-content {
-      display: none;
+    .btn-emoji-picker:hover {
+      background: #e0e0e0;
     }
 
-    .tab-content.active {
-      display: block;
+    body.dark-mode .btn-emoji-picker {
+      background: #2a2a4e;
+      border-color: #3a3a5e;
     }
 
-    body.dark-mode .tabs-container {
-      border-bottom-color: #2a2a4e;
-    }
-
-    body.dark-mode .tab-btn {
-      color: #888;
-    }
-
-    body.dark-mode .tab-btn:hover,
-    body.dark-mode .tab-btn.active {
-      color: #3498db;
+    body.dark-mode .btn-emoji-picker:hover {
+      background: #3a3a5e;
     }
 
     /* Reorder section styles - Drag & Drop */
@@ -1439,96 +1424,55 @@
     <div id="size-status" class="status" style="display: none;"></div>
   </div>
 
-  <!-- Gestion des modules et boutons personnalisés -->
+  <!-- Gestion des modules et raccourcis -->
   <div class="section">
     <h2>Gestion des modules et raccourcis</h2>
-    <p>Gerez vos modules et raccourcis personnalises depuis cette interface unifiee.</p>
+    <p>Gerez vos modules et raccourcis personnalises.</p>
 
-    <!-- Tabs -->
-    <div class="tabs-container" style="margin-bottom: 20px;">
-      <button class="tab-btn active" data-tab="modules-tab">📦 Modules</button>
-      <button class="tab-btn" data-tab="buttons-tab">🔗 Raccourcis personnalises</button>
-    </div>
-
-    <!-- Tab: Modules -->
-    <div id="modules-tab" class="tab-content active">
-      <div class="module-manager">
-        <!-- Left column: Available modules -->
-        <div class="modules-column available">
-          <div class="column-header">
-            <h3>📦 Modules disponibles</h3>
-            <div class="header-actions">
-              <button id="btn-activate-all" class="btn-activate-all">Tout activer →</button>
-            </div>
-          </div>
-          <div id="available-modules" class="modules-list">
-            <!-- Dynamically loaded -->
+    <div class="module-manager">
+      <!-- Left column: Available modules -->
+      <div class="modules-column available">
+        <div class="column-header">
+          <h3>📦 Modules disponibles</h3>
+          <div class="header-actions">
+            <button id="btn-activate-all" class="btn-activate-all">Tout activer →</button>
           </div>
         </div>
-
-        <!-- Right column: Active modules -->
-        <div class="modules-column active">
-          <div class="column-header">
-            <h3>✅ Modules actifs</h3>
-            <div class="header-actions">
-              <button id="btn-new-category" class="btn-new-category">+ Categorie</button>
-              <button id="btn-deactivate-all" class="btn-deactivate-all">← Tout retirer</button>
-            </div>
-          </div>
-          <div id="active-modules" class="modules-list">
-            <!-- Dynamically loaded with drag & drop -->
-          </div>
+        <div id="available-modules" class="modules-list">
+          <!-- Dynamically loaded -->
         </div>
       </div>
 
-      <div class="btn-group" style="margin-top: 15px;">
-        <button id="btn-save-modules">Sauvegarder les modules</button>
-        <button id="btn-reset-modules" class="btn-reset">Reinitialiser</button>
+      <!-- Right column: Active modules -->
+      <div class="modules-column active">
+        <div class="column-header">
+          <h3>✅ Modules actifs</h3>
+          <div class="header-actions">
+            <button id="btn-new-category" class="btn-new-category">+ Categorie</button>
+            <button id="btn-new-shortcut" class="btn-new-shortcut">+ Raccourci</button>
+            <button id="btn-deactivate-all" class="btn-deactivate-all">← Tout retirer</button>
+          </div>
+        </div>
+        <div id="active-modules" class="modules-list">
+          <!-- Dynamically loaded with drag & drop -->
+        </div>
       </div>
-      <div id="modules-status" class="status" style="display: none;"></div>
     </div>
 
-    <!-- Tab: Custom buttons -->
-    <div id="buttons-tab" class="tab-content">
-      <p style="margin-bottom: 15px; color: #666;">Ajoutez des raccourcis vers vos sites preferes. Ils apparaitront dans une section dediee du popup.</p>
-
+    <!-- Custom shortcuts list -->
+    <div id="shortcuts-section" style="margin-top: 20px; display: none;">
+      <h4 style="margin-bottom: 10px; color: #666;">🔗 Raccourcis personnalises</h4>
       <div id="buttons-list" class="buttons-list">
         <!-- Les boutons seront charges ici dynamiquement -->
       </div>
-
-      <div class="add-button-form">
-        <div class="form-group">
-          <label>Nom:</label>
-          <input type="text" id="new-btn-name" placeholder="Mon site">
-        </div>
-        <div class="form-group">
-          <label>URL:</label>
-          <input type="url" id="new-btn-url" placeholder="https://example.com">
-        </div>
-        <div class="form-group icon-selector">
-          <label>Icone:</label>
-          <div class="icon-input">
-            <input type="text" id="new-btn-icon" placeholder="Emoji" maxlength="4">
-            <button type="button" id="btn-emoji-picker" title="Choisir un emoji">...</button>
-          </div>
-          <div id="emoji-picker" class="emoji-picker">
-            <div class="emoji-grid">
-              <!-- Emojis populaires -->
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>&nbsp;</label>
-          <button id="btn-add-button" class="btn-add">+ Ajouter</button>
-        </div>
-      </div>
-
-      <div class="info">
-        <strong>Astuce:</strong> Laissez le champ icone vide pour utiliser automatiquement le favicon du site.
-      </div>
-
-      <div id="buttons-status" class="status" style="display: none;"></div>
     </div>
+
+    <div class="btn-group" style="margin-top: 15px;">
+      <button id="btn-save-modules">Sauvegarder les modules</button>
+      <button id="btn-reset-modules" class="btn-reset">Reinitialiser</button>
+    </div>
+    <div id="modules-status" class="status" style="display: none;"></div>
+    <div id="buttons-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- Modal for new category -->
@@ -1546,6 +1490,38 @@
       <div class="modal-buttons">
         <button id="btn-cancel-category" class="modal-btn-cancel">Annuler</button>
         <button id="btn-create-category" class="modal-btn-save">Creer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for new shortcut -->
+  <div id="shortcut-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Nouveau raccourci</h3>
+      <div class="form-group">
+        <label for="new-btn-name">Nom:</label>
+        <input type="text" id="new-btn-name" placeholder="Mon site">
+      </div>
+      <div class="form-group">
+        <label for="new-btn-url">URL:</label>
+        <input type="url" id="new-btn-url" placeholder="https://example.com">
+      </div>
+      <div class="form-group">
+        <label for="new-btn-icon">Icone (emoji ou vide pour favicon):</label>
+        <div class="icon-input" style="display: flex; gap: 8px;">
+          <input type="text" id="new-btn-icon" placeholder="🌐" maxlength="4" style="width: 60px;">
+          <button type="button" id="btn-emoji-picker" class="btn-emoji-picker" title="Choisir un emoji">😀</button>
+        </div>
+        <div id="emoji-picker" class="emoji-picker">
+          <div class="emoji-grid">
+            <!-- Emojis populaires -->
+          </div>
+        </div>
+      </div>
+      <p class="modal-hint" style="font-size: 11px; color: #888; margin: 8px 0;">Laissez l'icone vide pour utiliser le favicon du site.</p>
+      <div class="modal-buttons">
+        <button id="btn-cancel-shortcut" class="modal-btn-cancel">Annuler</button>
+        <button id="btn-add-button" class="modal-btn-save">Creer</button>
       </div>
     </div>
   </div>

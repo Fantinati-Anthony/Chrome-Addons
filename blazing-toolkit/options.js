@@ -1,18 +1,5 @@
 // Options page script
 document.addEventListener('DOMContentLoaded', () => {
-  // ========== TABS MANAGEMENT ==========
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tabId = btn.dataset.tab;
-      // Remove active from all tabs and contents
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      // Add active to clicked tab and its content
-      btn.classList.add('active');
-      document.getElementById(tabId)?.classList.add('active');
-    });
-  });
-
   // ========== DEFAULT VALUES ==========
   const DEFAULT_COLORS = {
     bgColor: '#f5f5f5',
@@ -300,8 +287,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ========== DYNAMIC BUTTONS ==========
+  // ========== DYNAMIC BUTTONS (SHORTCUTS) ==========
   const buttonsList = document.getElementById('buttons-list');
+  const shortcutsSection = document.getElementById('shortcuts-section');
   const newBtnName = document.getElementById('new-btn-name');
   const newBtnUrl = document.getElementById('new-btn-url');
   const newBtnIcon = document.getElementById('new-btn-icon');
@@ -309,6 +297,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const buttonsStatus = document.getElementById('buttons-status');
   const emojiPickerBtn = document.getElementById('btn-emoji-picker');
   const emojiPicker = document.getElementById('emoji-picker');
+  const shortcutModal = document.getElementById('shortcut-modal');
+  const btnNewShortcut = document.getElementById('btn-new-shortcut');
+  const btnCancelShortcut = document.getElementById('btn-cancel-shortcut');
 
   let customButtons = [];
 
@@ -345,6 +336,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Shortcut modal handling
+  btnNewShortcut.addEventListener('click', () => {
+    shortcutModal.classList.add('visible');
+    newBtnName.focus();
+  });
+
+  btnCancelShortcut.addEventListener('click', () => {
+    shortcutModal.classList.remove('visible');
+    newBtnName.value = '';
+    newBtnUrl.value = '';
+    newBtnIcon.value = '';
+  });
+
+  // Close modal on overlay click
+  shortcutModal.addEventListener('click', (e) => {
+    if (e.target === shortcutModal) {
+      shortcutModal.classList.remove('visible');
+      newBtnName.value = '';
+      newBtnUrl.value = '';
+      newBtnIcon.value = '';
+    }
+  });
+
   function loadButtons() {
     chrome.storage.sync.get(['customButtons'], (data) => {
       customButtons = data.customButtons || [];
@@ -354,16 +368,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function saveButtons() {
     chrome.storage.sync.set({ customButtons }, () => {
-      showStatus(buttonsStatus, 'Boutons sauvegardes!', 'success');
+      showStatus(buttonsStatus, 'Raccourci sauvegarde!', 'success');
     });
   }
 
   function renderButtons() {
     buttonsList.innerHTML = '';
+
+    // Show/hide shortcuts section based on whether there are buttons
     if (customButtons.length === 0) {
-      buttonsList.innerHTML = '<p style="color: #999; font-size: 13px; text-align: center; padding: 20px;">Aucun bouton personnalise. Ajoutez-en un ci-dessous!</p>';
+      shortcutsSection.style.display = 'none';
       return;
     }
+
+    shortcutsSection.style.display = 'block';
 
     customButtons.forEach((btn, index) => {
       const item = document.createElement('div');
@@ -435,19 +453,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Add new button
+  // Add new button (from modal)
   addButtonBtn.addEventListener('click', () => {
     const name = newBtnName.value.trim();
     const url = newBtnUrl.value.trim();
     const icon = newBtnIcon.value.trim();
 
     if (!name) {
-      showStatus(buttonsStatus, 'Veuillez entrer un nom', 'error');
+      alert('Veuillez entrer un nom');
       return;
     }
 
     if (!url) {
-      showStatus(buttonsStatus, 'Veuillez entrer une URL', 'error');
+      alert('Veuillez entrer une URL');
       return;
     }
 
@@ -455,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       new URL(url);
     } catch (e) {
-      showStatus(buttonsStatus, 'URL invalide', 'error');
+      alert('URL invalide');
       return;
     }
 
@@ -463,10 +481,11 @@ document.addEventListener('DOMContentLoaded', () => {
     saveButtons();
     renderButtons();
 
-    // Clear form
+    // Clear form and close modal
     newBtnName.value = '';
     newBtnUrl.value = '';
     newBtnIcon.value = '';
+    shortcutModal.classList.remove('visible');
   });
 
   // ========== EXPORT/IMPORT ==========
