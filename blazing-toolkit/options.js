@@ -51,53 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ========== MODULE MANAGEMENT ==========
-  const moduleCheckboxes = document.querySelectorAll('[data-module]');
-  const enableAllBtn = document.getElementById('btn-enable-all-modules');
-  const disableAllBtn = document.getElementById('btn-disable-all-modules');
-  const saveModulesBtn = document.getElementById('btn-save-modules');
-  const modulesStatus = document.getElementById('modules-status');
-
-  // Load saved module states
-  loadModuleStates();
-
-  function loadModuleStates() {
-    chrome.storage.sync.get(['enabledModules'], (data) => {
-      const modules = data.enabledModules || {};
-      moduleCheckboxes.forEach(checkbox => {
-        const moduleId = checkbox.dataset.module;
-        // Default to enabled if not specified
-        checkbox.checked = modules[moduleId] !== false;
-      });
-    });
-  }
-
-  // Enable all modules
-  if (enableAllBtn) {
-    enableAllBtn.addEventListener('click', () => {
-      moduleCheckboxes.forEach(cb => cb.checked = true);
-    });
-  }
-
-  // Disable all modules
-  if (disableAllBtn) {
-    disableAllBtn.addEventListener('click', () => {
-      moduleCheckboxes.forEach(cb => cb.checked = false);
-    });
-  }
-
-  // Save modules
-  if (saveModulesBtn) {
-    saveModulesBtn.addEventListener('click', () => {
-      const modules = {};
-      moduleCheckboxes.forEach(checkbox => {
-        modules[checkbox.dataset.module] = checkbox.checked;
-      });
-      chrome.storage.sync.set({ enabledModules: modules }, () => {
-        showStatus(modulesStatus, 'Modules sauvegardes!', 'success');
-      });
-    });
-  }
+  // ========== UNIFIED MODULE MANAGER ==========
+  // (Implementation moved to REORDER section below)
 
   // ========== COLOR CUSTOMIZATION ==========
   const colorInputs = {
@@ -626,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ========== REORDER CATEGORIES AND TOOLS ==========
+  // ========== UNIFIED MODULE MANAGER (Two Columns) ==========
   const CATEGORIES_CONFIG = {
     network: { emoji: '🖥️', name: 'Reseau & Remote', tools: ['myip', 'remotedesktop', 'speedtest', 'ping', 'traceroute', 'portscan', 'dnslookup'] },
     domainDns: { emoji: '🌐', name: 'Domaine & DNS', tools: ['whois', 'dnschecker', 'mailtester', 'ssl'] },
@@ -651,23 +606,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const DEFAULT_CATEGORY_ORDER = ['network', 'domainDns', 'seoAnalysis', 'development', 'social', 'browser', 'design', 'utilities'];
 
+  // State
+  let enabledModules = {}; // { toolId: true/false }
   let categoryOrder = [...DEFAULT_CATEGORY_ORDER];
-  let toolOrder = {};
+  let toolOrder = {}; // { catId: [toolId, ...] }
+  let customCategories = {}; // { catId: { name, emoji } }
+  let toolAssignment = {}; // { toolId: catId } - for tools moved to different categories
 
   // Initialize default tool order
   Object.keys(CATEGORIES_CONFIG).forEach(cat => {
     toolOrder[cat] = [...CATEGORIES_CONFIG[cat].tools];
   });
 
-  // Load saved order
-  chrome.storage.sync.get(['categoryOrder', 'toolOrder'], (data) => {
+  // Initialize all modules as enabled by default
+  Object.keys(TOOLS_CONFIG).forEach(toolId => {
+    enabledModules[toolId] = true;
+  });
+
+  // Load saved state
+  chrome.storage.sync.get(['enabledModules', 'categoryOrder', 'toolOrder', 'customCategories', 'toolAssignment'], (data) => {
+    if (data.enabledModules) {
+      enabledModules = { ...enabledModules, ...data.enabledModules };
+    }
     if (data.categoryOrder && Array.isArray(data.categoryOrder)) {
       categoryOrder = data.categoryOrder;
     }
     if (data.toolOrder && typeof data.toolOrder === 'object') {
       toolOrder = { ...toolOrder, ...data.toolOrder };
     }
-    renderReorderUI();
+    if (data.customCategories) {
+      customCategories = data.customCategories;
+    }
+    if (data.toolAssignment) {
+      toolAssignment = data.toolAssignment;
+    }
+    renderModuleManager();
   });
 
   // Drag state
@@ -681,49 +654,253 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function renderReorderUI() {
-    const container = document.getElementById('reorder-container');
+  // Get category info (handles both default and custom categories)
+  function getCategoryInfo(catId) {
+    if (CATEGORIES_CONFIG[catId]) {
+      return CATEGORIES_CONFIG[catId];
+    }
+    if (customCategories[catId]) {
+      return { ...customCategories[catId], tools: [] };
+    }
+    return null;
+  }
+
+  // Get tools for a category (considers tool assignments)
+  function getToolsForCategory(catId) {
+    const baseTools = toolOrder[catId] || [];
+    return baseTools.filter(toolId => {
+      const assignedCat = toolAssignment[toolId];
+      return !assignedCat || assignedCat === catId;
+    });
+  }
+
+  // Get tool display info
+  function getToolInfo(toolId) {
+    const fullName = TOOLS_CONFIG[toolId] || toolId;
+    const parts = fullName.split(' ');
+    const emoji = parts[0];
+    const name = parts.slice(1).join(' ');
+    return { emoji, name, fullName };
+  }
+
+  // Check if category has any enabled tools
+  function categoryHasEnabledTools(catId) {
+    const tools = getToolsForCategory(catId);
+    return tools.some(toolId => enabledModules[toolId]);
+  }
+
+  // Check if category has any disabled tools
+  function categoryHasDisabledTools(catId) {
+    const tools = getToolsForCategory(catId);
+    return tools.some(toolId => !enabledModules[toolId]);
+  }
+
+  // Render the module manager
+  function renderModuleManager() {
+    renderAvailableColumn();
+    renderActiveColumn();
+  }
+
+  // Render left column (available/disabled modules)
+  function renderAvailableColumn() {
+    const container = document.getElementById('available-modules');
     if (!container) return;
 
     container.innerHTML = '';
 
-    categoryOrder.forEach((catId) => {
-      const cat = CATEGORIES_CONFIG[catId];
+    // Get categories that have at least one disabled tool
+    const availableCategories = categoryOrder.filter(catId => {
+      const cat = getCategoryInfo(catId);
+      if (!cat) return false;
+      return categoryHasDisabledTools(catId);
+    });
+
+    if (availableCategories.length === 0) {
+      container.innerHTML = '<div class="empty-message">Tous les modules sont actifs</div>';
+      return;
+    }
+
+    availableCategories.forEach(catId => {
+      const cat = getCategoryInfo(catId);
       if (!cat) return;
 
+      const tools = getToolsForCategory(catId).filter(t => !enabledModules[t]);
+      if (tools.length === 0) return;
+
       const catEl = document.createElement('div');
-      catEl.className = 'reorder-category';
+      catEl.className = 'mm-category';
       catEl.dataset.category = catId;
 
-      const tools = toolOrder[catId] || cat.tools;
-
       catEl.innerHTML = `
-        <div class="reorder-category-header" draggable="true" data-cat-id="${catId}">
-          <span class="drag-handle">☰</span>
-          <span class="reorder-category-title">${cat.emoji} ${cat.name}</span>
-          <span class="reorder-category-toggle">▼</span>
+        <div class="mm-category-header">
+          <span class="mm-category-icon">${cat.emoji}</span>
+          <span class="mm-category-name">${cat.name}</span>
+          <span class="mm-category-count">${tools.length}</span>
+          <div class="mm-category-actions">
+            <button class="mm-btn-activate" data-action="activate-cat">Activer tout</button>
+          </div>
+          <span class="mm-category-toggle">▼</span>
         </div>
-        <div class="reorder-tools">
-          ${tools.map((toolId) => `
-            <div class="reorder-tool" data-tool="${toolId}" data-cat="${catId}" draggable="true">
-              <span class="drag-handle">☰</span>
-              <span class="reorder-tool-name">${TOOLS_CONFIG[toolId] || toolId}</span>
-            </div>
-          `).join('')}
+        <div class="mm-tools">
+          ${tools.map(toolId => {
+            const tool = getToolInfo(toolId);
+            return `
+              <div class="mm-tool" data-tool="${toolId}">
+                <span class="mm-tool-icon">${tool.emoji}</span>
+                <span class="mm-tool-name">${tool.name}</span>
+                <button class="mm-tool-action activate" data-action="activate">→</button>
+              </div>
+            `;
+          }).join('')}
         </div>
       `;
 
-      // Category expand/collapse (click on toggle only)
-      const toggle = catEl.querySelector('.reorder-category-toggle');
-      toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
+      // Toggle expand/collapse
+      const header = catEl.querySelector('.mm-category-header');
+      const toggle = catEl.querySelector('.mm-category-toggle');
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return;
         catEl.classList.toggle('expanded');
       });
 
-      // Category drag - on header only
-      const header = catEl.querySelector('.reorder-category-header');
+      // Activate all tools in category
+      catEl.querySelector('[data-action="activate-cat"]').addEventListener('click', (e) => {
+        e.stopPropagation();
+        tools.forEach(toolId => enabledModules[toolId] = true);
+        renderModuleManager();
+      });
 
+      // Activate individual tools
+      catEl.querySelectorAll('[data-action="activate"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const toolEl = btn.closest('.mm-tool');
+          const toolId = toolEl.dataset.tool;
+          enabledModules[toolId] = true;
+          renderModuleManager();
+        });
+      });
+
+      container.appendChild(catEl);
+    });
+  }
+
+  // Render right column (active modules with drag & drop)
+  function renderActiveColumn() {
+    const container = document.getElementById('active-modules');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // Get categories that have at least one enabled tool
+    const activeCategories = categoryOrder.filter(catId => {
+      const cat = getCategoryInfo(catId);
+      if (!cat) return false;
+      return categoryHasEnabledTools(catId);
+    });
+
+    // Also include custom categories
+    Object.keys(customCategories).forEach(catId => {
+      if (!activeCategories.includes(catId)) {
+        activeCategories.push(catId);
+      }
+    });
+
+    if (activeCategories.length === 0) {
+      container.innerHTML = '<div class="empty-message">Aucun module actif</div>';
+      return;
+    }
+
+    activeCategories.forEach(catId => {
+      const cat = getCategoryInfo(catId);
+      if (!cat) return;
+
+      const tools = getToolsForCategory(catId).filter(t => enabledModules[t]);
+      const isCustom = !!customCategories[catId];
+
+      const catEl = document.createElement('div');
+      catEl.className = 'mm-category' + (isCustom ? ' custom' : '');
+      catEl.dataset.category = catId;
+
+      catEl.innerHTML = `
+        <div class="mm-category-header" draggable="true">
+          <span class="mm-drag-handle">☰</span>
+          <span class="mm-category-icon">${cat.emoji}</span>
+          <span class="mm-category-name">${cat.name}</span>
+          <span class="mm-category-count">${tools.length}</span>
+          <div class="mm-category-actions">
+            ${isCustom ? `<button class="mm-btn-edit" data-action="edit-cat">✏️</button>` : ''}
+            ${isCustom ? `<button class="mm-btn-delete" data-action="delete-cat">🗑️</button>` : ''}
+            <button class="mm-btn-deactivate" data-action="deactivate-cat">← Retirer</button>
+          </div>
+          <span class="mm-category-toggle">▼</span>
+        </div>
+        <div class="mm-tools">
+          ${tools.map(toolId => {
+            const tool = getToolInfo(toolId);
+            return `
+              <div class="mm-tool" data-tool="${toolId}" data-cat="${catId}" draggable="true">
+                <span class="mm-drag-handle">☰</span>
+                <span class="mm-tool-icon">${tool.emoji}</span>
+                <span class="mm-tool-name">${tool.name}</span>
+                <button class="mm-tool-action deactivate" data-action="deactivate">←</button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      // Toggle expand/collapse
+      const header = catEl.querySelector('.mm-category-header');
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('button') || e.target.classList.contains('mm-drag-handle')) return;
+        catEl.classList.toggle('expanded');
+      });
+
+      // Deactivate all tools in category
+      const deactivateBtn = catEl.querySelector('[data-action="deactivate-cat"]');
+      if (deactivateBtn) {
+        deactivateBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          tools.forEach(toolId => enabledModules[toolId] = false);
+          renderModuleManager();
+        });
+      }
+
+      // Delete custom category
+      const deleteBtn = catEl.querySelector('[data-action="delete-cat"]');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (confirm('Supprimer cette categorie?')) {
+            delete customCategories[catId];
+            categoryOrder = categoryOrder.filter(c => c !== catId);
+            // Move tools back to original categories
+            Object.keys(toolAssignment).forEach(toolId => {
+              if (toolAssignment[toolId] === catId) {
+                delete toolAssignment[toolId];
+              }
+            });
+            delete toolOrder[catId];
+            renderModuleManager();
+          }
+        });
+      }
+
+      // Deactivate individual tools
+      catEl.querySelectorAll('[data-action="deactivate"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const toolEl = btn.closest('.mm-tool');
+          const toolId = toolEl.dataset.tool;
+          enabledModules[toolId] = false;
+          renderModuleManager();
+        });
+      });
+
+      // ========== DRAG & DROP FOR CATEGORIES ==========
       header.addEventListener('dragstart', (e) => {
+        if (e.target.tagName === 'BUTTON') return;
         draggedCategory = catId;
         draggedTool = null;
         catEl.classList.add('dragging');
@@ -737,18 +914,16 @@ document.addEventListener('DOMContentLoaded', () => {
         clearDropIndicators();
       });
 
-      // Category drop zone - on the whole category element
       catEl.addEventListener('dragover', (e) => {
+        if (draggedTool) return; // Don't interfere with tool dragging
         if (!draggedCategory || draggedCategory === catId) return;
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
 
-        // Detect position (top or bottom half)
         const rect = catEl.getBoundingClientRect();
         const midY = rect.top + rect.height / 2;
         const isTop = e.clientY < midY;
 
-        // Clear previous indicators and set new one
         clearDropIndicators();
         catEl.classList.add(isTop ? 'drag-over-top' : 'drag-over-bottom');
       });
@@ -760,37 +935,30 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       catEl.addEventListener('drop', (e) => {
+        if (draggedTool) return;
         if (!draggedCategory || draggedCategory === catId) return;
         e.preventDefault();
 
-        // Detect position for insertion
         const rect = catEl.getBoundingClientRect();
         const midY = rect.top + rect.height / 2;
         const insertAfter = e.clientY >= midY;
 
         clearDropIndicators();
 
-        // Reorder categories
         const fromIndex = categoryOrder.indexOf(draggedCategory);
         let toIndex = categoryOrder.indexOf(catId);
 
         if (fromIndex !== -1 && toIndex !== -1) {
-          // Remove from original position
           categoryOrder.splice(fromIndex, 1);
-
-          // Adjust toIndex if needed (after removal)
           if (fromIndex < toIndex) toIndex--;
-
-          // Insert at new position
           if (insertAfter) toIndex++;
           categoryOrder.splice(toIndex, 0, draggedCategory);
-
-          renderReorderUI();
+          renderModuleManager();
         }
       });
 
-      // Tool drag & drop
-      catEl.querySelectorAll('.reorder-tool').forEach((toolEl) => {
+      // ========== DRAG & DROP FOR TOOLS ==========
+      catEl.querySelectorAll('.mm-tool').forEach(toolEl => {
         const toolId = toolEl.dataset.tool;
 
         toolEl.addEventListener('dragstart', (e) => {
@@ -811,17 +979,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         toolEl.addEventListener('dragover', (e) => {
-          if (!draggedTool || draggedToolCategory !== catId || draggedTool === toolId) return;
+          if (!draggedTool) return;
+          // Allow drop within same category only for reordering
+          if (draggedToolCategory !== catId || draggedTool === toolId) return;
           e.preventDefault();
           e.stopPropagation();
           e.dataTransfer.dropEffect = 'move';
 
-          // Detect position (top or bottom half)
           const rect = toolEl.getBoundingClientRect();
           const midY = rect.top + rect.height / 2;
           const isTop = e.clientY < midY;
 
-          // Clear previous indicators and set new one
           clearDropIndicators();
           toolEl.classList.add(isTop ? 'drag-over-top' : 'drag-over-bottom');
         });
@@ -835,33 +1003,26 @@ document.addEventListener('DOMContentLoaded', () => {
           e.preventDefault();
           e.stopPropagation();
 
-          // Detect position for insertion
           const rect = toolEl.getBoundingClientRect();
           const midY = rect.top + rect.height / 2;
           const insertAfter = e.clientY >= midY;
 
           clearDropIndicators();
 
-          // Reorder tools within category
-          const tools = toolOrder[catId];
+          const tools = toolOrder[catId] || [];
           const fromIndex = tools.indexOf(draggedTool);
           let toIndex = tools.indexOf(toolId);
 
           if (fromIndex !== -1 && toIndex !== -1) {
-            // Remove from original position
             tools.splice(fromIndex, 1);
-
-            // Adjust toIndex if needed (after removal)
             if (fromIndex < toIndex) toIndex--;
-
-            // Insert at new position
             if (insertAfter) toIndex++;
             tools.splice(toIndex, 0, draggedTool);
+            toolOrder[catId] = tools;
 
-            // Re-render and keep expanded
-            renderReorderUI();
+            renderModuleManager();
             setTimeout(() => {
-              document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
+              document.querySelector(`#active-modules [data-category="${catId}"]`)?.classList.add('expanded');
             }, 0);
           }
         });
@@ -871,29 +1032,111 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Save order
-  const saveOrderBtn = document.getElementById('btn-save-order');
-  const resetOrderBtn = document.getElementById('btn-reset-order');
-  const orderStatus = document.getElementById('order-status');
+  // ========== HEADER BUTTONS ==========
+  const activateAllBtn = document.getElementById('btn-activate-all');
+  const deactivateAllBtn = document.getElementById('btn-deactivate-all');
+  const newCategoryBtn = document.getElementById('btn-new-category');
+  const saveModulesBtn = document.getElementById('btn-save-modules');
+  const resetModulesBtn = document.getElementById('btn-reset-modules');
+  const modulesStatus = document.getElementById('modules-status');
 
-  if (saveOrderBtn) {
-    saveOrderBtn.addEventListener('click', () => {
-      chrome.storage.sync.set({ categoryOrder, toolOrder }, () => {
-        showStatus(orderStatus, 'Ordre sauvegarde! Rechargez le popup pour voir les changements.', 'success');
+  if (activateAllBtn) {
+    activateAllBtn.addEventListener('click', () => {
+      Object.keys(TOOLS_CONFIG).forEach(toolId => enabledModules[toolId] = true);
+      renderModuleManager();
+    });
+  }
+
+  if (deactivateAllBtn) {
+    deactivateAllBtn.addEventListener('click', () => {
+      Object.keys(enabledModules).forEach(toolId => enabledModules[toolId] = false);
+      renderModuleManager();
+    });
+  }
+
+  if (saveModulesBtn) {
+    saveModulesBtn.addEventListener('click', () => {
+      chrome.storage.sync.set({
+        enabledModules,
+        categoryOrder,
+        toolOrder,
+        customCategories,
+        toolAssignment
+      }, () => {
+        showStatus(modulesStatus, 'Configuration sauvegardee! Rechargez le popup.', 'success');
       });
     });
   }
 
-  if (resetOrderBtn) {
-    resetOrderBtn.addEventListener('click', () => {
+  if (resetModulesBtn) {
+    resetModulesBtn.addEventListener('click', () => {
+      if (!confirm('Reinitialiser tous les modules et categories?')) return;
+
+      enabledModules = {};
+      Object.keys(TOOLS_CONFIG).forEach(toolId => enabledModules[toolId] = true);
       categoryOrder = [...DEFAULT_CATEGORY_ORDER];
+      toolOrder = {};
       Object.keys(CATEGORIES_CONFIG).forEach(cat => {
         toolOrder[cat] = [...CATEGORIES_CONFIG[cat].tools];
       });
-      chrome.storage.sync.remove(['categoryOrder', 'toolOrder'], () => {
-        renderReorderUI();
-        showStatus(orderStatus, 'Ordre reinitialise!', 'success');
+      customCategories = {};
+      toolAssignment = {};
+
+      chrome.storage.sync.remove(['enabledModules', 'categoryOrder', 'toolOrder', 'customCategories', 'toolAssignment'], () => {
+        renderModuleManager();
+        showStatus(modulesStatus, 'Configuration reinitialisee!', 'success');
       });
+    });
+  }
+
+  // ========== CUSTOM CATEGORY MODAL ==========
+  const categoryModal = document.getElementById('category-modal');
+  const newCatNameInput = document.getElementById('new-cat-name');
+  const newCatEmojiInput = document.getElementById('new-cat-emoji');
+  const cancelCategoryBtn = document.getElementById('btn-cancel-category');
+  const createCategoryBtn = document.getElementById('btn-create-category');
+
+  if (newCategoryBtn) {
+    newCategoryBtn.addEventListener('click', () => {
+      newCatNameInput.value = '';
+      newCatEmojiInput.value = '📁';
+      categoryModal.classList.add('visible');
+      newCatNameInput.focus();
+    });
+  }
+
+  if (cancelCategoryBtn) {
+    cancelCategoryBtn.addEventListener('click', () => {
+      categoryModal.classList.remove('visible');
+    });
+  }
+
+  if (createCategoryBtn) {
+    createCategoryBtn.addEventListener('click', () => {
+      const name = newCatNameInput.value.trim();
+      const emoji = newCatEmojiInput.value.trim() || '📁';
+
+      if (!name) {
+        alert('Veuillez entrer un nom pour la categorie');
+        return;
+      }
+
+      const catId = 'custom_' + Date.now();
+      customCategories[catId] = { name, emoji };
+      categoryOrder.push(catId);
+      toolOrder[catId] = [];
+
+      categoryModal.classList.remove('visible');
+      renderModuleManager();
+    });
+  }
+
+  // Close modal on overlay click
+  if (categoryModal) {
+    categoryModal.addEventListener('click', (e) => {
+      if (e.target === categoryModal) {
+        categoryModal.classList.remove('visible');
+      }
     });
   }
 });

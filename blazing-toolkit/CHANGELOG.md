@@ -7,6 +7,26 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.6.0] - 2025-12-14
+
+### Ajoute
+- **Nouveau gestionnaire de modules unifie** : Interface a deux colonnes
+  - **Colonne gauche** : Modules disponibles (desactives)
+  - **Colonne droite** : Modules actifs avec drag & drop pour l'ordre
+  - Activation/desactivation par categorie complete ou outil individuel
+  - Boutons "Tout activer" et "Tout retirer"
+- **Categories personnalisees** : Creez vos propres categories avec nom et emoji
+  - Bouton "+ Categorie" pour ajouter une nouvelle categorie
+  - Possibilite de supprimer les categories personnalisees
+- **Reorganisation des outils** : Drag & drop pour changer l'ordre
+  - Indicateur visuel (ligne bleue) montrant ou l'element sera place
+  - Fonctionne pour les categories et les outils
+
+### Modifie
+- Fusion des sections "Gestion des modules" et "Ordre d'affichage" en une seule interface
+
+---
+
 ## [3.5.4] - 2025-12-14
 
 ### Ameliore
