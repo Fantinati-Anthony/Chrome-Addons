@@ -7,6 +7,45 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.4.0] - 2025-12-14
+
+### Modifie
+- **Renommage de l'extension** : "AT Unified Toolkit" devient "Blazing Toolkit"
+  - Nouveau nom du dossier : `blazing-toolkit` (anciennement `AT-Unified-Addon`)
+  - Mise a jour de toutes les references dans le code
+  - URLs GitHub mises a jour pour les mises a jour automatiques
+
+### Corrige
+- **Fichier index.js manquant** : Creation de `modules/tools/index.js` pour reexporter tous les outils
+- **Chemins d'import** : Correction des imports utils.js (`./utils.js` → `../utils.js`)
+
+---
+
+## [3.3.3] - 2025-12-14
+
+### Corrige
+- **Tooltips tronques** : Les descriptions des outils ne sont plus coupees
+  - Changement de `overflow: hidden` en `overflow: visible` sur `.category-section`
+
+---
+
+## [3.3.2] - 2025-12-14
+
+### Ameliore
+- **Mise a jour intelligente** : Le systeme ne telecharge plus que les fichiers modifies
+  - Utilisation de l'API GitHub Compare pour detecter les fichiers changes
+  - Stockage du SHA du dernier commit pour les comparaisons
+  - Fallback vers mise a jour complete si necessaire
+
+---
+
+## [3.3.1] - 2025-12-14
+
+### Corrige
+- **Z-index modal changelog** : La modale de changelog s'affiche maintenant au-dessus de la modale d'ajout d'outils
+
+---
+
 ## [3.2.0] - 2025-12-13
 
 ### Ajouté
