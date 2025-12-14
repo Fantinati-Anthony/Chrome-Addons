@@ -1,5 +1,5 @@
 // Auto-update module for AT Unified Toolkit
-// Downloads updates from GitHub and writes to local extension folder
+// Downloads only CHANGED files from GitHub using Compare API
 
 const AutoUpdater = (function() {
   'use strict';
@@ -36,10 +36,12 @@ const AutoUpdater = (function() {
             <div class="update-progress-bar" id="update-progress-bar"></div>
           </div>
           <p id="update-progress-text">Preparation...</p>
+          <p id="update-file-count" class="update-hint"></p>
         </div>
         <div id="update-step-3" class="update-step">
           <p><strong>Etape 3:</strong> Mise a jour terminee!</p>
           <p class="update-hint">L'extension va se recharger automatiquement.</p>
+          <p id="update-summary" class="update-hint"></p>
           <button id="btn-reload-extension" class="update-modal-btn success">Recharger maintenant</button>
         </div>
         <div id="update-error" class="update-step error">
@@ -174,6 +176,14 @@ const AutoUpdater = (function() {
         font-size: 12px !important;
         color: #666 !important;
       }
+      #update-file-count {
+        text-align: center;
+        margin-top: 5px !important;
+      }
+      #update-summary {
+        text-align: center;
+        color: #27ae60 !important;
+      }
       .update-step.error p {
         color: #e74c3c;
       }
@@ -220,19 +230,88 @@ const AutoUpdater = (function() {
   }
 
   // Update progress
-  function updateProgress(percent, text) {
+  function updateProgress(percent, text, fileCount = '') {
     document.getElementById('update-progress-bar').style.width = percent + '%';
     document.getElementById('update-progress-text').textContent = text;
-  }
-
-  // Build GitHub API URL for file tree
-  function buildTreeUrl() {
-    return `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${REPO_BRANCH}?recursive=1`;
+    document.getElementById('update-file-count').textContent = fileCount;
   }
 
   // Build raw file URL
   function buildRawUrl(filePath) {
     return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}/${filePath}`;
+  }
+
+  // Get the latest commit SHA for the branch
+  async function getLatestCommitSha() {
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits/${REPO_BRANCH}`;
+    const response = await fetch(url, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.sha;
+  }
+
+  // Get changed files between two commits using Compare API
+  async function getChangedFiles(baseSha, headSha) {
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/compare/${baseSha}...${headSha}`;
+    const response = await fetch(url, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
+
+    if (!response.ok) {
+      // If compare fails, return null to trigger full update
+      console.warn('Compare API failed, will do full update');
+      return null;
+    }
+
+    const data = await response.json();
+    const extensionPath = ADDON_PATH + '/';
+
+    // Filter only files in our addon folder
+    const changedFiles = data.files
+      .filter(file => file.filename.startsWith(extensionPath))
+      .filter(file => file.status !== 'removed') // Don't include deleted files
+      .map(file => ({
+        path: file.filename.replace(extensionPath, ''),
+        fullPath: file.filename,
+        status: file.status // added, modified, renamed
+      }));
+
+    return changedFiles;
+  }
+
+  // Get ALL files (for first install or when compare fails)
+  async function getAllFiles() {
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${REPO_BRANCH}?recursive=1`;
+    const response = await fetch(url, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const extensionPath = ADDON_PATH + '/';
+
+    const files = data.tree
+      .filter(item => {
+        if (item.type !== 'blob') return false;
+        if (!item.path.startsWith(extensionPath)) return false;
+        return true;
+      })
+      .map(item => ({
+        path: item.path.replace(extensionPath, ''),
+        fullPath: item.path,
+        status: 'added'
+      }));
+
+    return files;
   }
 
   // Select folder and start update
@@ -259,24 +338,69 @@ const AutoUpdater = (function() {
 
       // Start download
       showStep('update-step-2');
-      updateProgress(0, 'Recuperation de la liste des fichiers...');
+      updateProgress(0, 'Analyse des modifications...');
 
-      // Fetch file list from GitHub API
-      const files = await fetchFileList();
+      // Get the latest commit SHA
+      const latestSha = await getLatestCommitSha();
 
-      if (!files || files.length === 0) {
-        showError('Impossible de recuperer la liste des fichiers depuis GitHub.');
+      // Get stored commit SHA from last update
+      const storage = await chrome.storage.local.get(['lastUpdateCommitSha']);
+      const lastSha = storage.lastUpdateCommitSha;
+
+      let files;
+      let isFullUpdate = false;
+
+      if (lastSha && lastSha !== latestSha) {
+        // Try to get only changed files
+        updateProgress(10, 'Recuperation des fichiers modifies...');
+        files = await getChangedFiles(lastSha, latestSha);
+
+        if (!files) {
+          // Compare failed, do full update
+          isFullUpdate = true;
+          updateProgress(10, 'Recuperation de tous les fichiers...');
+          files = await getAllFiles();
+        }
+      } else if (!lastSha) {
+        // First update - get all files
+        isFullUpdate = true;
+        updateProgress(10, 'Premiere mise a jour - tous les fichiers...');
+        files = await getAllFiles();
+      } else {
+        // Same SHA - nothing to update
+        updateProgress(100, 'Deja a jour!');
+        document.getElementById('update-summary').textContent = 'Aucun fichier a mettre a jour.';
+        setTimeout(() => showStep('update-step-3'), 500);
         return;
       }
+
+      if (!files || files.length === 0) {
+        updateProgress(100, 'Aucun fichier a mettre a jour!');
+        document.getElementById('update-summary').textContent = 'Aucun fichier modifie.';
+        // Still save the SHA
+        await chrome.storage.local.set({ lastUpdateCommitSha: latestSha });
+        setTimeout(() => showStep('update-step-3'), 500);
+        return;
+      }
+
+      // Show file count
+      const fileCountText = isFullUpdate
+        ? `${files.length} fichiers (mise a jour complete)`
+        : `${files.length} fichier(s) modifie(s)`;
+
+      updateProgress(15, 'Telechargement...', fileCountText);
 
       // Download and write each file
       const totalFiles = files.length;
       let processedFiles = 0;
+      let errors = 0;
 
       for (const file of files) {
+        const percent = 15 + Math.round((processedFiles / totalFiles) * 80);
         updateProgress(
-          Math.round((processedFiles / totalFiles) * 100),
-          `Telechargement: ${file.path} (${processedFiles + 1}/${totalFiles})`
+          percent,
+          `${file.path}`,
+          `${processedFiles + 1}/${totalFiles} fichiers`
         );
 
         try {
@@ -285,10 +409,20 @@ const AutoUpdater = (function() {
           processedFiles++;
         } catch (e) {
           console.error(`Error processing ${file.path}:`, e);
+          errors++;
         }
       }
 
+      // Save the new commit SHA
+      await chrome.storage.local.set({ lastUpdateCommitSha: latestSha });
+
       updateProgress(100, 'Mise a jour terminee!');
+
+      // Show summary
+      const summary = errors > 0
+        ? `${processedFiles} fichiers mis a jour, ${errors} erreurs`
+        : `${processedFiles} fichiers mis a jour`;
+      document.getElementById('update-summary').textContent = summary;
 
       setTimeout(() => {
         showStep('update-step-3');
@@ -302,33 +436,6 @@ const AutoUpdater = (function() {
         showError(e.message || 'Une erreur est survenue');
       }
     }
-  }
-
-  // Fetch file list from GitHub API
-  async function fetchFileList() {
-    const response = await fetch(buildTreeUrl(), {
-      headers: { 'Accept': 'application/vnd.github.v3+json' }
-    });
-
-    if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const extensionPath = ADDON_PATH + '/';
-
-    const files = data.tree
-      .filter(item => {
-        if (item.type !== 'blob') return false;
-        if (!item.path.startsWith(extensionPath)) return false;
-        return true;
-      })
-      .map(item => ({
-        path: item.path.replace(extensionPath, ''),
-        fullPath: item.path
-      }));
-
-    return files;
   }
 
   // Download a file from raw.githubusercontent.com

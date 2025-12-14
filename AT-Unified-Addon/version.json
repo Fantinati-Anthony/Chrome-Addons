@@ -1,5 +1,5 @@
 {
-  "version": "3.3.1",
+  "version": "3.3.2",
   "releaseDate": "2025-12-14",
-  "changelog": "Fix: Changelog modal now appears above tool store modal."
+  "changelog": "Improvement: Auto-updater now downloads only changed files using GitHub Compare API (faster updates)."
 }
