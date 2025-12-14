@@ -1,5 +1,5 @@
 {
-  "version": "3.6.0",
+  "version": "3.7.0",
   "releaseDate": "2025-12-14",
-  "changelog": "Major: New unified module manager with two-column layout, custom categories, and drag & drop ordering."
+  "changelog": "New: Dark/Light/System theme mode, auto-open sidebar when entering settings, live preview for colors and sizes."
 }

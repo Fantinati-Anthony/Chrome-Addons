@@ -75,6 +75,9 @@ window.refreshToolGrid = refreshToolGrid;
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('Toolkit loaded');
 
+  // ========== APPLY THEME ==========
+  await applyTheme();
+
   // ========== INITIALIZE I18N ==========
   if (typeof I18n !== 'undefined') {
     await I18n.init();
@@ -122,8 +125,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ========== SETTINGS BUTTON ==========
   const settingsBtn = document.getElementById('btn-settings');
   if (settingsBtn) {
-    settingsBtn.addEventListener('click', () => {
+    settingsBtn.addEventListener('click', async () => {
+      // Open options page
       chrome.runtime.openOptionsPage();
+      // Also open side panel to show live preview
+      const isSidebar = document.body.dataset.mode === 'sidebar';
+      if (!isSidebar) {
+        try {
+          await chrome.runtime.sendMessage({ type: 'openSidePanel' });
+        } catch (e) {
+          console.log('Side panel not available:', e);
+        }
+      }
     });
   }
 
@@ -728,6 +741,69 @@ async function applyModuleVisibility() {
     }
   }
 }
+
+// ========== THEME MANAGEMENT ==========
+async function applyTheme() {
+  const data = await chrome.storage.sync.get(['theme']);
+  const theme = data.theme || 'light';
+
+  if (theme === 'system') {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.body.classList.toggle('dark-mode', prefersDark);
+  } else {
+    document.body.classList.toggle('dark-mode', theme === 'dark');
+  }
+}
+
+// Listen for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async (e) => {
+  const data = await chrome.storage.sync.get(['theme']);
+  if (data.theme === 'system') {
+    document.body.classList.toggle('dark-mode', e.matches);
+  }
+});
+
+// Listen for changes from options page (theme, colors, radius, size)
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === 'themeChanged') {
+    if (message.theme === 'system') {
+      document.body.classList.toggle('dark-mode', message.isDark);
+    } else {
+      document.body.classList.toggle('dark-mode', message.theme === 'dark');
+    }
+  }
+
+  // Live preview: colors
+  if (message.type === 'colorsChanged') {
+    const colors = message.colors;
+    const root = document.documentElement;
+    root.style.setProperty('--bg-color', colors.bgColor);
+    root.style.setProperty('--text-color', colors.textColor);
+    root.style.setProperty('--primary-color', colors.primaryColor);
+    root.style.setProperty('--primary-hover', colors.primaryHover);
+    root.style.setProperty('--secondary-color', colors.secondaryColor);
+    root.style.setProperty('--button-bg', colors.buttonBg);
+    root.style.setProperty('--button-text', colors.buttonText);
+    root.style.setProperty('--panel-bg', colors.panelBg);
+    root.style.setProperty('--border-color', colors.borderColor);
+    root.style.setProperty('--success-color', colors.successColor);
+    root.style.setProperty('--error-color', colors.errorColor);
+  }
+
+  // Live preview: border radius
+  if (message.type === 'radiusChanged') {
+    const radius = message.radius;
+    const root = document.documentElement;
+    root.style.setProperty('--radius-small', radius.radiusSmall + 'px');
+    root.style.setProperty('--radius-medium', radius.radiusMedium + 'px');
+    root.style.setProperty('--radius-large', radius.radiusLarge + 'px');
+  }
+
+  // Live preview: button size
+  if (message.type === 'sizeChanged') {
+    document.documentElement.style.setProperty('--button-size', message.size);
+  }
+});
 
 // ========== CUSTOM COLORS ==========
 async function applyCustomColors() {
