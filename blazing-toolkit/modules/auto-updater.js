@@ -10,7 +10,75 @@ const AutoUpdater = (function() {
   const REPO_BRANCH = 'main';
   const ADDON_PATH = 'blazing-toolkit';
 
+  const DB_NAME = 'BlazingToolkitDB';
+  const DB_STORE = 'dirHandles';
+  const DB_KEY = 'extensionFolder';
+
   let updateModal = null;
+  let savedDirHandle = null;
+
+  // ========== IndexedDB for Directory Handle ==========
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, 1);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(DB_STORE)) {
+          db.createObjectStore(DB_STORE);
+        }
+      };
+    });
+  }
+
+  async function saveDirHandle(handle) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_STORE, 'readwrite');
+      tx.objectStore(DB_STORE).put(handle, DB_KEY);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function loadDirHandle() {
+    try {
+      const db = await openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(DB_STORE, 'readonly');
+        const request = tx.objectStore(DB_STORE).get(DB_KEY);
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+      });
+    } catch (e) {
+      console.log('No saved directory handle:', e);
+      return null;
+    }
+  }
+
+  async function verifyDirHandle(handle) {
+    if (!handle) return false;
+    try {
+      // Check if we still have permission
+      const permission = await handle.queryPermission({ mode: 'readwrite' });
+      if (permission === 'granted') {
+        // Verify manifest.json exists
+        await handle.getFileHandle('manifest.json');
+        return true;
+      }
+      // Try to request permission
+      const newPermission = await handle.requestPermission({ mode: 'readwrite' });
+      if (newPermission === 'granted') {
+        await handle.getFileHandle('manifest.json');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.log('Directory handle verification failed:', e);
+      return false;
+    }
+  }
 
   // Create and show the update modal
   function showUpdateModal() {
@@ -25,10 +93,20 @@ const AutoUpdater = (function() {
       <div class="update-modal-overlay"></div>
       <div class="update-modal-content">
         <h2>Mise a jour automatique</h2>
-        <div id="update-step-1" class="update-step active">
+        <div id="update-step-0" class="update-step">
+          <p><strong>Verification du dossier...</strong></p>
+          <p class="update-hint">Verification des permissions...</p>
+        </div>
+        <div id="update-step-1" class="update-step">
           <p><strong>Etape 1:</strong> Selectionnez le dossier de l'extension</p>
           <p class="update-hint">Naviguez vers le dossier <code>blazing-toolkit</code> sur votre disque.</p>
           <button id="btn-select-folder" class="update-modal-btn">Selectionner le dossier</button>
+        </div>
+        <div id="update-step-1-saved" class="update-step">
+          <p><strong>Dossier detecte:</strong></p>
+          <p id="saved-folder-name" class="update-hint" style="background:#f0f0f0;padding:8px;border-radius:4px;font-family:monospace;"></p>
+          <button id="btn-use-saved-folder" class="update-modal-btn">Mettre a jour</button>
+          <button id="btn-change-folder" class="update-modal-btn" style="background:#95a5a6;margin-top:8px;">Changer de dossier</button>
         </div>
         <div id="update-step-2" class="update-step">
           <p><strong>Etape 2:</strong> Telechargement en cours...</p>
@@ -200,7 +278,9 @@ const AutoUpdater = (function() {
 
   // Attach event listeners to modal buttons
   function attachModalEvents() {
-    document.getElementById('btn-select-folder').addEventListener('click', selectFolderAndUpdate);
+    document.getElementById('btn-select-folder').addEventListener('click', () => selectFolderAndUpdate(false));
+    document.getElementById('btn-use-saved-folder').addEventListener('click', () => runUpdateWithHandle(savedDirHandle));
+    document.getElementById('btn-change-folder').addEventListener('click', () => selectFolderAndUpdate(false));
     document.getElementById('btn-reload-extension').addEventListener('click', () => {
       chrome.runtime.reload();
     });
@@ -315,7 +395,7 @@ const AutoUpdater = (function() {
   }
 
   // Select folder and start update
-  async function selectFolderAndUpdate() {
+  async function selectFolderAndUpdate(skipSavedCheck = false) {
     try {
       // Check if File System Access API is available
       if (!window.showDirectoryPicker) {
@@ -336,6 +416,26 @@ const AutoUpdater = (function() {
         return;
       }
 
+      // Save the handle for future use
+      await saveDirHandle(dirHandle);
+      savedDirHandle = dirHandle;
+
+      // Run the update
+      await runUpdateWithHandle(dirHandle);
+
+    } catch (e) {
+      if (e.name === 'AbortError') {
+        hideModal();
+      } else {
+        console.error('Update error:', e);
+        showError(e.message || 'Une erreur est survenue');
+      }
+    }
+  }
+
+  // Run update with a given directory handle
+  async function runUpdateWithHandle(dirHandle) {
+    try {
       // Start download
       showStep('update-step-2');
       updateProgress(0, 'Analyse des modifications...');
@@ -467,8 +567,24 @@ const AutoUpdater = (function() {
   }
 
   return {
-    startUpdate: function() {
+    startUpdate: async function() {
       showUpdateModal();
+      showStep('update-step-0');
+
+      // Try to load saved directory handle
+      const handle = await loadDirHandle();
+
+      if (handle) {
+        const isValid = await verifyDirHandle(handle);
+        if (isValid) {
+          savedDirHandle = handle;
+          document.getElementById('saved-folder-name').textContent = handle.name;
+          showStep('update-step-1-saved');
+          return;
+        }
+      }
+
+      // No valid saved handle, show folder selection
       showStep('update-step-1');
     }
   };

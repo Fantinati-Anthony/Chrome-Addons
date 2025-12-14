@@ -1,5 +1,5 @@
 {
-  "version": "3.7.1",
+  "version": "3.7.2",
   "releaseDate": "2025-12-14",
-  "changelog": "Fix: Drag & drop tools between categories now shows visual indicator at exact position."
+  "changelog": "New: Auto-updater remembers installation folder for future updates."
 }
