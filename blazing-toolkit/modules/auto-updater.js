@@ -105,6 +105,10 @@ const AutoUpdater = (function() {
         <div id="update-step-1-saved" class="update-step">
           <p><strong>Dossier detecte:</strong></p>
           <p id="saved-folder-name" class="update-hint" style="background:#f0f0f0;padding:8px;border-radius:4px;font-family:monospace;"></p>
+          <div class="update-hint" style="background:#fff3cd;padding:10px;border-radius:4px;margin:10px 0;border-left:3px solid #ffc107;">
+            <strong>💡 Conseil:</strong> Exportez vos reglages avant la MAJ!
+            <button id="btn-backup-before-update" class="update-modal-btn" style="background:#9b59b6;margin-top:8px;font-size:12px;">📦 Exporter ma config</button>
+          </div>
           <button id="btn-use-saved-folder" class="update-modal-btn">Mettre a jour</button>
           <button id="btn-force-update" class="update-modal-btn" style="background:#e67e22;margin-top:8px;">Forcer la MAJ complete</button>
           <button id="btn-change-folder" class="update-modal-btn" style="background:#95a5a6;margin-top:8px;">Changer de dossier</button>
@@ -288,6 +292,45 @@ const AutoUpdater = (function() {
     });
     document.getElementById('btn-cancel-update').addEventListener('click', hideModal);
     document.getElementById('btn-close-modal').addEventListener('click', hideModal);
+
+    // Backup button - export config before update
+    document.getElementById('btn-backup-before-update').addEventListener('click', async () => {
+      try {
+        const syncData = await chrome.storage.sync.get(null);
+        const localData = await chrome.storage.local.get(['colors', 'emails']);
+
+        const exportData = {
+          version: '2.0',
+          exportDate: new Date().toISOString(),
+          sync: syncData,
+          local: {
+            colors: localData.colors,
+            emails: localData.emails
+          }
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `at-toolkit-backup-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        // Visual feedback
+        const btn = document.getElementById('btn-backup-before-update');
+        const originalText = btn.textContent;
+        btn.textContent = '✅ Exporté!';
+        btn.style.background = '#27ae60';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = '#9b59b6';
+        }, 2000);
+      } catch (error) {
+        console.error('Backup error:', error);
+        alert('Erreur lors de l\'export: ' + error.message);
+      }
+    });
   }
 
   // Hide the modal

@@ -1,5 +1,18 @@
 // Options page script
 document.addEventListener('DOMContentLoaded', () => {
+  // ========== TABS MANAGEMENT ==========
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.dataset.tab;
+      // Remove active from all tabs and contents
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      // Add active to clicked tab and its content
+      btn.classList.add('active');
+      document.getElementById(tabId)?.classList.add('active');
+    });
+  });
+
   // ========== DEFAULT VALUES ==========
   const DEFAULT_COLORS = {
     bgColor: '#f5f5f5',
