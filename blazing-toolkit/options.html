@@ -510,6 +510,425 @@
       }
     }
 
+    /* ========== NEW MODULE MANAGER - Two Column Layout ========== */
+    .module-manager {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 800px) {
+      .module-manager {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .modules-column {
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 15px;
+      min-height: 400px;
+    }
+
+    .modules-column.available {
+      border-color: #bdc3c7;
+    }
+
+    .modules-column.active {
+      border-color: #3498db;
+      background: #f0f7fc;
+    }
+
+    .column-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .column-header h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #2c3e50;
+    }
+
+    .column-header .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .column-header button {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-activate-all {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-activate-all:hover {
+      background: #219a52;
+    }
+
+    .btn-deactivate-all {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .btn-deactivate-all:hover {
+      background: #c0392b;
+    }
+
+    .btn-new-category {
+      background: #3498db;
+      color: white;
+    }
+
+    .btn-new-category:hover {
+      background: #2980b9;
+    }
+
+    .modules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Category in module manager */
+    .mm-category {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: visible;
+      position: relative;
+    }
+
+    .mm-category.custom {
+      border-color: #9b59b6;
+      border-style: dashed;
+    }
+
+    .mm-category-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #fff;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .mm-category-header:hover {
+      background: #f5f5f5;
+    }
+
+    .mm-category.expanded .mm-category-header {
+      border-bottom: 1px solid #eee;
+    }
+
+    .mm-category-icon {
+      font-size: 18px;
+    }
+
+    .mm-category-name {
+      flex: 1;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .mm-category-count {
+      font-size: 12px;
+      color: #888;
+      background: #f0f0f0;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .mm-category-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mm-category-actions button {
+      padding: 4px 8px;
+      font-size: 11px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mm-btn-activate {
+      background: #27ae60;
+      color: white;
+    }
+
+    .mm-btn-activate:hover {
+      background: #219a52;
+    }
+
+    .mm-btn-deactivate {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .mm-btn-deactivate:hover {
+      background: #c0392b;
+    }
+
+    .mm-btn-edit {
+      background: #f39c12;
+      color: white;
+    }
+
+    .mm-btn-edit:hover {
+      background: #d68910;
+    }
+
+    .mm-btn-delete {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .mm-btn-delete:hover {
+      background: #c0392b;
+    }
+
+    .mm-category-toggle {
+      font-size: 14px;
+      color: #666;
+      transition: transform 0.2s;
+      padding: 4px;
+    }
+
+    .mm-category.expanded .mm-category-toggle {
+      transform: rotate(180deg);
+    }
+
+    .mm-tools {
+      display: none;
+      padding: 8px;
+      background: #fafafa;
+    }
+
+    .mm-category.expanded .mm-tools {
+      display: block;
+    }
+
+    .mm-tool {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      margin: 4px 0;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .mm-tool:hover {
+      border-color: #3498db;
+      background: #f8fcff;
+    }
+
+    .mm-tool-icon {
+      font-size: 16px;
+    }
+
+    .mm-tool-name {
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .mm-tool-action {
+      padding: 3px 8px;
+      font-size: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .mm-tool:hover .mm-tool-action {
+      opacity: 1;
+    }
+
+    .mm-tool-action.activate {
+      background: #27ae60;
+      color: white;
+    }
+
+    .mm-tool-action.deactivate {
+      background: #e74c3c;
+      color: white;
+    }
+
+    /* Drag & Drop in active column */
+    .modules-column.active .mm-category-header {
+      cursor: grab;
+    }
+
+    .modules-column.active .mm-category-header:active {
+      cursor: grabbing;
+    }
+
+    .modules-column.active .mm-tool {
+      cursor: grab;
+    }
+
+    .modules-column.active .mm-tool:active {
+      cursor: grabbing;
+    }
+
+    .mm-drag-handle {
+      color: #999;
+      font-size: 14px;
+      cursor: grab;
+    }
+
+    .mm-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .mm-category.dragging,
+    .mm-tool.dragging {
+      opacity: 0.5;
+    }
+
+    .mm-category.drag-over-top::before,
+    .mm-category.drag-over-bottom::after,
+    .mm-tool.drag-over-top::before,
+    .mm-tool.drag-over-bottom::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #3498db;
+      border-radius: 2px;
+      box-shadow: 0 0 4px rgba(52, 152, 219, 0.5);
+    }
+
+    .mm-category.drag-over-top::before,
+    .mm-tool.drag-over-top::before {
+      top: -5px;
+    }
+
+    .mm-category.drag-over-bottom::after,
+    .mm-tool.drag-over-bottom::after {
+      bottom: -5px;
+    }
+
+    /* Custom category modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.visible {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      width: 400px;
+      max-width: 90%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .modal-content h3 {
+      margin: 0 0 20px 0;
+      color: #2c3e50;
+    }
+
+    .modal-content .form-group {
+      margin-bottom: 15px;
+    }
+
+    .modal-content label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .modal-content input:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .modal-buttons button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .modal-btn-cancel {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .modal-btn-cancel:hover {
+      background: #d0d0d0;
+    }
+
+    .modal-btn-save {
+      background: #3498db;
+      color: white;
+    }
+
+    .modal-btn-save:hover {
+      background: #2980b9;
+    }
+
+    .empty-message {
+      text-align: center;
+      padding: 30px;
+      color: #888;
+      font-style: italic;
+    }
+
     /* Reorder section styles - Drag & Drop */
     .reorder-container {
       display: flex;
@@ -818,98 +1237,64 @@
     <div id="size-status" class="status" style="display: none;"></div>
   </div>
 
-  <!-- Gestion des modules -->
+  <!-- Gestion des modules (unified) -->
   <div class="section">
     <h2>Gestion des modules</h2>
-    <p>Activez ou desactivez les outils selon vos besoins. Les outils desactives n'apparaitront pas dans le popup.</p>
+    <p>Gerez vos modules : activez/desactivez, reorganisez l'ordre, creez des categories personnalisees et deplacez les outils entre categories.</p>
 
-    <div class="modules-container">
-      <!-- Domain & DNS -->
-      <div class="module-category">
-        <h3>🌐 Domaine & DNS</h3>
-        <div class="module-list">
-          <label class="module-item"><input type="checkbox" data-module="whois" checked> 🔍 Whois</label>
-          <label class="module-item"><input type="checkbox" data-module="dnschecker" checked> 🌐 DNS Checker</label>
-          <label class="module-item"><input type="checkbox" data-module="mailtester" checked> ✉️ Mail Tester</label>
-          <label class="module-item"><input type="checkbox" data-module="ssl" checked> 🔒 SSL/TLS</label>
+    <div class="module-manager">
+      <!-- Left column: Available modules -->
+      <div class="modules-column available">
+        <div class="column-header">
+          <h3>📦 Modules disponibles</h3>
+          <div class="header-actions">
+            <button id="btn-activate-all" class="btn-activate-all">Tout activer →</button>
+          </div>
+        </div>
+        <div id="available-modules" class="modules-list">
+          <!-- Dynamically loaded -->
         </div>
       </div>
 
-      <!-- SEO & Analysis -->
-      <div class="module-category">
-        <h3>📊 SEO & Analyse</h3>
-        <div class="module-list">
-          <label class="module-item"><input type="checkbox" data-module="metatags" checked> 🏷️ Meta Tags</label>
-          <label class="module-item"><input type="checkbox" data-module="links" checked> 🔗 Liens</label>
-          <label class="module-item"><input type="checkbox" data-module="images" checked> 🖼️ Images</label>
-          <label class="module-item"><input type="checkbox" data-module="sitemap" checked> 🗺️ Sitemap</label>
-          <label class="module-item"><input type="checkbox" data-module="pagespeed" checked> ⚡ PageSpeed</label>
-          <label class="module-item"><input type="checkbox" data-module="lighthouse" checked> 🔦 Lighthouse</label>
+      <!-- Right column: Active modules -->
+      <div class="modules-column active">
+        <div class="column-header">
+          <h3>✅ Modules actifs</h3>
+          <div class="header-actions">
+            <button id="btn-new-category" class="btn-new-category">+ Categorie</button>
+            <button id="btn-deactivate-all" class="btn-deactivate-all">← Tout retirer</button>
+          </div>
         </div>
-      </div>
-
-      <!-- Development -->
-      <div class="module-category">
-        <h3>💻 Developpement</h3>
-        <div class="module-list">
-          <label class="module-item"><input type="checkbox" data-module="resize" checked> 📐 Resize</label>
-          <label class="module-item"><input type="checkbox" data-module="css" checked> 🎭 CSS Injection</label>
-          <label class="module-item"><input type="checkbox" data-module="js" checked> ⚡ JS Injection</label>
-          <label class="module-item"><input type="checkbox" data-module="headers" checked> 📋 Headers</label>
-          <label class="module-item"><input type="checkbox" data-module="lorem" checked> 📝 Lorem Ipsum</label>
-          <label class="module-item"><input type="checkbox" data-module="fonts" checked> 🔤 Fonts</label>
-        </div>
-      </div>
-
-      <!-- Browser -->
-      <div class="module-category">
-        <h3>🌍 Navigateur</h3>
-        <div class="module-list">
-          <label class="module-item"><input type="checkbox" data-module="bookmarks" checked> ⭐ Favoris</label>
-          <label class="module-item"><input type="checkbox" data-module="folders" checked> 📁 Dossiers</label>
-          <label class="module-item"><input type="checkbox" data-module="history" checked> 🕐 Historique</label>
-          <label class="module-item"><input type="checkbox" data-module="cookies" checked> 🍪 Cookies</label>
-          <label class="module-item"><input type="checkbox" data-module="cleardata" checked> 🧹 Clear Data</label>
-        </div>
-      </div>
-
-      <!-- Utilities -->
-      <div class="module-category">
-        <h3>🛠️ Utilitaires</h3>
-        <div class="module-list">
-          <label class="module-item"><input type="checkbox" data-module="desktop" checked> 🖥️ Raccourci Bureau</label>
-          <label class="module-item"><input type="checkbox" data-module="colorpicker" checked> 🎨 Color Picker</label>
-          <label class="module-item"><input type="checkbox" data-module="qrcode" checked> 📱 QR Code</label>
-          <label class="module-item"><input type="checkbox" data-module="downloads" checked> 📥 Downloads</label>
-          <label class="module-item"><input type="checkbox" data-module="emails" checked> 📧 Emails</label>
-          <label class="module-item"><input type="checkbox" data-module="speech" checked> 🔊 Synthese Vocale</label>
-          <label class="module-item"><input type="checkbox" data-module="translate" checked> 🌍 Traducteur</label>
+        <div id="active-modules" class="modules-list">
+          <!-- Dynamically loaded with drag & drop -->
         </div>
       </div>
     </div>
 
-    <div class="btn-group" style="margin-top: 15px;">
-      <button id="btn-enable-all-modules">Tout activer</button>
-      <button id="btn-disable-all-modules" class="btn-reset">Tout desactiver</button>
-      <button id="btn-save-modules">Sauvegarder les modules</button>
+    <div class="btn-group">
+      <button id="btn-save-modules">Sauvegarder</button>
+      <button id="btn-reset-modules" class="btn-reset">Reinitialiser</button>
     </div>
     <div id="modules-status" class="status" style="display: none;"></div>
   </div>
 
-  <!-- Ordre d'affichage -->
-  <div class="section">
-    <h2>Ordre d'affichage</h2>
-    <p>Reorganisez les categories et les outils dans l'ordre de votre choix. Cliquez sur une categorie pour voir et reorganiser ses outils.</p>
-
-    <div id="reorder-container" class="reorder-container">
-      <!-- Categories will be loaded dynamically -->
+  <!-- Modal for new category -->
+  <div id="category-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Nouvelle categorie</h3>
+      <div class="form-group">
+        <label for="new-cat-name">Nom:</label>
+        <input type="text" id="new-cat-name" placeholder="Ma categorie">
+      </div>
+      <div class="form-group">
+        <label for="new-cat-emoji">Emoji:</label>
+        <input type="text" id="new-cat-emoji" placeholder="📁" maxlength="4">
+      </div>
+      <div class="modal-buttons">
+        <button id="btn-cancel-category" class="modal-btn-cancel">Annuler</button>
+        <button id="btn-create-category" class="modal-btn-save">Creer</button>
+      </div>
     </div>
-
-    <div class="btn-group" style="margin-top: 15px;">
-      <button id="btn-save-order">Sauvegarder l'ordre</button>
-      <button id="btn-reset-order" class="btn-reset">Reinitialiser l'ordre</button>
-    </div>
-    <div id="order-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- Boutons dynamiques -->

@@ -1,5 +1,5 @@
 {
-  "version": "3.5.4",
+  "version": "3.6.0",
   "releaseDate": "2025-12-14",
-  "changelog": "Improved: Visual drop indicator line shows where items will be placed."
+  "changelog": "Major: New unified module manager with two-column layout, custom categories, and drag & drop ordering."
 }
