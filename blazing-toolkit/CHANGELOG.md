@@ -7,6 +7,16 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.5.2] - 2025-12-14
+
+### Corrige
+- **Visibilite des icones** : Amelioration du contraste des icones ☰ (drag handle) et ▼ (toggle)
+  - Couleur passee de gris clair (#999) a gris fonce (#333)
+  - Taille et poids augmentes pour une meilleure lisibilite
+- **Titre de la page** : Correction du titre "AT Toolkit" en "Blazing Toolkit" dans options.html
+
+---
+
 ## [3.5.1] - 2025-12-14
 
 ### Ameliore
