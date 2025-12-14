@@ -7,6 +7,18 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.5.0] - 2025-12-14
+
+### Ajoute
+- **Ordre d'affichage personnalisable** : Nouvelle section dans les options pour reorganiser les categories et outils
+  - Boutons ▲▼ pour monter/descendre les categories
+  - Cliquez sur une categorie pour voir et reorganiser ses outils
+  - Boutons ▲▼ pour chaque outil dans sa categorie
+  - L'ordre est sauvegarde et applique au popup
+  - Bouton "Reinitialiser l'ordre" pour revenir a l'ordre par defaut
+
+---
+
 ## [3.4.2] - 2025-12-14
 
 ### Corrige

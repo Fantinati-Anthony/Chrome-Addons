@@ -509,6 +509,108 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Reorder section styles */
+    .reorder-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .reorder-category {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .reorder-category-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #fff;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .reorder-category-header:hover {
+      background: #f0f0f0;
+    }
+
+    .reorder-arrows {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .reorder-arrows button {
+      width: 24px;
+      height: 16px;
+      padding: 0;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      font-size: 10px;
+      line-height: 1;
+      border-radius: 3px;
+    }
+
+    .reorder-arrows button:hover {
+      background: #e0e0e0;
+    }
+
+    .reorder-arrows button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .reorder-category-title {
+      flex: 1;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .reorder-category-toggle {
+      font-size: 12px;
+      color: #666;
+      transition: transform 0.2s;
+    }
+
+    .reorder-category.expanded .reorder-category-toggle {
+      transform: rotate(180deg);
+    }
+
+    .reorder-tools {
+      display: none;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .reorder-category.expanded .reorder-tools {
+      display: block;
+    }
+
+    .reorder-tool {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px;
+      margin: 4px 0;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+    }
+
+    .reorder-tool:hover {
+      border-color: #3498db;
+    }
+
+    .reorder-tool-name {
+      flex: 1;
+      font-size: 13px;
+    }
   </style>
 </head>
 <body>
@@ -738,6 +840,22 @@
       <button id="btn-save-modules">Sauvegarder les modules</button>
     </div>
     <div id="modules-status" class="status" style="display: none;"></div>
+  </div>
+
+  <!-- Ordre d'affichage -->
+  <div class="section">
+    <h2>Ordre d'affichage</h2>
+    <p>Reorganisez les categories et les outils dans l'ordre de votre choix. Cliquez sur une categorie pour voir et reorganiser ses outils.</p>
+
+    <div id="reorder-container" class="reorder-container">
+      <!-- Categories will be loaded dynamically -->
+    </div>
+
+    <div class="btn-group" style="margin-top: 15px;">
+      <button id="btn-save-order">Sauvegarder l'ordre</button>
+      <button id="btn-reset-order" class="btn-reset">Reinitialiser l'ordre</button>
+    </div>
+    <div id="order-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- Boutons dynamiques -->

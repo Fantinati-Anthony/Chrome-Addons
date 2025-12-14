@@ -1,5 +1,5 @@
 {
-  "version": "3.4.2",
+  "version": "3.5.0",
   "releaseDate": "2025-12-14",
-  "changelog": "Fix: Force bypass GitHub CDN cache for update checks."
+  "changelog": "New: Custom category and tool ordering in settings."
 }
