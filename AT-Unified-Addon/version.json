@@ -1,5 +1,0 @@
-{
-  "version": "3.3.3",
-  "releaseDate": "2025-12-14",
-  "changelog": "Fix: Tool description tooltips now display correctly without being clipped by category containers."
-}

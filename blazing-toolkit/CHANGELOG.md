@@ -1,6 +1,6 @@
 # Changelog
 
-Toutes les modifications notables de AT Unified Toolkit sont documentees dans ce fichier.
+Toutes les modifications notables de Blazing Toolkit sont documentees dans ce fichier.
 
 Le format est base sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).

@@ -1,4 +1,4 @@
-// Auto-update module for AT Unified Toolkit
+// Auto-update module for Blazing Toolkit
 // Downloads only CHANGED files from GitHub using Compare API
 
 const AutoUpdater = (function() {
@@ -8,7 +8,7 @@ const AutoUpdater = (function() {
   const REPO_OWNER = 'Fantinati-Anthony';
   const REPO_NAME = 'Chrome-Addons';
   const REPO_BRANCH = 'main';
-  const ADDON_PATH = 'AT-Unified-Addon';
+  const ADDON_PATH = 'blazing-toolkit';
 
   let updateModal = null;
 
@@ -27,7 +27,7 @@ const AutoUpdater = (function() {
         <h2>Mise a jour automatique</h2>
         <div id="update-step-1" class="update-step active">
           <p><strong>Etape 1:</strong> Selectionnez le dossier de l'extension</p>
-          <p class="update-hint">Naviguez vers le dossier <code>AT-Unified-Addon</code> sur votre disque.</p>
+          <p class="update-hint">Naviguez vers le dossier <code>blazing-toolkit</code> sur votre disque.</p>
           <button id="btn-select-folder" class="update-modal-btn">Selectionner le dossier</button>
         </div>
         <div id="update-step-2" class="update-step">

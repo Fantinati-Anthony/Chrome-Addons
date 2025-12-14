@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Changelog link - opens CHANGELOG.md on GitHub
     document.getElementById('changelog-link').addEventListener('click', (e) => {
       e.preventDefault();
-      chrome.tabs.create({ url: 'https://github.com/Fantinati-Anthony/Chrome-Addons/blob/main/AT-Unified-Addon/CHANGELOG.md' });
+      chrome.tabs.create({ url: 'https://github.com/Fantinati-Anthony/Chrome-Addons/blob/main/blazing-toolkit/CHANGELOG.md' });
     });
   }
 });
