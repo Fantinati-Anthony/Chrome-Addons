@@ -1,5 +1,5 @@
 {
-  "version": "3.3.2",
+  "version": "3.3.3",
   "releaseDate": "2025-12-14",
-  "changelog": "Improvement: Auto-updater now downloads only changed files using GitHub Compare API (faster updates)."
+  "changelog": "Fix: Tool description tooltips now display correctly without being clipped by category containers."
 }
