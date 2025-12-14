@@ -1,7 +1,7 @@
 // Tool: Meta Tags Extractor
 // Extract and display meta tags from the current page
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initMetaTags() {
   const extractBtn = document.getElementById('btn-extract-meta');

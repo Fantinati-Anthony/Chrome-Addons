@@ -1,7 +1,7 @@
 // Tool: Headings Analyzer
 // Analyze H1-H6 structure on the page
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initHeadings() {
   const analyzeBtn = document.getElementById('btn-analyze-headings');

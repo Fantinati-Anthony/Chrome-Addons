@@ -1,7 +1,7 @@
 // Tool: robots.txt Viewer
 // Load and display robots.txt
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initRobotsTxt() {
   const loadBtn = document.getElementById('btn-load-robots');

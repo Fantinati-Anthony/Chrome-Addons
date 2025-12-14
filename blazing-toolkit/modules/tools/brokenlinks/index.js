@@ -1,7 +1,7 @@
 // Tool: Broken Links Checker
 // Check for broken links on the page
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initBrokenLinks() {
   const checkBtn = document.getElementById('btn-check-links');

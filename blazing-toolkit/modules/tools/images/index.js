@@ -1,7 +1,7 @@
 // Tool: Page Images Extractor
 // Extract all images from the current page
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initImages() {
   const extractBtn = document.getElementById('btn-extract-images');

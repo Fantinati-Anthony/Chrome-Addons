@@ -1,7 +1,7 @@
 // Tool: Accessibility Checker
 // Basic accessibility analysis
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initAccessibility() {
   const checkBtn = document.getElementById('btn-check-a11y');

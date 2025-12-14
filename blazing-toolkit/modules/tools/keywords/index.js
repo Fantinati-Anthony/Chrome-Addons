@@ -1,7 +1,7 @@
 // Tool: Keyword Density Analyzer
 // Analyze keyword frequency on the page
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initKeywords() {
   const analyzeBtn = document.getElementById('btn-analyze-keywords');

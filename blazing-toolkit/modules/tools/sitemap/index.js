@@ -1,7 +1,7 @@
 // Tool: Sitemap Loader
 // Load and display sitemap.xml from the current domain
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initSitemap() {
   const loadBtn = document.getElementById('btn-load-sitemap');
