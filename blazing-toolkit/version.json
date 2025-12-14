@@ -1,5 +1,5 @@
 {
-  "version": "3.5.2",
+  "version": "3.5.3",
   "releaseDate": "2025-12-14",
-  "changelog": "Fix: Improved visibility for drag handles and toggle icons in settings."
+  "changelog": "Fix: Drag & drop now works correctly for categories and tools."
 }
