@@ -1,5 +1,5 @@
 {
-  "version": "3.7.0",
+  "version": "3.7.1",
   "releaseDate": "2025-12-14",
-  "changelog": "New: Dark/Light/System theme mode, auto-open sidebar when entering settings, live preview for colors and sizes."
+  "changelog": "Fix: Drag & drop tools between categories now shows visual indicator at exact position."
 }
