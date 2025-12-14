@@ -1,5 +1,5 @@
 {
-  "version": "3.3.0",
+  "version": "3.3.1",
   "releaseDate": "2025-12-14",
-  "changelog": "Modular tool architecture: Per-tool locale files and changelogs, Tool Store with on-demand activation, lazy loading for performance, multilingual descriptions for all 55+ tools."
+  "changelog": "Fix: Changelog modal now appears above tool store modal."
 }
