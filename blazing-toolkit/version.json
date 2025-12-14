@@ -1,5 +1,5 @@
 {
-  "version": "3.4.1",
+  "version": "3.4.2",
   "releaseDate": "2025-12-14",
-  "changelog": "Maintenance: Version bump to test auto-update system."
+  "changelog": "Fix: Force bypass GitHub CDN cache for update checks."
 }
