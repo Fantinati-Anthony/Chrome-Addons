@@ -1,0 +1,14 @@
+{
+  "label": "Traduire",
+  "title": "Traducteur",
+  "description": "Traduit du texte entre differentes langues via Google Translate.",
+  "placeholder": "Texte a traduire...",
+  "languages": {
+    "en": "Anglais",
+    "fr": "Francais",
+    "es": "Espagnol",
+    "de": "Allemand",
+    "it": "Italien",
+    "pt": "Portugais"
+  }
+}

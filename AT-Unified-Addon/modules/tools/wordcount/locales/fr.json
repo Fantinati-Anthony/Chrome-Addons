@@ -1,0 +1,6 @@
+{
+  "label": "Mots",
+  "title": "Compteur de mots",
+  "description": "Compte les mots, caracteres et phrases de la page ou d'un texte.",
+  "analyze": "Analyser la page"
+}

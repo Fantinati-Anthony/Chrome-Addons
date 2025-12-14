@@ -1,0 +1,6 @@
+{
+  "label": "Perf",
+  "title": "Temps de chargement",
+  "description": "Affiche les metriques de performance et temps de chargement.",
+  "analyze": "Analyser les performances"
+}

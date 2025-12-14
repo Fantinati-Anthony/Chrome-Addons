@@ -1,0 +1,7 @@
+{
+  "label": "Meta",
+  "title": "Meta Tags",
+  "description": "Affiche toutes les balises meta de la page (titre, description, Open Graph, etc.).",
+  "extract": "Extraire les meta tags",
+  "noMeta": "Aucun meta tag"
+}

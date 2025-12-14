@@ -429,6 +429,48 @@
 
     <!-- Version Footer -->
     <div id="version-footer" class="version-footer"></div>
+
+    <!-- Add Tools Button (shown when no tools or to add more) -->
+    <button id="btn-add-tools" class="add-tools-btn">
+      <span class="add-icon">+</span>
+      <span data-i18n="toolStore.addTools">Ajouter des outils</span>
+    </button>
+  </div>
+
+  <!-- Tool Store Modal -->
+  <div id="tool-store-modal" class="tool-store-overlay hidden">
+    <div class="tool-store-modal">
+      <div class="tool-store-header">
+        <h3 data-i18n="toolStore.title">Catalogue d'outils</h3>
+        <button id="btn-close-store" class="tool-store-close">&times;</button>
+      </div>
+      <div class="tool-store-search">
+        <input type="text" id="store-search" data-i18n-placeholder="toolStore.searchPlaceholder" placeholder="Rechercher un outil...">
+      </div>
+      <div class="tool-store-body" id="tool-store-content">
+        <!-- Tools are loaded dynamically here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Changelog Modal -->
+  <div id="changelog-modal" class="changelog-modal-overlay">
+    <div class="changelog-modal">
+      <div class="changelog-header">
+        <h3 id="changelog-title">
+          <span class="tool-emoji" id="changelog-emoji"></span>
+          <span id="changelog-name"></span>
+        </h3>
+        <button class="changelog-close-btn" id="btn-close-changelog">&times;</button>
+      </div>
+      <div class="changelog-body">
+        <div class="changelog-description" id="changelog-description"></div>
+        <div class="changelog-version-badge" id="changelog-current-version"></div>
+        <ul class="changelog-list" id="changelog-list">
+          <!-- Changelog entries loaded dynamically -->
+        </ul>
+      </div>
+    </div>
   </div>
 
   <!-- Tool Templates (hidden, used for dynamic loading) -->
@@ -971,6 +1013,7 @@
   <script src="modules/i18n.js"></script>
   <script src="modules/module-config.js"></script>
   <script src="modules/auto-updater.js"></script>
+  <script src="modules/tool-store.js"></script>
   <script type="module" src="modules/panel-loader.js"></script>
   <script src="popup.js"></script>
 </body>

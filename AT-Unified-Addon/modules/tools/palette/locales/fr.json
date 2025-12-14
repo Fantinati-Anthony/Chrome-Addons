@@ -1,0 +1,7 @@
+{
+  "label": "Palette",
+  "title": "Palette couleurs",
+  "description": "Extrait toutes les couleurs utilisees dans le CSS de la page.",
+  "extract": "Extraire les couleurs",
+  "copyAll": "Copier tout"
+}

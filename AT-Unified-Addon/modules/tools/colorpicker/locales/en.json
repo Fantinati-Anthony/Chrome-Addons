@@ -1,0 +1,8 @@
+{
+  "label": "Colors",
+  "title": "Color Picker",
+  "description": "Eyedropper to capture colors from any screen element.",
+  "pickColor": "Pick a color",
+  "noColors": "No colors",
+  "analyze": "Analyze"
+}

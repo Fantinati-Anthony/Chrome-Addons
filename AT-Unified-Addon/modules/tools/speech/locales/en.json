@@ -1,0 +1,7 @@
+{
+  "label": "Speech",
+  "title": "Text to Speech",
+  "description": "Reads selected text aloud with different voices and languages.",
+  "loadingVoices": "Loading voices...",
+  "saveVoice": "Save voice"
+}

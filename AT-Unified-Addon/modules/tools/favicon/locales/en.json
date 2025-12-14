@@ -1,0 +1,7 @@
+{
+  "label": "Favicon",
+  "title": "Favicon Generator",
+  "description": "Extracts and generates favicon in different sizes.",
+  "extract": "Extract favicon",
+  "generate": "Generate multi-sizes"
+}

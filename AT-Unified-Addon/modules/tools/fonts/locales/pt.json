@@ -1,0 +1,7 @@
+{
+  "label": "Fontes",
+  "title": "Fontes detectadas",
+  "description": "Detecta e lista todas as fontes usadas na pagina.",
+  "detect": "Detectar fontes",
+  "noFonts": "Nenhuma fonte detectada"
+}

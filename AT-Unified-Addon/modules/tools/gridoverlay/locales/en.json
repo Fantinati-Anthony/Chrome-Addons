@@ -1,0 +1,10 @@
+{
+  "label": "Grid",
+  "title": "Grid Overlay",
+  "description": "Shows a grid overlay to verify alignment.",
+  "columns": "Columns",
+  "gutter": "Gutter",
+  "color": "Color",
+  "show": "Show grid",
+  "hide": "Hide"
+}

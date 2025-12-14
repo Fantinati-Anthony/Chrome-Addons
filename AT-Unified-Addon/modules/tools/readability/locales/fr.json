@@ -1,0 +1,6 @@
+{
+  "label": "Lisibilite",
+  "title": "Score de lisibilite",
+  "description": "Calcule le score de lisibilite du contenu (Flesch-Kincaid, etc.).",
+  "analyze": "Analyser la lisibilite"
+}

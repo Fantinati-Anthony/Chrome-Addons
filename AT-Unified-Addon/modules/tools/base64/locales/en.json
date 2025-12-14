@@ -1,0 +1,9 @@
+{
+  "label": "Base64",
+  "title": "Base64 Encoder",
+  "description": "Encodes and decodes text to/from Base64.",
+  "placeholder": "Text to encode/decode...",
+  "encode": "Encode",
+  "decode": "Decode",
+  "copy": "Copy"
+}

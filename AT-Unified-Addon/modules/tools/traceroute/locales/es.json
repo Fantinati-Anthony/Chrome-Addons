@@ -1,0 +1,5 @@
+{
+  "label": "Trace",
+  "title": "Traceroute",
+  "description": "Traza la ruta de red hasta el servidor del dominio."
+}

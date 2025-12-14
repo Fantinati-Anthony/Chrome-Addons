@@ -1,0 +1,7 @@
+{
+  "label": "Voz",
+  "title": "Texto para voz",
+  "description": "Le texto selecionado em voz alta com diferentes vozes e idiomas.",
+  "loadingVoices": "Carregando vozes...",
+  "saveVoice": "Salvar voz"
+}

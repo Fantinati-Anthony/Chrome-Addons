@@ -1,0 +1,7 @@
+{
+  "label": "Historial",
+  "title": "Historial del dominio",
+  "description": "Muestra tu historial de navegacion del dominio actual.",
+  "load": "Cargar historial",
+  "noHistory": "Sin historial"
+}

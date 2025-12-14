@@ -1,0 +1,8 @@
+{
+  "label": "CSS",
+  "title": "Injecao CSS",
+  "description": "Injeta CSS personalizado para modificar a aparencia da pagina.",
+  "placeholder": "Digite o CSS...",
+  "inject": "Injetar CSS",
+  "injected": "Injetado!"
+}

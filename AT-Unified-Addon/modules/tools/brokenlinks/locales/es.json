@@ -1,0 +1,6 @@
+{
+  "label": "Enlaces 404",
+  "title": "Enlaces rotos",
+  "description": "Verifica todos los enlaces para detectar errores 404.",
+  "check": "Verificar enlaces"
+}

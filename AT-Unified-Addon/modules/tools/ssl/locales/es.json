@@ -1,0 +1,5 @@
+{
+  "label": "SSL",
+  "title": "SSL/TLS",
+  "description": "Verifica el certificado SSL/TLS y muestra detalles de seguridad."
+}

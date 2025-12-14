@@ -1,0 +1,6 @@
+{
+  "label": "Caracteres",
+  "title": "Compteur caracteres",
+  "description": "Compte les caracteres, mots et lignes d'un texte en temps reel.",
+  "placeholder": "Entrez votre texte ici..."
+}

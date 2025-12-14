@@ -1,0 +1,7 @@
+{
+  "label": "Headers",
+  "title": "Headers HTTP",
+  "description": "Mostra os cabecalhos HTTP de resposta do servidor.",
+  "load": "Carregar headers",
+  "noHeaders": "Sem headers"
+}

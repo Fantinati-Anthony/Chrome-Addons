@@ -1,0 +1,11 @@
+{
+  "label": "Downloads",
+  "title": "Downloads",
+  "description": "Baixa multiplos arquivos simultaneamente de uma lista de URLs.",
+  "placeholder": "Digite as URLs (uma por linha)...",
+  "concurrent": "Simultaneos",
+  "download": "Baixar",
+  "starting": "Iniciando",
+  "files": "arquivo(s)",
+  "done": "Pronto!"
+}

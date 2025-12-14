@@ -1,0 +1,9 @@
+{
+  "label": "Pomodoro",
+  "title": "Minuteur Pomodoro",
+  "description": "Minuteur de productivite avec cycles travail/pause.",
+  "work": "Travail (25min)",
+  "break": "Pause (5min)",
+  "start": "Demarrer",
+  "stop": "Arreter"
+}

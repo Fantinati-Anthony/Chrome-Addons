@@ -1,0 +1,7 @@
+{
+  "label": "History",
+  "title": "Domain History",
+  "description": "Shows your browsing history for the current domain.",
+  "load": "Load history",
+  "noHistory": "No history"
+}

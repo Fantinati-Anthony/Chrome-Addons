@@ -1,0 +1,7 @@
+{
+  "label": "Password",
+  "title": "Gerador de senha",
+  "description": "Gera senhas seguras com opcoes personalizaveis.",
+  "length": "Comprimento",
+  "generate": "Gerar"
+}

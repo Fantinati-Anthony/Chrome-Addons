@@ -1,0 +1,7 @@
+{
+  "label": "URL Enc",
+  "title": "Codificador URL",
+  "description": "Codifica y decodifica caracteres especiales en URLs.",
+  "encode": "Codificar",
+  "decode": "Decodificar"
+}

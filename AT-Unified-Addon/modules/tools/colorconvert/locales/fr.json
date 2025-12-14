@@ -1,0 +1,6 @@
+{
+  "label": "Convert",
+  "title": "Convertisseur couleurs",
+  "description": "Convertit les couleurs entre HEX, RGB, HSL et autres formats.",
+  "convert": "Convertir"
+}

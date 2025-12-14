@@ -1,0 +1,8 @@
+{
+  "label": "Cores",
+  "title": "Seletor de cores",
+  "description": "Conta-gotas para capturar cores de qualquer elemento.",
+  "pickColor": "Escolher uma cor",
+  "noColors": "Sem cores",
+  "analyze": "Analisar"
+}

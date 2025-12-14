@@ -1,0 +1,6 @@
+{
+  "label": "404 Links",
+  "title": "Broken Links",
+  "description": "Checks all page links to detect 404 errors.",
+  "check": "Check links"
+}

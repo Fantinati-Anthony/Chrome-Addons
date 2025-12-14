@@ -1,0 +1,6 @@
+{
+  "label": "Caracteres",
+  "title": "Contador de caracteres",
+  "description": "Conta caracteres, palavras e linhas em tempo real.",
+  "placeholder": "Digite seu texto aqui..."
+}

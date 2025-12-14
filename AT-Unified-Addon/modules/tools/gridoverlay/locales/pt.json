@@ -1,0 +1,10 @@
+{
+  "label": "Grade",
+  "title": "Grade overlay",
+  "description": "Exibe uma grade sobreposta para verificar alinhamento.",
+  "columns": "Colunas",
+  "gutter": "Espaco",
+  "color": "Cor",
+  "show": "Mostrar grade",
+  "hide": "Ocultar"
+}

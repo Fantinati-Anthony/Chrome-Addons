@@ -1,0 +1,6 @@
+{
+  "label": "Mixed",
+  "title": "Contenido mixto",
+  "description": "Detecta recursos HTTP en paginas HTTPS.",
+  "check": "Escanear contenido mixto"
+}

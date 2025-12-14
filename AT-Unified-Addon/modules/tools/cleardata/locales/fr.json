@@ -1,0 +1,11 @@
+{
+  "label": "Clear",
+  "title": "Vider les donnees",
+  "description": "Supprime les cookies, le cache et le stockage local du domaine.",
+  "cookies": "Cookies",
+  "cache": "Cache",
+  "storage": "Local Storage",
+  "clear": "Vider les donnees",
+  "cleared": "Supprime",
+  "cacheReload": "cache (reload required)"
+}

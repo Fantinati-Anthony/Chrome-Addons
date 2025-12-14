@@ -1,0 +1,7 @@
+{
+  "label": "Fonts",
+  "title": "Detected Fonts",
+  "description": "Detects and lists all fonts used on the page.",
+  "detect": "Detect fonts",
+  "noFonts": "No fonts detected"
+}

@@ -1,0 +1,6 @@
+{
+  "label": "My IP",
+  "title": "My IP Address",
+  "description": "Shows your public IP address and geolocation info.",
+  "detect": "Detect my IP"
+}

@@ -1,0 +1,7 @@
+{
+  "label": "Fonts",
+  "title": "Polices detectees",
+  "description": "Detecte et liste toutes les polices utilisees sur la page.",
+  "detect": "Detecter les polices",
+  "noFonts": "Aucune police detectee"
+}

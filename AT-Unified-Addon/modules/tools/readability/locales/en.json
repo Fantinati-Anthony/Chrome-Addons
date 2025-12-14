@@ -1,0 +1,6 @@
+{
+  "label": "Readability",
+  "title": "Readability Score",
+  "description": "Calculates content readability score (Flesch-Kincaid, etc.).",
+  "analyze": "Analyze readability"
+}

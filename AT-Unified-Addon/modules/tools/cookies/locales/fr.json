@@ -1,0 +1,7 @@
+{
+  "label": "Cookies",
+  "title": "Cookies",
+  "description": "Liste tous les cookies du domaine actuel avec leurs valeurs.",
+  "copyJson": "Copier JSON",
+  "noCookies": "Aucun cookie"
+}

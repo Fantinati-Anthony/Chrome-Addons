@@ -1,0 +1,8 @@
+{
+  "label": "Images",
+  "title": "Images de la page",
+  "description": "Extrait toutes les images de la page avec leurs URLs et dimensions.",
+  "extract": "Extraire les images",
+  "found": "images trouvees",
+  "copyUrls": "Copier URLs"
+}

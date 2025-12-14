@@ -1,0 +1,6 @@
+{
+  "label": "Robots",
+  "title": "robots.txt",
+  "description": "Exibe e analisa o arquivo robots.txt do site.",
+  "load": "Carregar robots.txt"
+}

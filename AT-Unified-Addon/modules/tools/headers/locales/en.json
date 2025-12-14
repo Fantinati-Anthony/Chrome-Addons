@@ -1,0 +1,7 @@
+{
+  "label": "Headers",
+  "title": "HTTP Headers",
+  "description": "Shows the HTTP response headers from the server.",
+  "load": "Load headers",
+  "noHeaders": "No headers"
+}

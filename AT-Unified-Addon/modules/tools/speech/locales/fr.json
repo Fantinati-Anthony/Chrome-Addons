@@ -1,0 +1,7 @@
+{
+  "label": "Voix",
+  "title": "Synthese Vocale",
+  "description": "Lit a voix haute le texte selectionne avec differentes voix et langues.",
+  "loadingVoices": "Chargement des voix...",
+  "saveVoice": "Sauvegarder la voix"
+}

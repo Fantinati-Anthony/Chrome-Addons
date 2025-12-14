@@ -1,0 +1,6 @@
+{
+  "label": "Mon IP",
+  "title": "Mon adresse IP",
+  "description": "Affiche votre adresse IP publique et informations de geolocalisation.",
+  "detect": "Detecter mon IP"
+}

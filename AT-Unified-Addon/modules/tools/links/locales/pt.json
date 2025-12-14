@@ -1,0 +1,9 @@
+{
+  "label": "Links",
+  "title": "Links da pagina",
+  "description": "Lista todos os links, separados em internos e externos.",
+  "extract": "Extrair links",
+  "internal": "internos",
+  "external": "externos",
+  "copyAll": "Copiar todos"
+}

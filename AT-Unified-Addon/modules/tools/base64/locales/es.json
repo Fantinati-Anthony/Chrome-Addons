@@ -1,0 +1,9 @@
+{
+  "label": "Base64",
+  "title": "Codificador Base64",
+  "description": "Codifica y decodifica texto en Base64.",
+  "placeholder": "Texto a codificar/decodificar...",
+  "encode": "Codificar",
+  "decode": "Decodificar",
+  "copy": "Copiar"
+}
