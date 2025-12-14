@@ -106,6 +106,7 @@ const AutoUpdater = (function() {
           <p><strong>Dossier detecte:</strong></p>
           <p id="saved-folder-name" class="update-hint" style="background:#f0f0f0;padding:8px;border-radius:4px;font-family:monospace;"></p>
           <button id="btn-use-saved-folder" class="update-modal-btn">Mettre a jour</button>
+          <button id="btn-force-update" class="update-modal-btn" style="background:#e67e22;margin-top:8px;">Forcer la MAJ complete</button>
           <button id="btn-change-folder" class="update-modal-btn" style="background:#95a5a6;margin-top:8px;">Changer de dossier</button>
         </div>
         <div id="update-step-2" class="update-step">
@@ -279,7 +280,8 @@ const AutoUpdater = (function() {
   // Attach event listeners to modal buttons
   function attachModalEvents() {
     document.getElementById('btn-select-folder').addEventListener('click', () => selectFolderAndUpdate(false));
-    document.getElementById('btn-use-saved-folder').addEventListener('click', () => runUpdateWithHandle(savedDirHandle));
+    document.getElementById('btn-use-saved-folder').addEventListener('click', () => runUpdateWithHandle(savedDirHandle, false));
+    document.getElementById('btn-force-update').addEventListener('click', () => runUpdateWithHandle(savedDirHandle, true));
     document.getElementById('btn-change-folder').addEventListener('click', () => selectFolderAndUpdate(false));
     document.getElementById('btn-reload-extension').addEventListener('click', () => {
       chrome.runtime.reload();
@@ -421,7 +423,7 @@ const AutoUpdater = (function() {
       savedDirHandle = dirHandle;
 
       // Run the update
-      await runUpdateWithHandle(dirHandle);
+      await runUpdateWithHandle(dirHandle, false);
 
     } catch (e) {
       if (e.name === 'AbortError') {
@@ -434,7 +436,7 @@ const AutoUpdater = (function() {
   }
 
   // Run update with a given directory handle
-  async function runUpdateWithHandle(dirHandle) {
+  async function runUpdateWithHandle(dirHandle, forceFullUpdate = false) {
     try {
       // Start download
       showStep('update-step-2');
@@ -450,7 +452,13 @@ const AutoUpdater = (function() {
       let files;
       let isFullUpdate = false;
 
-      if (lastSha && lastSha !== latestSha) {
+      // Force full update - clear stored SHA and download everything
+      if (forceFullUpdate) {
+        isFullUpdate = true;
+        await chrome.storage.local.remove(['lastUpdateCommitSha']);
+        updateProgress(10, 'MAJ forcee - tous les fichiers...');
+        files = await getAllFiles();
+      } else if (lastSha && lastSha !== latestSha) {
         // Try to get only changed files
         updateProgress(10, 'Recuperation des fichiers modifies...');
         files = await getChangedFiles(lastSha, latestSha);
@@ -477,8 +485,6 @@ const AutoUpdater = (function() {
       if (!files || files.length === 0) {
         updateProgress(100, 'Aucun fichier a mettre a jour!');
         document.getElementById('update-summary').textContent = 'Aucun fichier modifie.';
-        // Still save the SHA
-        await chrome.storage.local.set({ lastUpdateCommitSha: latestSha });
         setTimeout(() => showStep('update-step-3'), 500);
         return;
       }
