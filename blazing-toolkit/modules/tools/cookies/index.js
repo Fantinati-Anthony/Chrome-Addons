@@ -1,7 +1,7 @@
 // Tool: Cookies Viewer
 // Display and export cookies for the current domain
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initCookies() {
   const domainDiv = document.getElementById('cookies-domain');

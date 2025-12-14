@@ -1,7 +1,7 @@
 // Tool: Regex Tester
 // Test regular expressions
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export function initRegex() {
   const patternInput = document.getElementById('regex-pattern');

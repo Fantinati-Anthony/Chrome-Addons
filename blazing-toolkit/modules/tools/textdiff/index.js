@@ -1,7 +1,7 @@
 // Tool: Text Diff Comparison
 // Compare two texts line by line
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export function initTextDiff() {
   const text1 = document.getElementById('diff-text1');

@@ -1,7 +1,7 @@
 // Tool: UTM Builder
 // Generate URLs with UTM parameters
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initUTMBuilder() {
   const baseUrlDiv = document.getElementById('utm-base-url');

@@ -1,7 +1,7 @@
 // Tool: Font Detector
 // Detect fonts used on the current page
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initFonts() {
   const detectBtn = document.getElementById('btn-detect-fonts');

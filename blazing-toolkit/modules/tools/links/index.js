@@ -1,7 +1,7 @@
 // Tool: Page Links Extractor
 // Extract all links from the current page
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initLinks() {
   const extractBtn = document.getElementById('btn-extract-links');

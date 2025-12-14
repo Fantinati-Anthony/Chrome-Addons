@@ -1,7 +1,7 @@
 // Tool: Social Preview
 // Preview Open Graph and Twitter Card meta tags
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initSocialPreview() {
   const previewBtn = document.getElementById('btn-preview-social');

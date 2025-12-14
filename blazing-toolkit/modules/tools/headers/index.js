@@ -1,7 +1,7 @@
 // Tool: HTTP Headers
 // Fetch and display HTTP headers from the current page
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initHeaders() {
   const fetchBtn = document.getElementById('btn-fetch-headers');

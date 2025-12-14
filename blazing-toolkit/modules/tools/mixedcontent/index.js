@@ -1,7 +1,7 @@
 // Tool: Mixed Content Checker
 // Detect HTTP content on HTTPS pages
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml } from '../utils.js';
 
 export async function initMixedContent() {
   const checkBtn = document.getElementById('btn-check-mixed');
