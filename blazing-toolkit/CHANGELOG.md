@@ -7,6 +7,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.4.1] - 2025-12-14
+
+### Maintenance
+- Version bump pour tester le systeme de mise a jour automatique
+
+---
+
 ## [3.4.0] - 2025-12-14
 
 ### Modifie
