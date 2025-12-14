@@ -1080,9 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         toolEl.addEventListener('dragover', (e) => {
-          if (!draggedTool) return;
-          // Allow drop within same category only for reordering
-          if (draggedToolCategory !== catId || draggedTool === toolId) return;
+          if (!draggedTool || draggedTool === toolId) return;
           e.preventDefault();
           e.stopPropagation();
           e.dataTransfer.dropEffect = 'move';
@@ -1100,7 +1098,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         toolEl.addEventListener('drop', (e) => {
-          if (!draggedTool || draggedToolCategory !== catId || draggedTool === toolId) return;
+          if (!draggedTool || draggedTool === toolId) return;
           e.preventDefault();
           e.stopPropagation();
 
@@ -1110,6 +1108,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
           clearDropIndicators();
 
+          // Check if moving from different category
+          if (draggedToolCategory !== catId) {
+            // Remove from source category
+            const sourceTools = toolOrder[draggedToolCategory] || [];
+            const fromIndex = sourceTools.indexOf(draggedTool);
+            if (fromIndex !== -1) {
+              sourceTools.splice(fromIndex, 1);
+              toolOrder[draggedToolCategory] = sourceTools;
+            }
+
+            // Add to target category at specific position
+            const targetTools = toolOrder[catId] || [];
+            let toIndex = targetTools.indexOf(toolId);
+            if (insertAfter) toIndex++;
+            targetTools.splice(toIndex, 0, draggedTool);
+            toolOrder[catId] = targetTools;
+
+            // Update tool assignment
+            toolAssignment[draggedTool] = catId;
+
+            renderModuleManager();
+            setTimeout(() => {
+              document.querySelector(`#active-modules [data-category="${catId}"]`)?.classList.add('expanded');
+            }, 0);
+            return;
+          }
+
+          // Same category reorder
           const tools = toolOrder[catId] || [];
           const fromIndex = tools.indexOf(draggedTool);
           let toIndex = tools.indexOf(toolId);
