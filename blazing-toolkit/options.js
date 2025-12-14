@@ -688,19 +688,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const catEl = document.createElement('div');
       catEl.className = 'reorder-category';
       catEl.dataset.category = catId;
-      catEl.draggable = true;
 
       const tools = toolOrder[catId] || cat.tools;
 
       catEl.innerHTML = `
-        <div class="reorder-category-header">
+        <div class="reorder-category-header" draggable="true" data-cat-id="${catId}">
           <span class="drag-handle">☰</span>
           <span class="reorder-category-title">${cat.emoji} ${cat.name}</span>
           <span class="reorder-category-toggle">▼</span>
         </div>
         <div class="reorder-tools">
           ${tools.map((toolId) => `
-            <div class="reorder-tool" data-tool="${toolId}" draggable="true">
+            <div class="reorder-tool" data-tool="${toolId}" data-cat="${catId}" draggable="true">
               <span class="drag-handle">☰</span>
               <span class="reorder-tool-name">${TOOLS_CONFIG[toolId] || toolId}</span>
             </div>
@@ -715,21 +714,24 @@ document.addEventListener('DOMContentLoaded', () => {
         catEl.classList.toggle('expanded');
       });
 
-      // Category drag & drop
-      catEl.addEventListener('dragstart', (e) => {
-        if (e.target.classList.contains('reorder-tool')) return;
+      // Category drag - on header only
+      const header = catEl.querySelector('.reorder-category-header');
+
+      header.addEventListener('dragstart', (e) => {
         draggedCategory = catId;
+        draggedTool = null;
         catEl.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', catId);
+        e.dataTransfer.setData('text/plain', 'category:' + catId);
       });
 
-      catEl.addEventListener('dragend', () => {
+      header.addEventListener('dragend', () => {
         catEl.classList.remove('dragging');
         draggedCategory = null;
         container.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
       });
 
+      // Category drop zone - on the whole category element
       catEl.addEventListener('dragover', (e) => {
         if (!draggedCategory || draggedCategory === catId) return;
         e.preventDefault();
@@ -737,21 +739,26 @@ document.addEventListener('DOMContentLoaded', () => {
         catEl.classList.add('drag-over');
       });
 
-      catEl.addEventListener('dragleave', () => {
-        catEl.classList.remove('drag-over');
+      catEl.addEventListener('dragleave', (e) => {
+        // Only remove if leaving the category entirely
+        if (!catEl.contains(e.relatedTarget)) {
+          catEl.classList.remove('drag-over');
+        }
       });
 
       catEl.addEventListener('drop', (e) => {
+        if (!draggedCategory || draggedCategory === catId) return;
         e.preventDefault();
         catEl.classList.remove('drag-over');
-        if (!draggedCategory || draggedCategory === catId) return;
 
         // Reorder categories
         const fromIndex = categoryOrder.indexOf(draggedCategory);
         const toIndex = categoryOrder.indexOf(catId);
-        categoryOrder.splice(fromIndex, 1);
-        categoryOrder.splice(toIndex, 0, draggedCategory);
-        renderReorderUI();
+        if (fromIndex !== -1 && toIndex !== -1) {
+          categoryOrder.splice(fromIndex, 1);
+          categoryOrder.splice(toIndex, 0, draggedCategory);
+          renderReorderUI();
+        }
       });
 
       // Tool drag & drop
@@ -762,9 +769,10 @@ document.addEventListener('DOMContentLoaded', () => {
           e.stopPropagation();
           draggedTool = toolId;
           draggedToolCategory = catId;
+          draggedCategory = null;
           toolEl.classList.add('dragging');
           e.dataTransfer.effectAllowed = 'move';
-          e.dataTransfer.setData('text/plain', toolId);
+          e.dataTransfer.setData('text/plain', 'tool:' + toolId);
         });
 
         toolEl.addEventListener('dragend', () => {
@@ -787,23 +795,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         toolEl.addEventListener('drop', (e) => {
+          if (!draggedTool || draggedToolCategory !== catId || draggedTool === toolId) return;
           e.preventDefault();
           e.stopPropagation();
           toolEl.classList.remove('drag-over');
-          if (!draggedTool || draggedToolCategory !== catId || draggedTool === toolId) return;
 
           // Reorder tools within category
           const tools = toolOrder[catId];
           const fromIndex = tools.indexOf(draggedTool);
           const toIndex = tools.indexOf(toolId);
-          tools.splice(fromIndex, 1);
-          tools.splice(toIndex, 0, draggedTool);
+          if (fromIndex !== -1 && toIndex !== -1) {
+            tools.splice(fromIndex, 1);
+            tools.splice(toIndex, 0, draggedTool);
 
-          // Re-render and keep expanded
-          renderReorderUI();
-          setTimeout(() => {
-            document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
-          }, 0);
+            // Re-render and keep expanded
+            const wasExpanded = catEl.classList.contains('expanded');
+            renderReorderUI();
+            if (wasExpanded) {
+              setTimeout(() => {
+                document.querySelector(`[data-category="${catId}"]`)?.classList.add('expanded');
+              }, 0);
+            }
+          }
         });
       });
 

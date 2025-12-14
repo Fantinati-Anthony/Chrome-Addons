@@ -7,6 +7,16 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.5.3] - 2025-12-14
+
+### Corrige
+- **Drag & Drop fonctionnel** : Correction complete du systeme de glisser-deposer
+  - L'element draggable est maintenant le header de la categorie (pas le container entier)
+  - Meilleure gestion des etats de drag entre categories et outils
+  - Correction du bug ou le drop ne s'executait pas
+
+---
+
 ## [3.5.2] - 2025-12-14
 
 ### Corrige
