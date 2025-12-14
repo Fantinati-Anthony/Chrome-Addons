@@ -7,6 +7,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.4.2] - 2025-12-14
+
+### Corrige
+- **Cache CDN GitHub** : Ajout de headers `no-cache` et `cache: 'no-store'` pour forcer le contournement du cache lors de la verification des mises a jour
+
+---
+
 ## [3.4.1] - 2025-12-14
 
 ### Maintenance

@@ -184,7 +184,13 @@ const VERSION_URL = 'https://raw.githubusercontent.com/Fantinati-Anthony/Chrome-
 
 async function checkForUpdates() {
   try {
-    const response = await fetch(VERSION_URL + '?t=' + Date.now());
+    const response = await fetch(VERSION_URL + '?t=' + Date.now(), {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      }
+    });
     if (!response.ok) return;
 
     const data = await response.json();
