@@ -7,6 +7,24 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.2.0] - 2025-12-13
+
+### Ajouté
+- **Mode Sidebar** : Nouveau mode d'affichage en barre latérale
+  - Cliquez sur 📐 dans le popup pour ouvrir la sidebar
+  - Cliquez sur 📌 dans la sidebar pour revenir en mode popup
+  - Le mode choisi est sauvegardé et persistant
+  - L'icône de l'extension ouvre directement le mode actif
+
+### Technique
+- Utilisation de l'API Chrome Side Panel (chrome.sidePanel)
+- Permission `sidePanel` ajoutée au manifest
+- Nouveau fichier `sidepanel.html` pour le mode sidebar
+- CSS dédié pour la sidebar (`sidebar.css`)
+- Gestion du mode via `chrome.storage.local`
+
+---
+
 ## [3.1.0] - 2025-12-13
 
 ### Amélioré

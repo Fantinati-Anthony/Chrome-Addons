@@ -52,6 +52,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // ========== MODE SWITCH BUTTON ==========
+  const switchModeBtn = document.getElementById('btn-switch-mode');
+  if (switchModeBtn) {
+    // Check if we're in sidebar mode
+    const isSidebar = document.body.dataset.mode === 'sidebar';
+
+    if (isSidebar) {
+      // In sidebar mode: button switches to popup mode
+      switchModeBtn.addEventListener('click', async () => {
+        await chrome.runtime.sendMessage({ type: 'switchDisplayMode', mode: 'popup' });
+        // Show confirmation
+        switchModeBtn.textContent = '✓';
+        switchModeBtn.title = 'Mode Popup active! Cliquez sur l\'icone.';
+        setTimeout(() => {
+          switchModeBtn.textContent = '📌';
+          switchModeBtn.title = 'Passer en mode Popup';
+        }, 2000);
+      });
+    } else {
+      // In popup mode: button opens sidebar
+      switchModeBtn.addEventListener('click', async () => {
+        // First, switch to sidebar mode
+        await chrome.runtime.sendMessage({ type: 'switchDisplayMode', mode: 'sidebar' });
+        // Then open the side panel
+        await chrome.runtime.sendMessage({ type: 'openSidePanel' });
+        // Close the popup
+        window.close();
+      });
+    }
+  }
+
   // ========== UPDATE SYSTEM ==========
   // UI elements for update
   const updateBadge = document.getElementById('update-badge');
