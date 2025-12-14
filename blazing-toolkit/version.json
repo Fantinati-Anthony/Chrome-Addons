@@ -1,5 +1,5 @@
 {
-  "version": "3.7.3",
+  "version": "3.7.4",
   "releaseDate": "2025-12-14",
-  "changelog": "Fix: Added 'Force full update' button to re-download all files."
+  "changelog": "Feat: Merged 'Gestion des modules' and 'Boutons personnalisés' into tabbed section. Added backup/export button in update modal."
 }
