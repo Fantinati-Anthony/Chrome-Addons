@@ -1,4 +1,4 @@
-// AT Unified Toolkit - Background Service Worker
+// Blazing Toolkit - Background Service Worker
 
 // ========== DISPLAY MODE MANAGEMENT ==========
 // Mode: 'popup' (default) or 'sidebar'
@@ -176,11 +176,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-console.log('AT Unified Toolkit background service worker loaded');
+console.log('Blazing Toolkit background service worker loaded');
 
 // ========== AUTO UPDATE CHECK ==========
 const UPDATE_CHECK_INTERVAL = 60; // minutes
-const VERSION_URL = 'https://raw.githubusercontent.com/Fantinati-Anthony/Chrome-Addons/main/AT-Unified-Addon/version.json';
+const VERSION_URL = 'https://raw.githubusercontent.com/Fantinati-Anthony/Chrome-Addons/main/blazing-toolkit/version.json';
 
 async function checkForUpdates() {
   try {
