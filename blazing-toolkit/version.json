@@ -1,5 +1,5 @@
 {
-  "version": "3.7.15",
+  "version": "3.7.16",
   "releaseDate": "2025-12-15",
-  "changelog": "UX: Default header mode changed to light logo."
+  "changelog": "Fix: Added popup-logo element to sidepanel.html for logo display in sidebar mode."
 }
