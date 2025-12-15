@@ -1,5 +1,5 @@
 {
-  "version": "3.7.6",
-  "releaseDate": "2025-12-14",
-  "changelog": "UI: Increased options page max-width from 700px to 1100px for better module management."
+  "version": "3.7.7",
+  "releaseDate": "2025-12-15",
+  "changelog": "Feat: Comprehensive emoji picker with categories for shortcuts and custom categories."
 }
