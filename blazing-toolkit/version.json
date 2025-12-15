@@ -1,5 +1,5 @@
 {
-  "version": "3.7.12",
+  "version": "3.7.13",
   "releaseDate": "2025-12-15",
-  "changelog": "UX: Added category header border radius customization (top/bottom when collapsed)."
+  "changelog": "UX: Added footer bar color customization (background and text)."
 }

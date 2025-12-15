@@ -790,6 +790,8 @@ chrome.runtime.onMessage.addListener((message) => {
     root.style.setProperty('--error-color', colors.errorColor);
     root.style.setProperty('--category-bg', colors.categoryBg || '#ffffff');
     root.style.setProperty('--category-header', colors.categoryHeader || '#f5f5f5');
+    root.style.setProperty('--footer-bg', colors.footerBg || '#f5f5f5');
+    root.style.setProperty('--footer-text', colors.footerText || '#999999');
   }
 
   // Live preview: border radius
@@ -824,7 +826,9 @@ async function applyCustomColors() {
     successColor: '#27ae60',
     errorColor: '#e74c3c',
     categoryBg: '#ffffff',
-    categoryHeader: '#f5f5f5'
+    categoryHeader: '#f5f5f5',
+    footerBg: '#f5f5f5',
+    footerText: '#999999'
   };
 
   const DEFAULT_RADIUS = {
@@ -854,6 +858,8 @@ async function applyCustomColors() {
   root.style.setProperty('--error-color', colors.errorColor);
   root.style.setProperty('--category-bg', colors.categoryBg || '#ffffff');
   root.style.setProperty('--category-header', colors.categoryHeader || '#f5f5f5');
+  root.style.setProperty('--footer-bg', colors.footerBg || '#f5f5f5');
+  root.style.setProperty('--footer-text', colors.footerText || '#999999');
 
   // Apply border radius
   root.style.setProperty('--radius-small', radius.radiusSmall + 'px');

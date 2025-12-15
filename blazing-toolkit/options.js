@@ -111,7 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
     successColor: '#27ae60',
     errorColor: '#e74c3c',
     categoryBg: '#ffffff',
-    categoryHeader: '#f5f5f5'
+    categoryHeader: '#f5f5f5',
+    footerBg: '#f5f5f5',
+    footerText: '#999999'
   };
 
   const POPULAR_EMOJIS = [
@@ -219,7 +221,9 @@ document.addEventListener('DOMContentLoaded', () => {
     successColor: document.getElementById('color-success'),
     errorColor: document.getElementById('color-error'),
     categoryBg: document.getElementById('color-category-bg'),
-    categoryHeader: document.getElementById('color-category-header')
+    categoryHeader: document.getElementById('color-category-header'),
+    footerBg: document.getElementById('color-footer-bg'),
+    footerText: document.getElementById('color-footer-text')
   };
 
   // Unified save buttons for personnalisation section
