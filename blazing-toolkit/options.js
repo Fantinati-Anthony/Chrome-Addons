@@ -256,28 +256,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const DEFAULT_RADIUS = {
     radiusSmall: 4,
     radiusMedium: 8,
-    radiusLarge: 12
+    radiusLarge: 12,
+    radiusCategoryTop: 8,
+    radiusCategoryBottom: 8
   };
 
   const radiusSmall = document.getElementById('radius-small');
   const radiusMedium = document.getElementById('radius-medium');
   const radiusLarge = document.getElementById('radius-large');
+  const radiusCategoryTop = document.getElementById('radius-category-top');
+  const radiusCategoryBottom = document.getElementById('radius-category-bottom');
   const radiusSmallValue = document.getElementById('radius-small-value');
   const radiusMediumValue = document.getElementById('radius-medium-value');
   const radiusLargeValue = document.getElementById('radius-large-value');
+  const radiusCategoryTopValue = document.getElementById('radius-category-top-value');
+  const radiusCategoryBottomValue = document.getElementById('radius-category-bottom-value');
 
   // Update value display on slider change
   function updateRadiusDisplay() {
     if (radiusSmallValue) radiusSmallValue.textContent = radiusSmall.value + 'px';
     if (radiusMediumValue) radiusMediumValue.textContent = radiusMedium.value + 'px';
     if (radiusLargeValue) radiusLargeValue.textContent = radiusLarge.value + 'px';
+    if (radiusCategoryTopValue) radiusCategoryTopValue.textContent = radiusCategoryTop.value + 'px';
+    if (radiusCategoryBottomValue) radiusCategoryBottomValue.textContent = radiusCategoryBottom.value + 'px';
   }
 
   function broadcastRadiusChange() {
     const radius = {
       radiusSmall: parseInt(radiusSmall.value),
       radiusMedium: parseInt(radiusMedium.value),
-      radiusLarge: parseInt(radiusLarge.value)
+      radiusLarge: parseInt(radiusLarge.value),
+      radiusCategoryTop: parseInt(radiusCategoryTop?.value || 8),
+      radiusCategoryBottom: parseInt(radiusCategoryBottom?.value || 8)
     };
     chrome.runtime.sendMessage({ type: 'radiusChanged', radius });
   }
@@ -285,6 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (radiusSmall) radiusSmall.addEventListener('input', () => { updateRadiusDisplay(); broadcastRadiusChange(); });
   if (radiusMedium) radiusMedium.addEventListener('input', () => { updateRadiusDisplay(); broadcastRadiusChange(); });
   if (radiusLarge) radiusLarge.addEventListener('input', () => { updateRadiusDisplay(); broadcastRadiusChange(); });
+  if (radiusCategoryTop) radiusCategoryTop.addEventListener('input', () => { updateRadiusDisplay(); broadcastRadiusChange(); });
+  if (radiusCategoryBottom) radiusCategoryBottom.addEventListener('input', () => { updateRadiusDisplay(); broadcastRadiusChange(); });
 
   // Load saved radius
   chrome.storage.sync.get(['customRadius'], (data) => {
@@ -292,6 +304,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (radiusSmall) radiusSmall.value = radius.radiusSmall;
     if (radiusMedium) radiusMedium.value = radius.radiusMedium;
     if (radiusLarge) radiusLarge.value = radius.radiusLarge;
+    if (radiusCategoryTop) radiusCategoryTop.value = radius.radiusCategoryTop || 8;
+    if (radiusCategoryBottom) radiusCategoryBottom.value = radius.radiusCategoryBottom || 8;
     updateRadiusDisplay();
   });
 
@@ -345,7 +359,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const radius = {
         radiusSmall: parseInt(radiusSmall.value),
         radiusMedium: parseInt(radiusMedium.value),
-        radiusLarge: parseInt(radiusLarge.value)
+        radiusLarge: parseInt(radiusLarge.value),
+        radiusCategoryTop: parseInt(radiusCategoryTop?.value || 8),
+        radiusCategoryBottom: parseInt(radiusCategoryBottom?.value || 8)
       };
 
       // Save size
@@ -374,6 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (radiusSmall) radiusSmall.value = DEFAULT_RADIUS.radiusSmall;
       if (radiusMedium) radiusMedium.value = DEFAULT_RADIUS.radiusMedium;
       if (radiusLarge) radiusLarge.value = DEFAULT_RADIUS.radiusLarge;
+      if (radiusCategoryTop) radiusCategoryTop.value = DEFAULT_RADIUS.radiusCategoryTop;
+      if (radiusCategoryBottom) radiusCategoryBottom.value = DEFAULT_RADIUS.radiusCategoryBottom;
       updateRadiusDisplay();
       // Broadcast radius change for live preview
       chrome.runtime.sendMessage({ type: 'radiusChanged', radius: DEFAULT_RADIUS });

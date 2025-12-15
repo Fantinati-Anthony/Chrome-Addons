@@ -799,6 +799,8 @@ chrome.runtime.onMessage.addListener((message) => {
     root.style.setProperty('--radius-small', radius.radiusSmall + 'px');
     root.style.setProperty('--radius-medium', radius.radiusMedium + 'px');
     root.style.setProperty('--radius-large', radius.radiusLarge + 'px');
+    root.style.setProperty('--radius-category-top', (radius.radiusCategoryTop || 8) + 'px');
+    root.style.setProperty('--radius-category-bottom', (radius.radiusCategoryBottom || 8) + 'px');
   }
 
   // Live preview: button size
@@ -828,7 +830,9 @@ async function applyCustomColors() {
   const DEFAULT_RADIUS = {
     radiusSmall: 4,
     radiusMedium: 8,
-    radiusLarge: 12
+    radiusLarge: 12,
+    radiusCategoryTop: 8,
+    radiusCategoryBottom: 8
   };
 
   const data = await chrome.storage.sync.get(['customColors', 'customRadius']);
@@ -855,4 +859,6 @@ async function applyCustomColors() {
   root.style.setProperty('--radius-small', radius.radiusSmall + 'px');
   root.style.setProperty('--radius-medium', radius.radiusMedium + 'px');
   root.style.setProperty('--radius-large', radius.radiusLarge + 'px');
+  root.style.setProperty('--radius-category-top', (radius.radiusCategoryTop || 8) + 'px');
+  root.style.setProperty('--radius-category-bottom', (radius.radiusCategoryBottom || 8) + 'px');
 }
