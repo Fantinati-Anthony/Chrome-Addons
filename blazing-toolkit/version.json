@@ -1,5 +1,5 @@
 {
-  "version": "3.7.4",
+  "version": "3.7.6",
   "releaseDate": "2025-12-14",
-  "changelog": "Feat: Merged 'Gestion des modules' and 'Boutons personnalisés' into tabbed section. Added backup/export button in update modal."
+  "changelog": "UI: Increased options page max-width from 700px to 1100px for better module management."
 }
