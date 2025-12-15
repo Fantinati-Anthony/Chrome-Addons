@@ -596,7 +596,10 @@ input[type="number"] {
   color: var(--footer-text);
   background: var(--footer-bg);
   padding: 10px 0 5px;
-  margin-top: 10px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
 }
 
 .version-footer a {
