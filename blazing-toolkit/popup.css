@@ -11,6 +11,8 @@
   --border-color: #eee;
   --success-color: #27ae60;
   --error-color: #e74c3c;
+  --category-bg: white;
+  --category-header: #f5f5f5;
 
   /* Border radius personnalisables */
   --radius-small: 4px;
@@ -614,7 +616,7 @@ input[type="number"] {
 /* Category Sections */
 .category-section {
   margin-bottom: 12px;
-  background: var(--panel-bg);
+  background: var(--category-bg);
   border-radius: var(--radius-medium);
   overflow: visible;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -629,7 +631,7 @@ input[type="number"] {
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  background: var(--bg-color);
+  background: var(--category-header);
   cursor: pointer;
   user-select: none;
   transition: background 0.2s;

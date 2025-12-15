@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sectionHeaders = document.querySelectorAll('.section-header');
   const COLLAPSED_SECTIONS_KEY = 'collapsedSections';
   const FIRST_VISIT_KEY = 'optionsFirstVisit';
-  const allSectionIds = ['section-general', 'section-personnalisation', 'section-modules', 'section-backup', 'section-updates', 'section-openai', 'section-notifications', 'section-data'];
+  const allSectionIds = ['section-general', 'section-personnalisation', 'section-modules', 'section-ia', 'section-backup', 'section-updates', 'section-data'];
 
   // Check if first visit and initialize sections
   chrome.storage.local.get([COLLAPSED_SECTIONS_KEY, FIRST_VISIT_KEY], (data) => {
@@ -109,7 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
     panelBg: '#ffffff',
     borderColor: '#eeeeee',
     successColor: '#27ae60',
-    errorColor: '#e74c3c'
+    errorColor: '#e74c3c',
+    categoryBg: '#ffffff',
+    categoryHeader: '#f5f5f5'
   };
 
   const POPULAR_EMOJIS = [
@@ -215,7 +217,9 @@ document.addEventListener('DOMContentLoaded', () => {
     panelBg: document.getElementById('color-panel-bg'),
     borderColor: document.getElementById('color-border'),
     successColor: document.getElementById('color-success'),
-    errorColor: document.getElementById('color-error')
+    errorColor: document.getElementById('color-error'),
+    categoryBg: document.getElementById('color-category-bg'),
+    categoryHeader: document.getElementById('color-category-header')
   };
 
   // Unified save buttons for personnalisation section

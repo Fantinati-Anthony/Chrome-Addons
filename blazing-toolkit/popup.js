@@ -788,6 +788,8 @@ chrome.runtime.onMessage.addListener((message) => {
     root.style.setProperty('--border-color', colors.borderColor);
     root.style.setProperty('--success-color', colors.successColor);
     root.style.setProperty('--error-color', colors.errorColor);
+    root.style.setProperty('--category-bg', colors.categoryBg || '#ffffff');
+    root.style.setProperty('--category-header', colors.categoryHeader || '#f5f5f5');
   }
 
   // Live preview: border radius
@@ -818,7 +820,9 @@ async function applyCustomColors() {
     panelBg: '#ffffff',
     borderColor: '#eeeeee',
     successColor: '#27ae60',
-    errorColor: '#e74c3c'
+    errorColor: '#e74c3c',
+    categoryBg: '#ffffff',
+    categoryHeader: '#f5f5f5'
   };
 
   const DEFAULT_RADIUS = {
@@ -844,6 +848,8 @@ async function applyCustomColors() {
   root.style.setProperty('--border-color', colors.borderColor);
   root.style.setProperty('--success-color', colors.successColor);
   root.style.setProperty('--error-color', colors.errorColor);
+  root.style.setProperty('--category-bg', colors.categoryBg || '#ffffff');
+  root.style.setProperty('--category-header', colors.categoryHeader || '#f5f5f5');
 
   // Apply border radius
   root.style.setProperty('--radius-small', radius.radiusSmall + 'px');

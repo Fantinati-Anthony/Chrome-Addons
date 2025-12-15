@@ -1543,15 +1543,53 @@
       <!-- Sub-section: Couleurs -->
       <div class="sub-section">
         <h3>🎨 Couleurs</h3>
+
+        <!-- Groupe: Général -->
+        <p style="font-size: 12px; color: #888; margin: 10px 0 8px; font-weight: 600;">🌐 Général</p>
         <div class="color-grid">
           <div class="color-item">
-            <label>Fond:</label>
+            <label>Fond de page:</label>
             <input type="color" id="color-bg" value="#f5f5f5">
           </div>
           <div class="color-item">
-            <label>Texte:</label>
+            <label>Texte principal:</label>
             <input type="color" id="color-text" value="#333333">
           </div>
+          <div class="color-item">
+            <label>Bordures:</label>
+            <input type="color" id="color-border" value="#eeeeee">
+          </div>
+        </div>
+
+        <!-- Groupe: Categories (accueil) -->
+        <p style="font-size: 12px; color: #888; margin: 15px 0 8px; font-weight: 600;">📂 Categories (zones d'outils)</p>
+        <div class="color-grid">
+          <div class="color-item">
+            <label>Fond des categories:</label>
+            <input type="color" id="color-category-bg" value="#ffffff">
+          </div>
+          <div class="color-item">
+            <label>En-tete des categories:</label>
+            <input type="color" id="color-category-header" value="#f5f5f5">
+          </div>
+        </div>
+
+        <!-- Groupe: Boutons/Outils -->
+        <p style="font-size: 12px; color: #888; margin: 15px 0 8px; font-weight: 600;">🔧 Boutons et outils</p>
+        <div class="color-grid">
+          <div class="color-item">
+            <label>Fond des boutons:</label>
+            <input type="color" id="color-button-bg" value="#ffffff">
+          </div>
+          <div class="color-item">
+            <label>Texte des boutons:</label>
+            <input type="color" id="color-button-text" value="#666666">
+          </div>
+        </div>
+
+        <!-- Groupe: Interface -->
+        <p style="font-size: 12px; color: #888; margin: 15px 0 8px; font-weight: 600;">🎯 Couleurs d'accentuation</p>
+        <div class="color-grid">
           <div class="color-item">
             <label>Couleur principale:</label>
             <input type="color" id="color-primary" value="#3498db">
@@ -1565,21 +1603,14 @@
             <input type="color" id="color-secondary" value="#2c3e50">
           </div>
           <div class="color-item">
-            <label>Fond boutons:</label>
-            <input type="color" id="color-button-bg" value="#ffffff">
-          </div>
-          <div class="color-item">
-            <label>Texte boutons:</label>
-            <input type="color" id="color-button-text" value="#666666">
-          </div>
-          <div class="color-item">
-            <label>Fond panneaux:</label>
+            <label>Fond panneaux/modales:</label>
             <input type="color" id="color-panel-bg" value="#ffffff">
           </div>
-          <div class="color-item">
-            <label>Bordures:</label>
-            <input type="color" id="color-border" value="#eeeeee">
-          </div>
+        </div>
+
+        <!-- Groupe: Statuts -->
+        <p style="font-size: 12px; color: #888; margin: 15px 0 8px; font-weight: 600;">✅ Statuts</p>
+        <div class="color-grid">
           <div class="color-item">
             <label>Succes:</label>
             <input type="color" id="color-success" value="#27ae60">
@@ -1763,6 +1794,53 @@
     </div>
   </div>
 
+  <!-- Intelligence Artificielle -->
+  <div class="section" id="section-ia">
+    <div class="section-header">
+      <h2>🤖 Intelligence Artificielle</h2>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-content">
+      <p>Configurez les fonctionnalites liees a l'intelligence artificielle.</p>
+
+      <!-- Sub-section: API OpenAI -->
+      <div class="sub-section">
+        <h3>🔑 API OpenAI (GPT)</h3>
+        <div class="info">
+          Obtenez votre cle API sur <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>
+        </div>
+
+        <label for="api-key">Cle API OpenAI:</label>
+        <input type="password" id="api-key" placeholder="sk-...">
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="show-api-key">
+          <label for="show-api-key" style="margin-bottom: 0;">Afficher la cle</label>
+        </div>
+
+        <button id="btn-save-api-key">Sauvegarder la cle API</button>
+        <div id="api-key-status" class="status" style="display: none;"></div>
+      </div>
+
+      <!-- Sub-section: Notifications ChatGPT -->
+      <div class="sub-section">
+        <h3>🔔 Notifications ChatGPT</h3>
+        <p style="font-size: 13px; color: #666; margin-bottom: 12px;">Notifications sonores pour ChatGPT et OpenAI Playground.</p>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="enable-ding" checked>
+          <label for="enable-ding" style="margin-bottom: 0;">Activer le son de notification</label>
+        </div>
+
+        <label for="ding-volume">Volume:</label>
+        <input type="range" id="ding-volume" min="0" max="100" value="50" style="width: 100%; margin-bottom: 15px;">
+
+        <button id="btn-save-ding">Sauvegarder les notifications</button>
+        <div id="ding-status" class="status" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Export/Import -->
   <div class="section" id="section-backup">
     <div class="section-header">
@@ -1800,54 +1878,6 @@
         <button id="btn-force-update" style="background: #e67e22;">Reinitialiser le cache MAJ</button>
       </div>
       <div id="github-status" class="status" style="display: none;"></div>
-    </div>
-  </div>
-
-  <!-- API OpenAI -->
-  <div class="section" id="section-openai">
-    <div class="section-header">
-      <h2>🤖 API OpenAI (GPT)</h2>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-content">
-      <p>Configurez votre cle API OpenAI pour utiliser la fonctionnalite de correction de texte avec GPT.</p>
-
-      <div class="info">
-        Obtenez votre cle API sur <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>
-      </div>
-
-      <label for="api-key">Cle API OpenAI:</label>
-      <input type="password" id="api-key" placeholder="sk-...">
-
-      <div class="checkbox-group">
-        <input type="checkbox" id="show-api-key">
-        <label for="show-api-key" style="margin-bottom: 0;">Afficher la cle</label>
-      </div>
-
-      <button id="btn-save-api-key">Sauvegarder</button>
-      <div id="api-key-status" class="status" style="display: none;"></div>
-    </div>
-  </div>
-
-  <!-- Notifications ChatGPT -->
-  <div class="section" id="section-notifications">
-    <div class="section-header">
-      <h2>🔔 Notifications ChatGPT</h2>
-      <span class="section-toggle">▼</span>
-    </div>
-    <div class="section-content">
-      <p>Configurez les notifications sonores pour ChatGPT et OpenAI Playground.</p>
-
-      <div class="checkbox-group">
-        <input type="checkbox" id="enable-ding" checked>
-        <label for="enable-ding" style="margin-bottom: 0;">Activer le son de notification</label>
-      </div>
-
-      <label for="ding-volume">Volume:</label>
-      <input type="range" id="ding-volume" min="0" max="100" value="50" style="width: 100%; margin-bottom: 15px;">
-
-      <button id="btn-save-ding">Sauvegarder</button>
-      <div id="ding-status" class="status" style="display: none;"></div>
     </div>
   </div>
 
