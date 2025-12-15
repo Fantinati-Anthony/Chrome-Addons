@@ -32,21 +32,93 @@
     .section {
       background: white;
       border-radius: 8px;
-      padding: 20px;
       margin-bottom: 20px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
     }
 
-    .section h2 {
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 20px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .section-header:hover {
+      background: #f8f9fa;
+    }
+
+    .section-header h2 {
       font-size: 18px;
       color: #2c3e50;
-      margin-bottom: 15px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-toggle {
+      font-size: 12px;
+      color: #999;
+      transition: transform 0.3s;
+    }
+
+    .section.collapsed .section-toggle {
+      transform: rotate(-90deg);
+    }
+
+    .section-content {
+      padding: 0 20px 20px;
+      transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.2s ease;
+      overflow: hidden;
+    }
+
+    .section.collapsed .section-content {
+      max-height: 0 !important;
+      padding-top: 0;
+      padding-bottom: 0;
+      opacity: 0;
     }
 
     .section p {
       color: #666;
       font-size: 13px;
       margin-bottom: 15px;
+    }
+
+    /* Sub-sections for grouped content */
+    .sub-section {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .sub-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .sub-section h3 {
+      font-size: 15px;
+      color: #34495e;
+      margin: 0 0 12px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    body.dark-mode .section-header:hover {
+      background: #2a2a4e;
+    }
+
+    body.dark-mode .sub-section {
+      border-color: #2a2a4e;
+    }
+
+    body.dark-mode .sub-section h3 {
+      border-bottom-color: #2a2a4e;
     }
 
     label {
@@ -1337,167 +1409,177 @@
   <h1>Blazing Toolkit - Options</h1>
 
   <!-- Parametres generaux -->
-  <div class="section">
-    <h2>Parametres generaux</h2>
-    <p>Personnalisez le nom et la langue de l'extension.</p>
-
-    <div class="form-row" style="margin-bottom: 15px;">
-      <div class="form-group">
-        <label for="popup-title-input">Nom du popup:</label>
-        <input type="text" id="popup-title-input" placeholder="Toolkit">
-      </div>
-      <div class="form-group">
-        <label for="language-select">Langue / Language:</label>
-        <select id="language-select">
-          <option value="fr">Francais</option>
-          <option value="en">English</option>
-          <option value="es">Espanol</option>
-          <option value="pt">Portugues</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="theme-select">Theme:</label>
-        <select id="theme-select">
-          <option value="light">☀️ Clair</option>
-          <option value="dark">🌙 Sombre</option>
-          <option value="system">💻 Systeme</option>
-        </select>
-      </div>
+  <div class="section" id="section-general">
+    <div class="section-header">
+      <h2>⚙️ Parametres generaux</h2>
+      <span class="section-toggle">▼</span>
     </div>
-    <button id="btn-save-general">Sauvegarder</button>
-    <div id="general-status" class="status" style="display: none;"></div>
+    <div class="section-content">
+      <p>Personnalisez le nom et la langue de l'extension.</p>
+
+      <div class="form-row" style="margin-bottom: 15px;">
+        <div class="form-group">
+          <label for="popup-title-input">Nom du popup:</label>
+          <input type="text" id="popup-title-input" placeholder="Toolkit">
+        </div>
+        <div class="form-group">
+          <label for="language-select">Langue / Language:</label>
+          <select id="language-select">
+            <option value="fr">Francais</option>
+            <option value="en">English</option>
+            <option value="es">Espanol</option>
+            <option value="pt">Portugues</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="theme-select">Theme:</label>
+          <select id="theme-select">
+            <option value="light">☀️ Clair</option>
+            <option value="dark">🌙 Sombre</option>
+            <option value="system">💻 Systeme</option>
+          </select>
+        </div>
+      </div>
+      <button id="btn-save-general">Sauvegarder</button>
+      <div id="general-status" class="status" style="display: none;"></div>
+    </div>
   </div>
 
-  <!-- Personnalisation des couleurs -->
-  <div class="section">
-    <h2>Personnalisation des couleurs</h2>
-    <p>Personnalisez l'apparence de votre extension en modifiant les couleurs.</p>
-
-    <div class="color-grid">
-      <div class="color-item">
-        <label>Fond:</label>
-        <input type="color" id="color-bg" value="#f5f5f5">
-      </div>
-      <div class="color-item">
-        <label>Texte:</label>
-        <input type="color" id="color-text" value="#333333">
-      </div>
-      <div class="color-item">
-        <label>Couleur principale:</label>
-        <input type="color" id="color-primary" value="#3498db">
-      </div>
-      <div class="color-item">
-        <label>Principale (hover):</label>
-        <input type="color" id="color-primary-hover" value="#2980b9">
-      </div>
-      <div class="color-item">
-        <label>Couleur secondaire:</label>
-        <input type="color" id="color-secondary" value="#2c3e50">
-      </div>
-      <div class="color-item">
-        <label>Fond boutons:</label>
-        <input type="color" id="color-button-bg" value="#ffffff">
-      </div>
-      <div class="color-item">
-        <label>Texte boutons:</label>
-        <input type="color" id="color-button-text" value="#666666">
-      </div>
-      <div class="color-item">
-        <label>Fond panneaux:</label>
-        <input type="color" id="color-panel-bg" value="#ffffff">
-      </div>
-      <div class="color-item">
-        <label>Bordures:</label>
-        <input type="color" id="color-border" value="#eeeeee">
-      </div>
-      <div class="color-item">
-        <label>Succes:</label>
-        <input type="color" id="color-success" value="#27ae60">
-      </div>
-      <div class="color-item">
-        <label>Erreur:</label>
-        <input type="color" id="color-error" value="#e74c3c">
-      </div>
+  <!-- Personnalisation -->
+  <div class="section" id="section-personnalisation">
+    <div class="section-header">
+      <h2>🎨 Personnalisation</h2>
+      <span class="section-toggle">▼</span>
     </div>
+    <div class="section-content">
+      <p>Personnalisez l'apparence de votre extension: couleurs, arrondis et tailles.</p>
 
-    <div class="btn-group">
-      <button id="btn-save-colors">Sauvegarder les couleurs</button>
-      <button id="btn-reset-colors" class="btn-reset">Reinitialiser</button>
-    </div>
-    <div id="colors-status" class="status" style="display: none;"></div>
-  </div>
-
-  <!-- Border Radius -->
-  <div class="section">
-    <h2>Arrondis (Border Radius)</h2>
-    <p>Personnalisez les arrondis des boutons, panneaux et autres elements.</p>
-
-    <div class="radius-grid">
-      <div class="radius-item">
-        <label>Petit (boutons):</label>
-        <div class="radius-input">
-          <input type="range" id="radius-small" min="0" max="20" value="4">
-          <span id="radius-small-value">4px</span>
+      <!-- Sub-section: Couleurs -->
+      <div class="sub-section">
+        <h3>🎨 Couleurs</h3>
+        <div class="color-grid">
+          <div class="color-item">
+            <label>Fond:</label>
+            <input type="color" id="color-bg" value="#f5f5f5">
+          </div>
+          <div class="color-item">
+            <label>Texte:</label>
+            <input type="color" id="color-text" value="#333333">
+          </div>
+          <div class="color-item">
+            <label>Couleur principale:</label>
+            <input type="color" id="color-primary" value="#3498db">
+          </div>
+          <div class="color-item">
+            <label>Principale (hover):</label>
+            <input type="color" id="color-primary-hover" value="#2980b9">
+          </div>
+          <div class="color-item">
+            <label>Couleur secondaire:</label>
+            <input type="color" id="color-secondary" value="#2c3e50">
+          </div>
+          <div class="color-item">
+            <label>Fond boutons:</label>
+            <input type="color" id="color-button-bg" value="#ffffff">
+          </div>
+          <div class="color-item">
+            <label>Texte boutons:</label>
+            <input type="color" id="color-button-text" value="#666666">
+          </div>
+          <div class="color-item">
+            <label>Fond panneaux:</label>
+            <input type="color" id="color-panel-bg" value="#ffffff">
+          </div>
+          <div class="color-item">
+            <label>Bordures:</label>
+            <input type="color" id="color-border" value="#eeeeee">
+          </div>
+          <div class="color-item">
+            <label>Succes:</label>
+            <input type="color" id="color-success" value="#27ae60">
+          </div>
+          <div class="color-item">
+            <label>Erreur:</label>
+            <input type="color" id="color-error" value="#e74c3c">
+          </div>
         </div>
-      </div>
-      <div class="radius-item">
-        <label>Moyen (panneaux):</label>
-        <div class="radius-input">
-          <input type="range" id="radius-medium" min="0" max="30" value="8">
-          <span id="radius-medium-value">8px</span>
+        <div class="btn-group" style="margin-top: 10px;">
+          <button id="btn-save-colors">Sauvegarder les couleurs</button>
+          <button id="btn-reset-colors" class="btn-reset">Reinitialiser</button>
         </div>
+        <div id="colors-status" class="status" style="display: none;"></div>
       </div>
-      <div class="radius-item">
-        <label>Grand (icones, popup):</label>
-        <div class="radius-input">
-          <input type="range" id="radius-large" min="0" max="40" value="12">
-          <span id="radius-large-value">12px</span>
+
+      <!-- Sub-section: Arrondis -->
+      <div class="sub-section">
+        <h3>⬜ Arrondis (Border Radius)</h3>
+        <div class="radius-grid">
+          <div class="radius-item">
+            <label>Petit (boutons):</label>
+            <div class="radius-input">
+              <input type="range" id="radius-small" min="0" max="20" value="4">
+              <span id="radius-small-value">4px</span>
+            </div>
+          </div>
+          <div class="radius-item">
+            <label>Moyen (panneaux):</label>
+            <div class="radius-input">
+              <input type="range" id="radius-medium" min="0" max="30" value="8">
+              <span id="radius-medium-value">8px</span>
+            </div>
+          </div>
+          <div class="radius-item">
+            <label>Grand (icones, popup):</label>
+            <div class="radius-input">
+              <input type="range" id="radius-large" min="0" max="40" value="12">
+              <span id="radius-large-value">12px</span>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button id="btn-save-radius">Sauvegarder les arrondis</button>
-      <button id="btn-reset-radius" class="btn-reset">Reinitialiser</button>
-    </div>
-    <div id="radius-status" class="status" style="display: none;"></div>
-  </div>
-
-  <!-- Button Size -->
-  <div class="section">
-    <h2>Taille des boutons</h2>
-    <p>Ajustez la taille des boutons d'outils dans le popup.</p>
-
-    <div class="radius-grid">
-      <div class="radius-item">
-        <label>Taille des boutons:</label>
-        <div class="radius-input">
-          <input type="range" id="button-size" min="0.7" max="1.5" step="0.1" value="1">
-          <span id="button-size-value">100%</span>
+        <div class="btn-group" style="margin-top: 10px;">
+          <button id="btn-save-radius">Sauvegarder les arrondis</button>
+          <button id="btn-reset-radius" class="btn-reset">Reinitialiser</button>
         </div>
+        <div id="radius-status" class="status" style="display: none;"></div>
+      </div>
+
+      <!-- Sub-section: Taille des boutons -->
+      <div class="sub-section">
+        <h3>📐 Taille des boutons</h3>
+        <div class="radius-grid">
+          <div class="radius-item">
+            <label>Taille des boutons:</label>
+            <div class="radius-input">
+              <input type="range" id="button-size" min="0.7" max="1.5" step="0.1" value="1">
+              <span id="button-size-value">100%</span>
+            </div>
+          </div>
+        </div>
+        <div class="size-preview" style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+          <div id="size-preview-btn" style="display: inline-flex; flex-direction: column; align-items: center; padding: 12px 8px; background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <span style="font-size: 24px;">🔧</span>
+            <span style="font-size: 10px; color: #666;">Outil</span>
+          </div>
+        </div>
+        <div class="btn-group" style="margin-top: 10px;">
+          <button id="btn-save-size">Sauvegarder la taille</button>
+          <button id="btn-reset-size" class="btn-reset">Reinitialiser</button>
+        </div>
+        <div id="size-status" class="status" style="display: none;"></div>
       </div>
     </div>
-
-    <div class="size-preview" style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
-      <div id="size-preview-btn" style="display: inline-flex; flex-direction: column; align-items: center; padding: 12px 8px; background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <span style="font-size: 24px;">🔧</span>
-        <span style="font-size: 10px; color: #666;">Outil</span>
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button id="btn-save-size">Sauvegarder la taille</button>
-      <button id="btn-reset-size" class="btn-reset">Reinitialiser</button>
-    </div>
-    <div id="size-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- Gestion des modules et raccourcis -->
-  <div class="section">
-    <h2>Gestion des modules et raccourcis</h2>
-    <p>Gerez vos modules et raccourcis personnalises.</p>
+  <div class="section" id="section-modules">
+    <div class="section-header">
+      <h2>📦 Gestion des modules et raccourcis</h2>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-content">
+      <p>Gerez vos modules et raccourcis personnalises.</p>
 
-    <div class="module-manager">
+      <div class="module-manager">
       <!-- Left column: Available modules -->
       <div class="modules-column available">
         <div class="column-header">
@@ -1539,8 +1621,9 @@
       <button id="btn-save-modules">Sauvegarder les modules</button>
       <button id="btn-reset-modules" class="btn-reset">Reinitialiser</button>
     </div>
-    <div id="modules-status" class="status" style="display: none;"></div>
-    <div id="buttons-status" class="status" style="display: none;"></div>
+      <div id="modules-status" class="status" style="display: none;"></div>
+      <div id="buttons-status" class="status" style="display: none;"></div>
+    </div>
   </div>
 
   <!-- Modal for new category -->
@@ -1603,80 +1686,105 @@
   </div>
 
   <!-- Export/Import -->
-  <div class="section">
-    <h2>Sauvegarde des reglages</h2>
-    <p>Exportez vos reglages pour les sauvegarder ou les importer sur un autre navigateur.</p>
-
-    <div class="export-import">
-      <button id="btn-export" class="btn-export">Exporter les reglages</button>
-      <button id="btn-import-trigger" class="btn-import">Importer les reglages</button>
-      <input type="file" id="import-file" accept=".json">
+  <div class="section" id="section-backup">
+    <div class="section-header">
+      <h2>💾 Sauvegarde des reglages</h2>
+      <span class="section-toggle">▼</span>
     </div>
-    <div id="export-status" class="status" style="display: none;"></div>
+    <div class="section-content">
+      <p>Exportez vos reglages pour les sauvegarder ou les importer sur un autre navigateur.</p>
+
+      <div class="export-import">
+        <button id="btn-export" class="btn-export">Exporter les reglages</button>
+        <button id="btn-import-trigger" class="btn-import">Importer les reglages</button>
+        <input type="file" id="import-file" accept=".json">
+      </div>
+      <div id="export-status" class="status" style="display: none;"></div>
+    </div>
   </div>
 
   <!-- Mises a jour -->
-  <div class="section">
-    <h2>Mises a jour</h2>
-    <p>L'extension se met a jour depuis le repository GitHub public:</p>
-
-    <div class="info">
-      <strong>Repository:</strong> Fantinati-Anthony/Chrome-Addons<br>
-      <strong>Branche:</strong> main<br>
-      <strong>Dossier:</strong> blazing-toolkit
+  <div class="section" id="section-updates">
+    <div class="section-header">
+      <h2>🔄 Mises a jour</h2>
+      <span class="section-toggle">▼</span>
     </div>
+    <div class="section-content">
+      <p>L'extension se met a jour depuis le repository GitHub public:</p>
 
-    <div class="btn-group">
-      <button id="btn-force-update" style="background: #e67e22;">Reinitialiser le cache MAJ</button>
+      <div class="info">
+        <strong>Repository:</strong> Fantinati-Anthony/Chrome-Addons<br>
+        <strong>Branche:</strong> main<br>
+        <strong>Dossier:</strong> blazing-toolkit
+      </div>
+
+      <div class="btn-group">
+        <button id="btn-force-update" style="background: #e67e22;">Reinitialiser le cache MAJ</button>
+      </div>
+      <div id="github-status" class="status" style="display: none;"></div>
     </div>
-    <div id="github-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- API OpenAI -->
-  <div class="section">
-    <h2>API OpenAI (GPT)</h2>
-    <p>Configurez votre cle API OpenAI pour utiliser la fonctionnalite de correction de texte avec GPT.</p>
-
-    <div class="info">
-      Obtenez votre cle API sur <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>
+  <div class="section" id="section-openai">
+    <div class="section-header">
+      <h2>🤖 API OpenAI (GPT)</h2>
+      <span class="section-toggle">▼</span>
     </div>
+    <div class="section-content">
+      <p>Configurez votre cle API OpenAI pour utiliser la fonctionnalite de correction de texte avec GPT.</p>
 
-    <label for="api-key">Cle API OpenAI:</label>
-    <input type="password" id="api-key" placeholder="sk-...">
+      <div class="info">
+        Obtenez votre cle API sur <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>
+      </div>
 
-    <div class="checkbox-group">
-      <input type="checkbox" id="show-api-key">
-      <label for="show-api-key" style="margin-bottom: 0;">Afficher la cle</label>
+      <label for="api-key">Cle API OpenAI:</label>
+      <input type="password" id="api-key" placeholder="sk-...">
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="show-api-key">
+        <label for="show-api-key" style="margin-bottom: 0;">Afficher la cle</label>
+      </div>
+
+      <button id="btn-save-api-key">Sauvegarder</button>
+      <div id="api-key-status" class="status" style="display: none;"></div>
     </div>
-
-    <button id="btn-save-api-key">Sauvegarder</button>
-    <div id="api-key-status" class="status" style="display: none;"></div>
   </div>
 
   <!-- Notifications ChatGPT -->
-  <div class="section">
-    <h2>Notifications ChatGPT</h2>
-    <p>Configurez les notifications sonores pour ChatGPT et OpenAI Playground.</p>
-
-    <div class="checkbox-group">
-      <input type="checkbox" id="enable-ding" checked>
-      <label for="enable-ding" style="margin-bottom: 0;">Activer le son de notification</label>
+  <div class="section" id="section-notifications">
+    <div class="section-header">
+      <h2>🔔 Notifications ChatGPT</h2>
+      <span class="section-toggle">▼</span>
     </div>
+    <div class="section-content">
+      <p>Configurez les notifications sonores pour ChatGPT et OpenAI Playground.</p>
 
-    <label for="ding-volume">Volume:</label>
-    <input type="range" id="ding-volume" min="0" max="100" value="50" style="width: 100%; margin-bottom: 15px;">
+      <div class="checkbox-group">
+        <input type="checkbox" id="enable-ding" checked>
+        <label for="enable-ding" style="margin-bottom: 0;">Activer le son de notification</label>
+      </div>
 
-    <button id="btn-save-ding">Sauvegarder</button>
-    <div id="ding-status" class="status" style="display: none;"></div>
+      <label for="ding-volume">Volume:</label>
+      <input type="range" id="ding-volume" min="0" max="100" value="50" style="width: 100%; margin-bottom: 15px;">
+
+      <button id="btn-save-ding">Sauvegarder</button>
+      <div id="ding-status" class="status" style="display: none;"></div>
+    </div>
   </div>
 
   <!-- Donnees -->
-  <div class="section">
-    <h2>Donnees</h2>
-    <p>Gerez les donnees stockees par l'extension.</p>
+  <div class="section" id="section-data">
+    <div class="section-header">
+      <h2>🗑️ Donnees</h2>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-content">
+      <p>Gerez les donnees stockees par l'extension.</p>
 
-    <button id="btn-clear-all" style="background: #e74c3c;">Effacer toutes les donnees</button>
-    <div id="clear-status" class="status" style="display: none;"></div>
+      <button id="btn-clear-all" style="background: #e74c3c;">Effacer toutes les donnees</button>
+      <div id="clear-status" class="status" style="display: none;"></div>
+    </div>
   </div>
 
   <script src="options.js"></script>

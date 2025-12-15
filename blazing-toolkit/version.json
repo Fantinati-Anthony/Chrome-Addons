@@ -1,5 +1,5 @@
 {
-  "version": "3.7.7",
+  "version": "3.7.8",
   "releaseDate": "2025-12-15",
-  "changelog": "Feat: Comprehensive emoji picker with categories for shortcuts and custom categories."
+  "changelog": "UI: Collapsible sections in settings page. Merged Colors/Radius/Size into single Personnalisation section."
 }
