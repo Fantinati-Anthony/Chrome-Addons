@@ -368,11 +368,11 @@
       background: white;
       border: 1px solid #ddd;
       border-radius: 8px;
-      padding: 10px;
+      padding: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 100;
+      z-index: 1000;
       display: none;
-      max-width: 280px;
+      width: 320px;
     }
 
     .emoji-picker.show {
@@ -380,23 +380,91 @@
     }
 
     .emoji-grid {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .emoji-tabs {
+      display: flex;
+      gap: 2px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .emoji-tab {
+      padding: 6px 8px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      opacity: 0.6;
+      transition: all 0.2s;
+    }
+
+    .emoji-tab:hover {
+      background: #f0f0f0;
+      opacity: 1;
+    }
+
+    .emoji-tab.active {
+      background: #e8f4fc;
+      opacity: 1;
+    }
+
+    .emoji-content {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .emoji-category-content {
+      display: none;
+    }
+
+    .emoji-category-content.active {
       display: grid;
       grid-template-columns: repeat(8, 1fr);
-      gap: 5px;
+      gap: 4px;
     }
 
     .emoji-btn {
-      padding: 5px;
+      padding: 6px;
       background: transparent;
       border: 1px solid transparent;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 18px;
+      transition: all 0.15s;
     }
 
     .emoji-btn:hover {
       background: #f0f0f0;
       border-color: #ddd;
+      transform: scale(1.15);
+    }
+
+    body.dark-mode .emoji-picker {
+      background: #1a1a2e;
+      border-color: #2a2a4e;
+    }
+
+    body.dark-mode .emoji-tabs {
+      border-bottom-color: #2a2a4e;
+    }
+
+    body.dark-mode .emoji-tab:hover {
+      background: #2a2a4e;
+    }
+
+    body.dark-mode .emoji-tab.active {
+      background: #3a3a5e;
+    }
+
+    body.dark-mode .emoji-btn:hover {
+      background: #2a2a4e;
+      border-color: #3a3a5e;
     }
 
     /* Reset button */
@@ -1483,9 +1551,17 @@
         <label for="new-cat-name">Nom:</label>
         <input type="text" id="new-cat-name" placeholder="Ma categorie">
       </div>
-      <div class="form-group">
+      <div class="form-group" style="position: relative;">
         <label for="new-cat-emoji">Emoji:</label>
-        <input type="text" id="new-cat-emoji" placeholder="📁" maxlength="4">
+        <div class="icon-input" style="display: flex; gap: 8px;">
+          <input type="text" id="new-cat-emoji" placeholder="📁" maxlength="4" style="width: 60px;">
+          <button type="button" id="btn-cat-emoji-picker" class="btn-emoji-picker" title="Choisir un emoji">😀</button>
+        </div>
+        <div id="cat-emoji-picker" class="emoji-picker">
+          <div class="emoji-grid">
+            <!-- Emojis dynamiquement charges -->
+          </div>
+        </div>
       </div>
       <div class="modal-buttons">
         <button id="btn-cancel-category" class="modal-btn-cancel">Annuler</button>
