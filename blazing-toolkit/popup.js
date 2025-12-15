@@ -95,14 +95,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ========== APPLY BUTTON SIZE ==========
   await applyButtonSize();
 
-  // ========== APPLY CUSTOM TITLE ==========
-  const popupTitleEl = document.getElementById('popup-title');
-  if (popupTitleEl) {
-    const data = await chrome.storage.sync.get(['popupTitle']);
-    if (data.popupTitle) {
-      popupTitleEl.textContent = data.popupTitle;
-    }
-  }
+  // ========== APPLY HEADER (TITLE OR LOGO) ==========
+  await applyHeader();
 
   // ========== APPLY CUSTOM ORDER ==========
   await applyCustomOrder();
@@ -634,6 +628,43 @@ async function applyButtonSize() {
   document.documentElement.style.setProperty('--button-size', size);
 }
 
+// ========== HEADER (TITLE OR LOGO) ==========
+async function applyHeader() {
+  const popupTitleEl = document.getElementById('popup-title');
+  const popupLogoEl = document.getElementById('popup-logo');
+
+  const data = await chrome.storage.sync.get(['headerMode', 'popupTitle', 'logoUrl']);
+  const headerMode = data.headerMode || 'text';
+
+  if (headerMode === 'text') {
+    // Show title, hide logo
+    if (popupTitleEl) {
+      popupTitleEl.style.display = '';
+      if (data.popupTitle) {
+        popupTitleEl.textContent = data.popupTitle;
+      }
+    }
+    if (popupLogoEl) {
+      popupLogoEl.style.display = 'none';
+    }
+  } else {
+    // Show logo, hide title
+    if (popupTitleEl) {
+      popupTitleEl.style.display = 'none';
+    }
+    if (popupLogoEl) {
+      popupLogoEl.style.display = '';
+      if (headerMode === 'logo-light') {
+        popupLogoEl.src = 'logos/light-mode.png';
+      } else if (headerMode === 'logo-dark') {
+        popupLogoEl.src = 'logos/dark-mode.png';
+      } else if (headerMode === 'logo-custom' && data.logoUrl) {
+        popupLogoEl.src = data.logoUrl;
+      }
+    }
+  }
+}
+
 // ========== CUSTOM ORDER ==========
 async function applyCustomOrder() {
   const data = await chrome.storage.sync.get(['categoryOrder', 'toolOrder']);
@@ -808,6 +839,11 @@ chrome.runtime.onMessage.addListener((message) => {
   // Live preview: button size
   if (message.type === 'sizeChanged') {
     document.documentElement.style.setProperty('--button-size', message.size);
+  }
+
+  // Live preview: settings (header mode, title, logo)
+  if (message.type === 'settingsChanged') {
+    applyHeader();
   }
 });
 

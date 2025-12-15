@@ -140,11 +140,32 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // ========== GENERAL SETTINGS (TITLE + LANGUAGE + THEME) ==========
+  const headerModeSelect = document.getElementById('header-mode-select');
   const popupTitleInput = document.getElementById('popup-title-input');
+  const titleInputGroup = document.getElementById('title-input-group');
+  const logoUrlInput = document.getElementById('logo-url-input');
+  const logoUrlGroup = document.getElementById('logo-url-group');
   const languageSelect = document.getElementById('language-select');
   const themeSelect = document.getElementById('theme-select');
   const saveGeneralBtn = document.getElementById('btn-save-general');
   const generalStatus = document.getElementById('general-status');
+
+  // Show/hide title input and logo URL based on header mode
+  function updateHeaderInputsVisibility() {
+    if (headerModeSelect) {
+      const mode = headerModeSelect.value;
+      if (titleInputGroup) {
+        titleInputGroup.style.display = mode === 'text' ? '' : 'none';
+      }
+      if (logoUrlGroup) {
+        logoUrlGroup.style.display = mode === 'logo-custom' ? '' : 'none';
+      }
+    }
+  }
+
+  if (headerModeSelect) {
+    headerModeSelect.addEventListener('change', updateHeaderInputsVisibility);
+  }
 
   // Theme management
   function applyTheme(theme) {
@@ -168,9 +189,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Load saved settings
-  chrome.storage.sync.get(['popupTitle', 'language', 'theme'], (data) => {
+  chrome.storage.sync.get(['popupTitle', 'language', 'theme', 'headerMode', 'logoUrl'], (data) => {
+    if (data.headerMode && headerModeSelect) {
+      headerModeSelect.value = data.headerMode;
+    }
+    updateHeaderInputsVisibility();
     if (data.popupTitle && popupTitleInput) {
       popupTitleInput.value = data.popupTitle;
+    }
+    if (data.logoUrl && logoUrlInput) {
+      logoUrlInput.value = data.logoUrl;
     }
     if (data.language && languageSelect) {
       languageSelect.value = data.language;
@@ -193,13 +221,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Save general settings
   if (saveGeneralBtn) {
     saveGeneralBtn.addEventListener('click', () => {
+      const headerMode = headerModeSelect.value || 'text';
       const title = popupTitleInput.value.trim() || 'Toolkit';
+      const logoUrl = logoUrlInput.value.trim() || '';
       const language = languageSelect.value || 'fr';
       const theme = themeSelect.value || 'light';
-      chrome.storage.sync.set({ popupTitle: title, language: language, theme: theme }, () => {
+      chrome.storage.sync.set({ headerMode: headerMode, popupTitle: title, logoUrl: logoUrl, language: language, theme: theme }, () => {
         showStatus(generalStatus, 'Parametres sauvegardes!', 'success');
         // Notify all windows of settings change
-        chrome.runtime.sendMessage({ type: 'settingsChanged', settings: { popupTitle: title, language, theme } });
+        chrome.runtime.sendMessage({ type: 'settingsChanged', settings: { headerMode, popupTitle: title, logoUrl, language, theme } });
       });
     });
   }
