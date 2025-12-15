@@ -1,5 +1,38 @@
 // Options page script
 document.addEventListener('DOMContentLoaded', () => {
+  // ========== COLLAPSIBLE SECTIONS ==========
+  const sectionHeaders = document.querySelectorAll('.section-header');
+  const COLLAPSED_SECTIONS_KEY = 'collapsedSections';
+
+  // Load collapsed state from storage
+  chrome.storage.local.get([COLLAPSED_SECTIONS_KEY], (data) => {
+    const collapsedSections = data[COLLAPSED_SECTIONS_KEY] || [];
+    collapsedSections.forEach(sectionId => {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.classList.add('collapsed');
+      }
+    });
+  });
+
+  // Add click handlers to section headers
+  sectionHeaders.forEach(header => {
+    header.addEventListener('click', () => {
+      const section = header.parentElement;
+      section.classList.toggle('collapsed');
+
+      // Save collapsed state
+      const allSections = document.querySelectorAll('.section[id]');
+      const collapsedSections = [];
+      allSections.forEach(s => {
+        if (s.classList.contains('collapsed')) {
+          collapsedSections.push(s.id);
+        }
+      });
+      chrome.storage.local.set({ [COLLAPSED_SECTIONS_KEY]: collapsedSections });
+    });
+  });
+
   // ========== DEFAULT VALUES ==========
   const DEFAULT_COLORS = {
     bgColor: '#f5f5f5',
