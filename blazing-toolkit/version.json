@@ -1,5 +1,5 @@
 {
-  "version": "3.7.13",
+  "version": "3.7.14",
   "releaseDate": "2025-12-15",
-  "changelog": "UX: Added footer bar color customization (background and text)."
+  "changelog": "UX: Header mode selection - choose between text title, light/dark logo, or custom URL."
 }
