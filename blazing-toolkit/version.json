@@ -1,5 +1,5 @@
 {
-  "version": "3.7.9",
+  "version": "3.7.10",
   "releaseDate": "2025-12-15",
-  "changelog": "UX: First-launch welcome message, all sections collapsed by default, improved onboarding."
+  "changelog": "UX: Single save button for Personnalisation section instead of 3 individual buttons."
 }
