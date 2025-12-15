@@ -3,17 +3,81 @@ document.addEventListener('DOMContentLoaded', () => {
   // ========== COLLAPSIBLE SECTIONS ==========
   const sectionHeaders = document.querySelectorAll('.section-header');
   const COLLAPSED_SECTIONS_KEY = 'collapsedSections';
+  const FIRST_VISIT_KEY = 'optionsFirstVisit';
+  const allSectionIds = ['section-general', 'section-personnalisation', 'section-modules', 'section-backup', 'section-updates', 'section-openai', 'section-notifications', 'section-data'];
 
-  // Load collapsed state from storage
-  chrome.storage.local.get([COLLAPSED_SECTIONS_KEY], (data) => {
-    const collapsedSections = data[COLLAPSED_SECTIONS_KEY] || [];
-    collapsedSections.forEach(sectionId => {
-      const section = document.getElementById(sectionId);
-      if (section) {
-        section.classList.add('collapsed');
+  // Check if first visit and initialize sections
+  chrome.storage.local.get([COLLAPSED_SECTIONS_KEY, FIRST_VISIT_KEY], (data) => {
+    const isFirstVisit = !data[FIRST_VISIT_KEY];
+
+    if (isFirstVisit) {
+      // First visit: collapse all except modules section
+      allSectionIds.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section && sectionId !== 'section-modules') {
+          section.classList.add('collapsed');
+        }
+      });
+
+      // Show welcome message
+      showWelcomeMessage();
+
+      // Mark as visited
+      chrome.storage.local.set({ [FIRST_VISIT_KEY]: true });
+    } else {
+      // Not first visit: use saved state or collapse all by default
+      const collapsedSections = data[COLLAPSED_SECTIONS_KEY];
+
+      if (collapsedSections && collapsedSections.length > 0) {
+        // Restore saved state
+        collapsedSections.forEach(sectionId => {
+          const section = document.getElementById(sectionId);
+          if (section) {
+            section.classList.add('collapsed');
+          }
+        });
+      } else {
+        // No saved state: collapse all by default
+        allSectionIds.forEach(sectionId => {
+          const section = document.getElementById(sectionId);
+          if (section) {
+            section.classList.add('collapsed');
+          }
+        });
       }
-    });
+    }
   });
+
+  // Welcome message for first-time users
+  function showWelcomeMessage() {
+    const modulesSection = document.getElementById('section-modules');
+    if (!modulesSection) return;
+
+    const welcomeBanner = document.createElement('div');
+    welcomeBanner.id = 'welcome-banner';
+    welcomeBanner.innerHTML = `
+      <div class="welcome-content">
+        <span class="welcome-icon">👋</span>
+        <div class="welcome-text">
+          <strong>Bienvenue!</strong>
+          <p>Commencez par ajouter vos premiers outils depuis la colonne de gauche, ou creez vos propres raccourcis!</p>
+        </div>
+        <button class="welcome-close" title="Fermer">✕</button>
+      </div>
+    `;
+
+    // Insert after section-content starts
+    const sectionContent = modulesSection.querySelector('.section-content');
+    if (sectionContent && sectionContent.firstChild) {
+      sectionContent.insertBefore(welcomeBanner, sectionContent.firstChild.nextSibling);
+    }
+
+    // Close button handler
+    welcomeBanner.querySelector('.welcome-close').addEventListener('click', () => {
+      welcomeBanner.style.animation = 'slideUp 0.3s ease forwards';
+      setTimeout(() => welcomeBanner.remove(), 300);
+    });
+  }
 
   // Add click handlers to section headers
   sectionHeaders.forEach(header => {
