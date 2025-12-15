@@ -218,9 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
     errorColor: document.getElementById('color-error')
   };
 
-  const saveColorsBtn = document.getElementById('btn-save-colors');
-  const resetColorsBtn = document.getElementById('btn-reset-colors');
-  const colorsStatus = document.getElementById('colors-status');
+  // Unified save buttons for personnalisation section
+  const savePersonnalisationBtn = document.getElementById('btn-save-personnalisation');
+  const resetPersonnalisationBtn = document.getElementById('btn-reset-personnalisation');
+  const personnalisationStatus = document.getElementById('personnalisation-status');
 
   // Load saved colors
   chrome.storage.sync.get(['customColors'], (data) => {
@@ -245,26 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Save colors
-  saveColorsBtn.addEventListener('click', () => {
-    const colors = {};
-    Object.keys(colorInputs).forEach(key => {
-      colors[key] = colorInputs[key].value;
-    });
-    chrome.storage.sync.set({ customColors: colors }, () => {
-      showStatus(colorsStatus, 'Couleurs sauvegardees!', 'success');
-    });
-  });
-
-  // Reset colors
-  resetColorsBtn.addEventListener('click', () => {
-    Object.keys(colorInputs).forEach(key => {
-      colorInputs[key].value = DEFAULT_COLORS[key];
-    });
-    chrome.storage.sync.set({ customColors: DEFAULT_COLORS }, () => {
-      showStatus(colorsStatus, 'Couleurs reinitialisees!', 'success');
-    });
-  });
+  // Save and reset handled by unified personnalisation button below
 
   // ========== BORDER RADIUS ==========
   const DEFAULT_RADIUS = {
@@ -279,9 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const radiusSmallValue = document.getElementById('radius-small-value');
   const radiusMediumValue = document.getElementById('radius-medium-value');
   const radiusLargeValue = document.getElementById('radius-large-value');
-  const saveRadiusBtn = document.getElementById('btn-save-radius');
-  const resetRadiusBtn = document.getElementById('btn-reset-radius');
-  const radiusStatus = document.getElementById('radius-status');
 
   // Update value display on slider change
   function updateRadiusDisplay() {
@@ -312,40 +291,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateRadiusDisplay();
   });
 
-  // Save radius
-  if (saveRadiusBtn) {
-    saveRadiusBtn.addEventListener('click', () => {
-      const radius = {
-        radiusSmall: parseInt(radiusSmall.value),
-        radiusMedium: parseInt(radiusMedium.value),
-        radiusLarge: parseInt(radiusLarge.value)
-      };
-      chrome.storage.sync.set({ customRadius: radius }, () => {
-        showStatus(radiusStatus, 'Arrondis sauvegardes!', 'success');
-      });
-    });
-  }
-
-  // Reset radius
-  if (resetRadiusBtn) {
-    resetRadiusBtn.addEventListener('click', () => {
-      if (radiusSmall) radiusSmall.value = DEFAULT_RADIUS.radiusSmall;
-      if (radiusMedium) radiusMedium.value = DEFAULT_RADIUS.radiusMedium;
-      if (radiusLarge) radiusLarge.value = DEFAULT_RADIUS.radiusLarge;
-      updateRadiusDisplay();
-      chrome.storage.sync.set({ customRadius: DEFAULT_RADIUS }, () => {
-        showStatus(radiusStatus, 'Arrondis reinitialises!', 'success');
-      });
-    });
-  }
+  // Radius save/reset handled by unified personnalisation button
 
   // ========== BUTTON SIZE ==========
   const buttonSizeSlider = document.getElementById('button-size');
   const buttonSizeValue = document.getElementById('button-size-value');
   const sizePreviewBtn = document.getElementById('size-preview-btn');
-  const saveSizeBtn = document.getElementById('btn-save-size');
-  const resetSizeBtn = document.getElementById('btn-reset-size');
-  const sizeStatus = document.getElementById('size-status');
 
   function updateSizeDisplay() {
     if (buttonSizeValue && buttonSizeSlider) {
@@ -377,23 +328,64 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSizeDisplay();
   });
 
-  // Save size
-  if (saveSizeBtn) {
-    saveSizeBtn.addEventListener('click', () => {
+  // ========== UNIFIED PERSONNALISATION SAVE/RESET ==========
+  if (savePersonnalisationBtn) {
+    savePersonnalisationBtn.addEventListener('click', () => {
+      // Save colors
+      const colors = {};
+      Object.keys(colorInputs).forEach(key => {
+        colors[key] = colorInputs[key].value;
+      });
+
+      // Save radius
+      const radius = {
+        radiusSmall: parseInt(radiusSmall.value),
+        radiusMedium: parseInt(radiusMedium.value),
+        radiusLarge: parseInt(radiusLarge.value)
+      };
+
+      // Save size
       const size = parseFloat(buttonSizeSlider.value);
-      chrome.storage.sync.set({ buttonSize: size }, () => {
-        showStatus(sizeStatus, 'Taille sauvegardee!', 'success');
+
+      chrome.storage.sync.set({
+        customColors: colors,
+        customRadius: radius,
+        buttonSize: size
+      }, () => {
+        showStatus(personnalisationStatus, 'Personnalisation sauvegardee!', 'success');
       });
     });
   }
 
-  // Reset size
-  if (resetSizeBtn) {
-    resetSizeBtn.addEventListener('click', () => {
+  if (resetPersonnalisationBtn) {
+    resetPersonnalisationBtn.addEventListener('click', () => {
+      // Reset colors
+      Object.keys(colorInputs).forEach(key => {
+        colorInputs[key].value = DEFAULT_COLORS[key];
+      });
+      // Broadcast color change for live preview
+      chrome.runtime.sendMessage({ type: 'colorsChanged', colors: DEFAULT_COLORS });
+
+      // Reset radius
+      if (radiusSmall) radiusSmall.value = DEFAULT_RADIUS.radiusSmall;
+      if (radiusMedium) radiusMedium.value = DEFAULT_RADIUS.radiusMedium;
+      if (radiusLarge) radiusLarge.value = DEFAULT_RADIUS.radiusLarge;
+      updateRadiusDisplay();
+      // Broadcast radius change for live preview
+      chrome.runtime.sendMessage({ type: 'radiusChanged', radius: DEFAULT_RADIUS });
+
+      // Reset size
       if (buttonSizeSlider) buttonSizeSlider.value = 1;
       updateSizeDisplay();
-      chrome.storage.sync.set({ buttonSize: 1 }, () => {
-        showStatus(sizeStatus, 'Taille reinitialisee!', 'success');
+      // Broadcast size change for live preview
+      chrome.runtime.sendMessage({ type: 'sizeChanged', size: 1 });
+
+      chrome.storage.sync.set({
+        customColors: DEFAULT_COLORS,
+        customRadius: DEFAULT_RADIUS,
+        buttonSize: 1
+      }, () => {
+        showStatus(personnalisationStatus, 'Personnalisation reinitialisee!', 'success');
       });
     });
   }
