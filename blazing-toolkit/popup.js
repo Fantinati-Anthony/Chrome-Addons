@@ -634,7 +634,7 @@ async function applyHeader() {
   const popupLogoEl = document.getElementById('popup-logo');
 
   const data = await chrome.storage.sync.get(['headerMode', 'popupTitle', 'logoUrl']);
-  const headerMode = data.headerMode || 'text';
+  const headerMode = data.headerMode || 'logo-light';
 
   if (headerMode === 'text') {
     // Show title, hide logo

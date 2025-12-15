@@ -1,5 +1,5 @@
 {
-  "version": "3.7.14",
+  "version": "3.7.15",
   "releaseDate": "2025-12-15",
-  "changelog": "UX: Header mode selection - choose between text title, light/dark logo, or custom URL."
+  "changelog": "UX: Default header mode changed to light logo."
 }
