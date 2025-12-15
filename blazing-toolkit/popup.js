@@ -790,6 +790,8 @@ chrome.runtime.onMessage.addListener((message) => {
     root.style.setProperty('--error-color', colors.errorColor);
     root.style.setProperty('--category-bg', colors.categoryBg || '#ffffff');
     root.style.setProperty('--category-header', colors.categoryHeader || '#f5f5f5');
+    root.style.setProperty('--footer-bg', colors.footerBg || '#f5f5f5');
+    root.style.setProperty('--footer-text', colors.footerText || '#999999');
   }
 
   // Live preview: border radius
@@ -799,6 +801,8 @@ chrome.runtime.onMessage.addListener((message) => {
     root.style.setProperty('--radius-small', radius.radiusSmall + 'px');
     root.style.setProperty('--radius-medium', radius.radiusMedium + 'px');
     root.style.setProperty('--radius-large', radius.radiusLarge + 'px');
+    root.style.setProperty('--radius-category-top', (radius.radiusCategoryTop || 8) + 'px');
+    root.style.setProperty('--radius-category-bottom', (radius.radiusCategoryBottom || 8) + 'px');
   }
 
   // Live preview: button size
@@ -822,13 +826,17 @@ async function applyCustomColors() {
     successColor: '#27ae60',
     errorColor: '#e74c3c',
     categoryBg: '#ffffff',
-    categoryHeader: '#f5f5f5'
+    categoryHeader: '#f5f5f5',
+    footerBg: '#f5f5f5',
+    footerText: '#999999'
   };
 
   const DEFAULT_RADIUS = {
     radiusSmall: 4,
     radiusMedium: 8,
-    radiusLarge: 12
+    radiusLarge: 12,
+    radiusCategoryTop: 8,
+    radiusCategoryBottom: 8
   };
 
   const data = await chrome.storage.sync.get(['customColors', 'customRadius']);
@@ -850,9 +858,13 @@ async function applyCustomColors() {
   root.style.setProperty('--error-color', colors.errorColor);
   root.style.setProperty('--category-bg', colors.categoryBg || '#ffffff');
   root.style.setProperty('--category-header', colors.categoryHeader || '#f5f5f5');
+  root.style.setProperty('--footer-bg', colors.footerBg || '#f5f5f5');
+  root.style.setProperty('--footer-text', colors.footerText || '#999999');
 
   // Apply border radius
   root.style.setProperty('--radius-small', radius.radiusSmall + 'px');
   root.style.setProperty('--radius-medium', radius.radiusMedium + 'px');
   root.style.setProperty('--radius-large', radius.radiusLarge + 'px');
+  root.style.setProperty('--radius-category-top', (radius.radiusCategoryTop || 8) + 'px');
+  root.style.setProperty('--radius-category-bottom', (radius.radiusCategoryBottom || 8) + 'px');
 }

@@ -1,5 +1,5 @@
 {
-  "version": "3.7.11",
+  "version": "3.7.13",
   "releaseDate": "2025-12-15",
-  "changelog": "UX: Reorganized color settings with category colors, merged IA sections."
+  "changelog": "UX: Added footer bar color customization (background and text)."
 }

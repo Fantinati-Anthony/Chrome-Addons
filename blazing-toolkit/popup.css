@@ -18,6 +18,12 @@
   --radius-small: 4px;
   --radius-medium: 8px;
   --radius-large: 12px;
+  --radius-category-top: 8px;
+  --radius-category-bottom: 8px;
+
+  /* Footer */
+  --footer-bg: transparent;
+  --footer-text: #999999;
 }
 
 * {
@@ -587,9 +593,9 @@ input[type="number"] {
 .version-footer {
   text-align: center;
   font-size: 10px;
-  color: #999;
+  color: var(--footer-text);
+  background: var(--footer-bg);
   padding: 10px 0 5px;
-  border-top: 1px solid #eee;
   margin-top: 10px;
 }
 
@@ -617,7 +623,7 @@ input[type="number"] {
 .category-section {
   margin-bottom: 12px;
   background: var(--category-bg);
-  border-radius: var(--radius-medium);
+  border-radius: var(--radius-category-top) var(--radius-category-top) var(--radius-category-bottom) var(--radius-category-bottom);
   overflow: visible;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
@@ -632,9 +638,15 @@ input[type="number"] {
   gap: 8px;
   padding: 10px 12px;
   background: var(--category-header);
+  border-radius: var(--radius-category-top) var(--radius-category-top) 0 0;
   cursor: pointer;
   user-select: none;
-  transition: background 0.2s;
+  transition: background 0.2s, border-radius 0.2s;
+}
+
+/* When collapsed, header gets bottom radius too */
+.category-header[data-collapsed="true"] {
+  border-radius: var(--radius-category-top) var(--radius-category-top) var(--radius-category-bottom) var(--radius-category-bottom);
 }
 
 .category-header:hover {
