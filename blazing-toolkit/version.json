@@ -1,5 +1,5 @@
 {
-  "version": "3.7.8",
+  "version": "3.7.9",
   "releaseDate": "2025-12-15",
-  "changelog": "UI: Collapsible sections in settings page. Merged Colors/Radius/Size into single Personnalisation section."
+  "changelog": "UX: First-launch welcome message, all sections collapsed by default, improved onboarding."
 }
