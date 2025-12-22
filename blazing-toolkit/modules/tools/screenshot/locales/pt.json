@@ -1,0 +1,19 @@
+{
+  "label": "Captura",
+  "title": "Captura de tela",
+  "description": "Capture screenshots de paginas web: area visivel, selecao ou pagina completa.",
+  "captureVisible": "Area visivel",
+  "captureSelection": "Selecao",
+  "captureFullPage": "Pagina completa",
+  "download": "Baixar",
+  "copy": "Copiar",
+  "capturing": "Capturando...",
+  "success": "Captura bem-sucedida!",
+  "selectArea": "Selecione uma area na pagina...",
+  "cancelled": "Selecao cancelada",
+  "fullPageProgress": "Capturando {current}/{total}...",
+  "fullPageSuccess": "Captura de pagina completa bem-sucedida!",
+  "copySuccess": "Copiado!",
+  "error": "Erro",
+  "instructions": "Desenhe um retangulo para capturar. Pressione Escape para cancelar."
+}

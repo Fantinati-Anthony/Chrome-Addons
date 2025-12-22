@@ -52,6 +52,7 @@ import {
   initUrlEncoder,
   initPasswordGen,
   initFavicon,
+  initScreenshot,
   // Text Tools
   initWordCount,
   initCharCount,
@@ -127,6 +128,7 @@ const PanelLoader = (function() {
     urlencoder: initUrlEncoder,
     passwordgen: initPasswordGen,
     favicon: initFavicon,
+    screenshot: initScreenshot,
     // Text Tools
     wordcount: initWordCount,
     charcount: initCharCount,

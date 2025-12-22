@@ -1,0 +1,19 @@
+{
+  "label": "Screenshot",
+  "title": "Screenshot",
+  "description": "Capture screenshots of web pages: visible area, selection, or full page.",
+  "captureVisible": "Visible area",
+  "captureSelection": "Selection",
+  "captureFullPage": "Full page",
+  "download": "Download",
+  "copy": "Copy",
+  "capturing": "Capturing...",
+  "success": "Capture successful!",
+  "selectArea": "Select an area on the page...",
+  "cancelled": "Selection cancelled",
+  "fullPageProgress": "Capturing {current}/{total}...",
+  "fullPageSuccess": "Full page capture successful!",
+  "copySuccess": "Copied!",
+  "error": "Error",
+  "instructions": "Draw a rectangle to capture. Press Escape to cancel."
+}

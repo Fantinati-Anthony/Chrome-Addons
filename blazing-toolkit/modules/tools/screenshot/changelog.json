@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2024-12-22",
+      "type": "added",
+      "messages": {
+        "en": "Initial release of screenshot tool with visible area, selection, and full page capture",
+        "fr": "Version initiale de l'outil capture d'ecran avec zone visible, selection et page complete",
+        "es": "Version inicial de la herramienta de captura con area visible, seleccion y pagina completa",
+        "pt": "Versao inicial da ferramenta de captura com area visivel, selecao e pagina completa"
+      }
+    }
+  ]
+}
