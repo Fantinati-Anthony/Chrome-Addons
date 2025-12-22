@@ -1,5 +1,5 @@
 {
-  "version": "3.8.7",
+  "version": "3.8.9",
   "releaseDate": "2025-12-22",
-  "changelog": "Fix: Favorites buttons now properly open tool panels when clicked."
+  "changelog": "Feature: Added Markdown conversion button - select any element and convert its HTML to Markdown using OpenAI API."
 }

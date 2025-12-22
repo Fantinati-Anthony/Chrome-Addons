@@ -980,12 +980,17 @@
         <button id="btn-screenshot-selection" class="action-btn" data-i18n="screenshot.captureSelection">Selection</button>
         <button id="btn-screenshot-element" class="action-btn" data-i18n="screenshot.captureElement">Element</button>
         <button id="btn-screenshot-fullpage" class="action-btn" data-i18n="screenshot.captureFullPage">Page complete</button>
+        <button id="btn-screenshot-markdown" class="action-btn" data-i18n="screenshot.captureMarkdown">Markdown</button>
       </div>
       <div id="screenshot-status" class="status-message"></div>
       <div id="screenshot-preview" class="screenshot-preview"></div>
+      <div id="markdown-output" class="markdown-output" style="display:none;">
+        <textarea id="markdown-result" rows="10" readonly></textarea>
+      </div>
       <div class="tool-actions">
         <button id="btn-download-screenshot" class="action-btn" data-i18n="screenshot.download">Telecharger</button>
         <button id="btn-copy-screenshot" class="small-btn" data-i18n="screenshot.copy">Copier</button>
+        <button id="btn-copy-markdown" class="small-btn" style="display:none;" data-i18n="screenshot.copyMarkdown">Copier MD</button>
       </div>
     </div>
   </template>
