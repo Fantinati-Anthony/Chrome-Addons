@@ -438,6 +438,19 @@ const PanelLoader = (function() {
 // Export for ES modules
 export { PanelLoader };
 
+// Expose functions globally for popup.js favorites
+window.showToolPanel = function(toolId) {
+  const tool = document.querySelector(`.category-section:not(.favorites-section) .tool-icon[data-tool="${toolId}"]`);
+  const title = tool?.dataset.title || toolId;
+  PanelLoader.openPanel(toolId, title);
+};
+
+window.handleDirectAction = function(toolId) {
+  if (directActions[toolId]) {
+    directActions[toolId]();
+  }
+};
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   PanelLoader.init();
