@@ -64,7 +64,7 @@ export async function initScreenshot() {
     }
   });
 
-  // Capture element using html2canvas
+  // Capture element using scroll and stitch
   elementBtn.addEventListener('click', async () => {
     try {
       statusDiv.textContent = 'Cliquez sur un element a capturer...';
@@ -72,34 +72,19 @@ export async function initScreenshot() {
 
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-      // Inject html2canvas and element selector
-      await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: injectHtml2Canvas
-      });
-
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         func: initElementSelector
       });
 
-      const handleMessage = (message) => {
-        if (message.type === 'screenshot-element-complete') {
+      const handleMessage = async (message) => {
+        if (message.type === 'screenshot-element-selected') {
           chrome.runtime.onMessage.removeListener(handleMessage);
-          currentScreenshot = message.dataUrl;
-          displayPreview(message.dataUrl);
-          statusDiv.textContent = 'Capture element reussie!';
-          statusDiv.className = 'status-message success';
+          await captureElement(tab.id, message.elementRect, statusDiv);
         } else if (message.type === 'screenshot-element-cancelled') {
           chrome.runtime.onMessage.removeListener(handleMessage);
           statusDiv.textContent = 'Selection annulee';
           statusDiv.className = 'status-message info';
-        } else if (message.type === 'screenshot-element-error') {
-          chrome.runtime.onMessage.removeListener(handleMessage);
-          statusDiv.textContent = 'Erreur: ' + message.error;
-          statusDiv.className = 'status-message error';
-        } else if (message.type === 'screenshot-element-progress') {
-          statusDiv.textContent = message.text;
         }
       };
 
@@ -110,6 +95,207 @@ export async function initScreenshot() {
       statusDiv.className = 'status-message error';
     }
   });
+
+  // Capture element by scrolling and stitching
+  async function captureElement(tabId, elementRect, statusDiv) {
+    try {
+      statusDiv.textContent = 'Capture element en cours...';
+      statusDiv.className = 'status-message info';
+
+      // Get viewport dimensions
+      const [{ result: viewport }] = await chrome.scripting.executeScript({
+        target: { tabId },
+        func: () => ({
+          width: window.innerWidth,
+          height: window.innerHeight,
+          dpr: window.devicePixelRatio || 1,
+          scrollX: window.scrollX,
+          scrollY: window.scrollY
+        })
+      });
+
+      const { width: vpWidth, height: vpHeight, dpr } = viewport;
+      const { top, left, width, height } = elementRect;
+
+      // If element fits in viewport, just capture and crop
+      if (width <= vpWidth && height <= vpHeight) {
+        // Scroll to make element visible
+        await chrome.scripting.executeScript({
+          target: { tabId },
+          func: (t, l) => window.scrollTo(l, t),
+          args: [top, left]
+        });
+        await new Promise(r => setTimeout(r, 300));
+
+        const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+
+        // Get actual scroll position
+        const [{ result: scrollPos }] = await chrome.scripting.executeScript({
+          target: { tabId },
+          func: () => ({ x: window.scrollX, y: window.scrollY })
+        });
+
+        // Crop to element bounds
+        const cropRect = {
+          x: (left - scrollPos.x) * dpr,
+          y: (top - scrollPos.y) * dpr,
+          width: width * dpr,
+          height: height * dpr
+        };
+
+        const croppedImage = await cropImage(dataUrl, cropRect);
+        currentScreenshot = croppedImage;
+        displayPreview(croppedImage);
+        statusDiv.textContent = 'Capture element reussie!';
+        statusDiv.className = 'status-message success';
+        return;
+      }
+
+      // Element is larger than viewport - need to scroll and stitch
+      const sectionsX = Math.ceil(width / vpWidth);
+      const sectionsY = Math.ceil(height / vpHeight);
+      const totalSections = sectionsX * sectionsY;
+
+      // Hide fixed elements
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        func: () => {
+          window.__screenshotFixedElements = [];
+          document.querySelectorAll('*').forEach(el => {
+            const style = window.getComputedStyle(el);
+            if (style.position === 'fixed' || style.position === 'sticky') {
+              window.__screenshotFixedElements.push({ el, display: el.style.display });
+              el.style.display = 'none';
+            }
+          });
+        }
+      });
+
+      const captures = [];
+      let captureCount = 0;
+
+      for (let y = 0; y < sectionsY; y++) {
+        for (let x = 0; x < sectionsX; x++) {
+          const scrollX = left + (x * vpWidth);
+          const scrollY = top + (y * vpHeight);
+
+          // Scroll to position
+          await chrome.scripting.executeScript({
+            target: { tabId },
+            func: (sx, sy) => window.scrollTo(sx, sy),
+            args: [scrollX, scrollY]
+          });
+          await new Promise(r => setTimeout(r, 300));
+
+          // Get actual scroll position
+          const [{ result: actualScroll }] = await chrome.scripting.executeScript({
+            target: { tabId },
+            func: () => ({ x: window.scrollX, y: window.scrollY })
+          });
+
+          // Capture visible area
+          const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+
+          // Calculate what portion of this capture belongs to the element
+          const captureLeft = Math.max(0, left - actualScroll.x);
+          const captureTop = Math.max(0, top - actualScroll.y);
+          const captureRight = Math.min(vpWidth, left + width - actualScroll.x);
+          const captureBottom = Math.min(vpHeight, top + height - actualScroll.y);
+
+          captures.push({
+            dataUrl,
+            destX: Math.max(0, actualScroll.x - left),
+            destY: Math.max(0, actualScroll.y - top),
+            srcX: captureLeft,
+            srcY: captureTop,
+            srcWidth: captureRight - captureLeft,
+            srcHeight: captureBottom - captureTop
+          });
+
+          captureCount++;
+          statusDiv.textContent = `Capture: ${captureCount}/${totalSections}...`;
+        }
+      }
+
+      // Restore fixed elements
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        func: () => {
+          if (window.__screenshotFixedElements) {
+            window.__screenshotFixedElements.forEach(({ el, display }) => {
+              el.style.display = display || '';
+            });
+            delete window.__screenshotFixedElements;
+          }
+        }
+      });
+
+      statusDiv.textContent = 'Assemblage...';
+
+      // Stitch captures
+      const finalDataUrl = await stitchElementCaptures(captures, width, height, dpr);
+      currentScreenshot = finalDataUrl;
+      displayPreview(finalDataUrl);
+      statusDiv.textContent = 'Capture element reussie!';
+      statusDiv.className = 'status-message success';
+
+    } catch (error) {
+      console.error('Element capture error:', error);
+      statusDiv.textContent = 'Erreur: ' + error.message;
+      statusDiv.className = 'status-message error';
+
+      // Restore fixed elements on error
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId },
+          func: () => {
+            if (window.__screenshotFixedElements) {
+              window.__screenshotFixedElements.forEach(({ el, display }) => {
+                el.style.display = display || '';
+              });
+              delete window.__screenshotFixedElements;
+            }
+          }
+        });
+      } catch (e) { /* ignore */ }
+    }
+  }
+
+  // Stitch element captures
+  async function stitchElementCaptures(captures, width, height, dpr) {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      const ctx = canvas.getContext('2d');
+
+      let loadedCount = 0;
+      const images = [];
+
+      captures.forEach((capture, index) => {
+        const img = new Image();
+        img.onload = () => {
+          images[index] = { img, capture };
+          loadedCount++;
+
+          if (loadedCount === captures.length) {
+            images.forEach(({ img, capture }) => {
+              ctx.drawImage(
+                img,
+                capture.srcX * dpr, capture.srcY * dpr,
+                capture.srcWidth * dpr, capture.srcHeight * dpr,
+                capture.destX * dpr, capture.destY * dpr,
+                capture.srcWidth * dpr, capture.srcHeight * dpr
+              );
+            });
+            resolve(canvas.toDataURL('image/png'));
+          }
+        };
+        img.onerror = reject;
+        img.src = capture.dataUrl;
+      });
+    });
+  }
 
   // Capture full page using scroll and stitch
   fullPageBtn.addEventListener('click', async () => {
@@ -122,15 +308,13 @@ export async function initScreenshot() {
       // Get page dimensions
       const [{ result: dimensions }] = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        func: () => {
-          return {
-            scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
-            scrollHeight: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight),
-            viewportWidth: window.innerWidth,
-            viewportHeight: window.innerHeight,
-            dpr: window.devicePixelRatio || 1
-          };
-        }
+        func: () => ({
+          scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+          scrollHeight: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight),
+          viewportWidth: window.innerWidth,
+          viewportHeight: window.innerHeight,
+          dpr: window.devicePixelRatio || 1
+        })
       });
 
       const { scrollWidth, scrollHeight, viewportWidth, viewportHeight, dpr } = dimensions;
@@ -138,27 +322,22 @@ export async function initScreenshot() {
 
       statusDiv.textContent = `Capture: 0/${totalSections} sections...`;
 
-      // Hide fixed elements before capture
+      // Hide fixed elements
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         func: () => {
           window.__screenshotFixedElements = [];
-          const allElements = document.querySelectorAll('*');
-          allElements.forEach(el => {
+          document.querySelectorAll('*').forEach(el => {
             const style = window.getComputedStyle(el);
             if (style.position === 'fixed' || style.position === 'sticky') {
-              window.__screenshotFixedElements.push({
-                el,
-                position: style.position,
-                display: el.style.display
-              });
+              window.__screenshotFixedElements.push({ el, display: el.style.display });
               el.style.display = 'none';
             }
           });
         }
       });
 
-      // Scroll to top first
+      // Scroll to top
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         func: () => window.scrollTo(0, 0)
@@ -169,32 +348,27 @@ export async function initScreenshot() {
       const captures = [];
       for (let i = 0; i < totalSections; i++) {
         const scrollY = i * viewportHeight;
-        const isLastSection = i === totalSections - 1;
-        const actualCaptureHeight = isLastSection ? (scrollHeight - scrollY) : viewportHeight;
 
-        // Scroll to position
         await chrome.scripting.executeScript({
           target: { tabId: tab.id },
           func: (y) => window.scrollTo(0, y),
           args: [scrollY]
         });
-
-        // Wait for scroll and render
         await new Promise(r => setTimeout(r, 300));
 
-        // Verify scroll position
         const [{ result: actualScrollY }] = await chrome.scripting.executeScript({
           target: { tabId: tab.id },
           func: () => window.scrollY
         });
 
-        // Capture visible area
         const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+        const isLast = i === totalSections - 1;
+
         captures.push({
           dataUrl,
           scrollY: actualScrollY,
-          captureHeight: actualCaptureHeight,
-          isLast: isLastSection
+          captureHeight: isLast ? (scrollHeight - scrollY) : viewportHeight,
+          isLast
         });
 
         statusDiv.textContent = `Capture: ${i + 1}/${totalSections} sections...`;
@@ -214,9 +388,8 @@ export async function initScreenshot() {
         }
       });
 
-      statusDiv.textContent = 'Assemblage de l\'image...';
+      statusDiv.textContent = 'Assemblage...';
 
-      // Stitch images together
       const finalDataUrl = await stitchImages(captures, scrollWidth, scrollHeight, viewportHeight, dpr);
       currentScreenshot = finalDataUrl;
       displayPreview(finalDataUrl);
@@ -228,7 +401,6 @@ export async function initScreenshot() {
       statusDiv.textContent = 'Erreur: ' + error.message;
       statusDiv.className = 'status-message error';
 
-      // Try to restore fixed elements on error
       try {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         await chrome.scripting.executeScript({
@@ -246,7 +418,7 @@ export async function initScreenshot() {
     }
   });
 
-  // Stitch captured images into one
+  // Stitch full page images
   async function stitchImages(captures, pageWidth, pageHeight, viewportHeight, dpr) {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
@@ -264,19 +436,16 @@ export async function initScreenshot() {
           loadedCount++;
 
           if (loadedCount === captures.length) {
-            // Draw all images
-            images.forEach(({ img, capture }, i) => {
+            images.forEach(({ img, capture }) => {
               const destY = capture.scrollY * dpr;
-              const sourceY = 0;
               const sourceHeight = capture.isLast ? capture.captureHeight * dpr : img.height;
 
               ctx.drawImage(
                 img,
-                0, sourceY, img.width, sourceHeight,
+                0, 0, img.width, sourceHeight,
                 0, destY, img.width, sourceHeight
               );
             });
-
             resolve(canvas.toDataURL('image/png'));
           }
         };
@@ -319,7 +488,6 @@ export async function initScreenshot() {
   // Download screenshot
   downloadBtn.addEventListener('click', () => {
     if (!currentScreenshot) return;
-
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
     const a = document.createElement('a');
     a.href = currentScreenshot;
@@ -330,10 +498,9 @@ export async function initScreenshot() {
   // Copy to clipboard
   copyBtn.addEventListener('click', async () => {
     if (!currentScreenshot) return;
-
     try {
       const blob = await (await fetch(currentScreenshot)).blob();
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
       copyBtn.textContent = 'Copie!';
       setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1500);
     } catch (error) {
@@ -347,26 +514,11 @@ export async function initScreenshot() {
   copyBtn.disabled = true;
 }
 
-// Content script: Inject html2canvas library
-function injectHtml2Canvas() {
-  if (window.html2canvas) return Promise.resolve();
-
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-
-// Content script: Element selector for element capture
+// Content script: Element selector
 function initElementSelector() {
-  // Remove existing overlay
   const existingOverlay = document.getElementById('screenshot-element-overlay');
   if (existingOverlay) existingOverlay.remove();
 
-  // Create overlay
   const overlay = document.createElement('div');
   overlay.id = 'screenshot-element-overlay';
   overlay.style.cssText = `
@@ -379,7 +531,6 @@ function initElementSelector() {
     cursor: crosshair;
   `;
 
-  // Highlight box
   const highlightBox = document.createElement('div');
   highlightBox.id = 'screenshot-highlight-box';
   highlightBox.style.cssText = `
@@ -393,7 +544,6 @@ function initElementSelector() {
   `;
   document.body.appendChild(highlightBox);
 
-  // Instructions
   const instructions = document.createElement('div');
   instructions.style.cssText = `
     position: fixed;
@@ -414,14 +564,9 @@ function initElementSelector() {
 
   let currentElement = null;
 
-  // Handle mouse move to highlight elements
   const handleMouseMove = (e) => {
-    const x = e.clientX;
-    const y = e.clientY;
-
-    // Temporarily hide overlay to get element underneath
     overlay.style.pointerEvents = 'none';
-    const element = document.elementFromPoint(x, y);
+    const element = document.elementFromPoint(e.clientX, e.clientY);
     overlay.style.pointerEvents = 'auto';
 
     if (element && element !== overlay && element !== highlightBox && !overlay.contains(element)) {
@@ -435,48 +580,25 @@ function initElementSelector() {
     }
   };
 
-  // Handle click to capture element
-  const handleClick = async (e) => {
+  const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!currentElement) return;
 
+    // Get element's absolute position on page (not just viewport)
+    const rect = currentElement.getBoundingClientRect();
+    const elementRect = {
+      top: rect.top + window.scrollY,
+      left: rect.left + window.scrollX,
+      width: rect.width,
+      height: rect.height
+    };
+
     cleanup();
-
-    chrome.runtime.sendMessage({ type: 'screenshot-element-progress', text: 'Capture en cours...' });
-
-    try {
-      // Wait for html2canvas to be ready
-      let attempts = 0;
-      while (!window.html2canvas && attempts < 50) {
-        await new Promise(r => setTimeout(r, 100));
-        attempts++;
-      }
-
-      if (!window.html2canvas) {
-        throw new Error('html2canvas non charge');
-      }
-
-      const canvas = await window.html2canvas(currentElement, {
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
-        scale: window.devicePixelRatio || 1,
-        logging: false,
-        imageTimeout: 15000,
-        removeContainer: true
-      });
-
-      const dataUrl = canvas.toDataURL('image/png');
-      chrome.runtime.sendMessage({ type: 'screenshot-element-complete', dataUrl });
-    } catch (error) {
-      console.error('Capture error:', error);
-      chrome.runtime.sendMessage({ type: 'screenshot-element-error', error: error.message });
-    }
+    chrome.runtime.sendMessage({ type: 'screenshot-element-selected', elementRect });
   };
 
-  // Handle Escape to cancel
   const handleKeydown = (e) => {
     if (e.key === 'Escape') {
       cleanup();
@@ -484,7 +606,6 @@ function initElementSelector() {
     }
   };
 
-  // Cleanup function
   const cleanup = () => {
     overlay.remove();
     highlightBox.remove();
@@ -498,7 +619,7 @@ function initElementSelector() {
   document.body.appendChild(overlay);
 }
 
-// Content script function for selection capture
+// Content script: Selection capture
 function initSelectionCapture() {
   const existingOverlay = document.getElementById('screenshot-selection-overlay');
   if (existingOverlay) existingOverlay.remove();
@@ -560,13 +681,10 @@ function initSelectionCapture() {
 
   overlay.addEventListener('mousemove', (e) => {
     if (!isDrawing) return;
-    const currentX = e.clientX;
-    const currentY = e.clientY;
-
-    const left = Math.min(startX, currentX);
-    const top = Math.min(startY, currentY);
-    const width = Math.abs(currentX - startX);
-    const height = Math.abs(currentY - startY);
+    const left = Math.min(startX, e.clientX);
+    const top = Math.min(startY, e.clientY);
+    const width = Math.abs(e.clientX - startX);
+    const height = Math.abs(e.clientY - startY);
 
     selectionBox.style.left = left + 'px';
     selectionBox.style.top = top + 'px';
@@ -578,14 +696,11 @@ function initSelectionCapture() {
     if (!isDrawing) return;
     isDrawing = false;
 
-    const endX = e.clientX;
-    const endY = e.clientY;
-
     const rect = {
-      x: Math.min(startX, endX) * dpr,
-      y: Math.min(startY, endY) * dpr,
-      width: Math.abs(endX - startX) * dpr,
-      height: Math.abs(endY - startY) * dpr
+      x: Math.min(startX, e.clientX) * dpr,
+      y: Math.min(startY, e.clientY) * dpr,
+      width: Math.abs(e.clientX - startX) * dpr,
+      height: Math.abs(e.clientY - startY) * dpr
     };
 
     overlay.remove();
@@ -609,7 +724,7 @@ function initSelectionCapture() {
   document.body.appendChild(overlay);
 }
 
-// Crop image to selection rectangle
+// Crop image to rectangle
 async function cropImage(dataUrl, rect) {
   return new Promise((resolve, reject) => {
     const img = new Image();
