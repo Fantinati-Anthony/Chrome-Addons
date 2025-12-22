@@ -1,5 +1,5 @@
 {
-  "version": "3.8.2",
+  "version": "3.8.3",
   "releaseDate": "2025-12-22",
-  "changelog": "Fix: Rewritten full page capture with proper scrolling, accurate positioning and seamless stitching."
+  "changelog": "Feature: Added element capture mode using html2canvas (for sites with custom scroll). Full page scroll-based capture kept for standard sites."
 }

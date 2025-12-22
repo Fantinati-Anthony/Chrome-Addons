@@ -1,6 +1,17 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2025-12-22",
+      "type": "added",
+      "messages": {
+        "en": "Added element capture mode using html2canvas for sites with custom scroll",
+        "fr": "Ajout du mode capture d'element avec html2canvas pour les sites avec scroll personnalise",
+        "es": "Agregado modo de captura de elemento con html2canvas para sitios con scroll personalizado",
+        "pt": "Adicionado modo de captura de elemento com html2canvas para sites com scroll personalizado"
+      }
+    },
     {
       "version": "1.0.0",
       "date": "2024-12-22",

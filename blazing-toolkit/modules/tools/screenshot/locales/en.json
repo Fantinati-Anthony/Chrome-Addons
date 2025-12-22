@@ -4,6 +4,7 @@
   "description": "Capture screenshots of web pages: visible area, selection, or full page.",
   "captureVisible": "Visible area",
   "captureSelection": "Selection",
+  "captureElement": "Element",
   "captureFullPage": "Full page",
   "download": "Download",
   "copy": "Copy",
