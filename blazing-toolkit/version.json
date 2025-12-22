@@ -1,5 +1,5 @@
 {
-  "version": "3.8.5",
+  "version": "3.8.7",
   "releaseDate": "2025-12-22",
-  "changelog": "Fix: Added delay between captures to respect Chrome's rate limit (1 capture/sec)."
+  "changelog": "Fix: Favorites buttons now properly open tool panels when clicked."
 }

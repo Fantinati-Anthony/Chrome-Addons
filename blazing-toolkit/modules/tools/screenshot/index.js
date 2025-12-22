@@ -1,6 +1,34 @@
 // Tool: Screenshot Capture
 // Capture screenshots of web pages (visible area, selection, element, or full page)
 
+// Rate-limited capture with retry logic
+let lastCaptureTime = 0;
+const MIN_CAPTURE_INTERVAL = 1500; // 1.5 seconds between captures
+
+async function rateLimitedCapture() {
+  const now = Date.now();
+  const timeSinceLastCapture = now - lastCaptureTime;
+
+  if (timeSinceLastCapture < MIN_CAPTURE_INTERVAL) {
+    await new Promise(r => setTimeout(r, MIN_CAPTURE_INTERVAL - timeSinceLastCapture));
+  }
+
+  // Retry logic for rate limit errors
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+      lastCaptureTime = Date.now();
+      return dataUrl;
+    } catch (error) {
+      if (error.message.includes('MAX_CAPTURE') && attempt < 2) {
+        await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); // 2s, 4s backoff
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+
 export async function initScreenshot() {
   const visibleBtn = document.getElementById('btn-screenshot-visible');
   const selectionBtn = document.getElementById('btn-screenshot-selection');
@@ -20,7 +48,7 @@ export async function initScreenshot() {
       statusDiv.className = 'status-message info';
       statusDiv.textContent = 'Capture en cours...';
 
-      const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+      const dataUrl = await rateLimitedCapture();
       currentScreenshot = dataUrl;
       displayPreview(dataUrl);
       statusDiv.textContent = 'Capture reussie!';
@@ -125,9 +153,7 @@ export async function initScreenshot() {
           func: (t, l) => window.scrollTo(l, t),
           args: [top, left]
         });
-        await new Promise(r => setTimeout(r, 1100)); // Chrome rate limit: 1 capture/sec
-
-        const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+        const dataUrl = await rateLimitedCapture();
 
         // Get actual scroll position
         const [{ result: scrollPos }] = await chrome.scripting.executeScript({
@@ -185,7 +211,7 @@ export async function initScreenshot() {
             func: (sx, sy) => window.scrollTo(sx, sy),
             args: [scrollX, scrollY]
           });
-          await new Promise(r => setTimeout(r, 1100)); // Chrome rate limit: 1 capture/sec
+          await new Promise(r => setTimeout(r, 200)); // Wait for scroll to settle
 
           // Get actual scroll position
           const [{ result: actualScroll }] = await chrome.scripting.executeScript({
@@ -194,7 +220,7 @@ export async function initScreenshot() {
           });
 
           // Capture visible area
-          const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+          const dataUrl = await rateLimitedCapture();
 
           // Calculate what portion of this capture belongs to the element
           const captureLeft = Math.max(0, left - actualScroll.x);
@@ -342,7 +368,7 @@ export async function initScreenshot() {
         target: { tabId: tab.id },
         func: () => window.scrollTo(0, 0)
       });
-      await new Promise(r => setTimeout(r, 1100)); // Chrome rate limit: 1 capture/sec
+      await new Promise(r => setTimeout(r, 200)); // Wait for scroll to settle
 
       // Capture each section
       const captures = [];
@@ -354,14 +380,14 @@ export async function initScreenshot() {
           func: (y) => window.scrollTo(0, y),
           args: [scrollY]
         });
-        await new Promise(r => setTimeout(r, 1100)); // Chrome rate limit: 1 capture/sec
+        await new Promise(r => setTimeout(r, 200)); // Wait for scroll to settle
 
         const [{ result: actualScrollY }] = await chrome.scripting.executeScript({
           target: { tabId: tab.id },
           func: () => window.scrollY
         });
 
-        const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+        const dataUrl = await rateLimitedCapture();
         const isLast = i === totalSections - 1;
 
         captures.push({
@@ -458,7 +484,7 @@ export async function initScreenshot() {
   // Capture selected area
   async function captureSelection(tabId, rect) {
     try {
-      const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+      const dataUrl = await rateLimitedCapture();
       const croppedImage = await cropImage(dataUrl, rect);
       currentScreenshot = croppedImage;
       displayPreview(croppedImage);
