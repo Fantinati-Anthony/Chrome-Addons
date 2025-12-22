@@ -130,6 +130,7 @@ export async function initScreenshot() {
   });
 
   // Capture element by scrolling and stitching
+  // Uses scrollIntoView to ensure element is visible before each capture
   async function captureElement(tabId, elementRect, statusDiv) {
     try {
       statusDiv.textContent = 'Capture element en cours...';
@@ -141,37 +142,52 @@ export async function initScreenshot() {
         func: () => ({
           width: window.innerWidth,
           height: window.innerHeight,
-          dpr: window.devicePixelRatio || 1,
-          scrollX: window.scrollX,
-          scrollY: window.scrollY
+          dpr: window.devicePixelRatio || 1
         })
       });
 
       const { width: vpWidth, height: vpHeight, dpr } = viewport;
-      const { top, left, width, height } = elementRect;
+      const { width, height } = elementRect;
 
-      // If element fits in viewport, just capture and crop
+      // If element fits in viewport, scroll to it and capture
       if (width <= vpWidth && height <= vpHeight) {
-        // Scroll to make element visible
+        // Scroll element into view using the data attribute
         await chrome.scripting.executeScript({
           target: { tabId },
-          func: (t, l) => window.scrollTo(l, t),
-          args: [top, left]
+          func: () => {
+            const element = document.querySelector('[data-screenshot-target]');
+            if (element) {
+              element.scrollIntoView({ block: 'start', inline: 'start', behavior: 'instant' });
+            }
+          }
         });
+        await new Promise(r => setTimeout(r, 300));
+
         const dataUrl = await rateLimitedCapture();
 
-        // Get actual scroll position
-        const [{ result: scrollPos }] = await chrome.scripting.executeScript({
+        // Get element's current viewport position after scroll
+        const [{ result: currentRect }] = await chrome.scripting.executeScript({
           target: { tabId },
-          func: () => ({ x: window.scrollX, y: window.scrollY })
+          func: () => {
+            const element = document.querySelector('[data-screenshot-target]');
+            if (element) {
+              const rect = element.getBoundingClientRect();
+              return { x: rect.left, y: rect.top, width: rect.width, height: rect.height };
+            }
+            return null;
+          }
         });
+
+        if (!currentRect) {
+          throw new Error('Element non trouve');
+        }
 
         // Crop to element bounds
         const cropRect = {
-          x: (left - scrollPos.x) * dpr,
-          y: (top - scrollPos.y) * dpr,
-          width: width * dpr,
-          height: height * dpr
+          x: Math.max(0, currentRect.x) * dpr,
+          y: Math.max(0, currentRect.y) * dpr,
+          width: currentRect.width * dpr,
+          height: currentRect.height * dpr
         };
 
         const croppedImage = await cropImage(dataUrl, cropRect);
@@ -179,13 +195,21 @@ export async function initScreenshot() {
         displayPreview(croppedImage);
         statusDiv.textContent = 'Capture element reussie!';
         statusDiv.className = 'status-message success';
+
+        // Clean up the data attribute
+        await chrome.scripting.executeScript({
+          target: { tabId },
+          func: () => {
+            const element = document.querySelector('[data-screenshot-target]');
+            if (element) element.removeAttribute('data-screenshot-target');
+          }
+        });
         return;
       }
 
       // Element is larger than viewport - need to scroll and stitch
-      const sectionsX = Math.ceil(width / vpWidth);
       const sectionsY = Math.ceil(height / vpHeight);
-      const totalSections = sectionsX * sectionsY;
+      const totalSections = sectionsY;
 
       // Hide fixed elements
       await chrome.scripting.executeScript({
@@ -203,52 +227,108 @@ export async function initScreenshot() {
       });
 
       const captures = [];
-      let captureCount = 0;
 
-      for (let y = 0; y < sectionsY; y++) {
-        for (let x = 0; x < sectionsX; x++) {
-          const scrollX = left + (x * vpWidth);
-          const scrollY = top + (y * vpHeight);
+      // For each vertical section, use scrollIntoView with a virtual anchor
+      for (let sectionIdx = 0; sectionIdx < sectionsY; sectionIdx++) {
+        // Create a virtual anchor at the target position and scrollIntoView
+        const [{ result: scrollResult }] = await chrome.scripting.executeScript({
+          target: { tabId },
+          func: (sectionIndex, vpH) => {
+            const element = document.querySelector('[data-screenshot-target]');
+            if (!element) return { success: false };
 
-          // Scroll to position
-          await chrome.scripting.executeScript({
-            target: { tabId },
-            func: (sx, sy) => window.scrollTo(sx, sy),
-            args: [scrollX, scrollY]
-          });
-          await new Promise(r => setTimeout(r, 200)); // Wait for scroll to settle
+            const rect = element.getBoundingClientRect();
+            const elemTop = rect.top + window.scrollY;
+            const elemLeft = rect.left + window.scrollX;
 
-          // Get actual scroll position
-          const [{ result: actualScroll }] = await chrome.scripting.executeScript({
-            target: { tabId },
-            func: () => ({ x: window.scrollX, y: window.scrollY })
-          });
+            // Calculate target scroll position to show this section
+            const targetScrollY = elemTop + (sectionIndex * vpH);
 
-          // Capture visible area
-          const dataUrl = await rateLimitedCapture();
+            // Try multiple scroll methods
+            // Method 1: window.scrollTo
+            window.scrollTo({
+              top: targetScrollY,
+              left: elemLeft,
+              behavior: 'instant'
+            });
 
-          // Calculate what portion of this capture belongs to the element
-          const captureLeft = Math.max(0, left - actualScroll.x);
-          const captureTop = Math.max(0, top - actualScroll.y);
-          const captureRight = Math.min(vpWidth, left + width - actualScroll.x);
-          const captureBottom = Math.min(vpHeight, top + height - actualScroll.y);
+            // Method 2: If element has a scrollable parent, scroll that too
+            let parent = element.parentElement;
+            while (parent && parent !== document.body) {
+              const style = window.getComputedStyle(parent);
+              if (style.overflow === 'auto' || style.overflow === 'scroll' ||
+                  style.overflowY === 'auto' || style.overflowY === 'scroll') {
+                // Found scrollable parent - scroll it
+                const parentRect = parent.getBoundingClientRect();
+                const elemRelativeTop = elemTop - (parentRect.top + window.scrollY);
+                parent.scrollTop = elemRelativeTop + (sectionIndex * vpH);
+                break;
+              }
+              parent = parent.parentElement;
+            }
 
-          captures.push({
-            dataUrl,
-            destX: Math.max(0, actualScroll.x - left),
-            destY: Math.max(0, actualScroll.y - top),
-            srcX: captureLeft,
-            srcY: captureTop,
-            srcWidth: captureRight - captureLeft,
-            srcHeight: captureBottom - captureTop
-          });
+            return { success: true };
+          },
+          args: [sectionIdx, vpHeight]
+        });
 
-          captureCount++;
-          statusDiv.textContent = `Capture: ${captureCount}/${totalSections}...`;
+        await new Promise(r => setTimeout(r, 400)); // Wait for scroll to settle
+
+        // Capture visible area
+        const dataUrl = await rateLimitedCapture();
+
+        // Get element's current position in viewport
+        const [{ result: elemPos }] = await chrome.scripting.executeScript({
+          target: { tabId },
+          func: () => {
+            const element = document.querySelector('[data-screenshot-target]');
+            if (!element) return null;
+            const rect = element.getBoundingClientRect();
+            return {
+              elemLeft: rect.left,
+              elemTop: rect.top,
+              elemWidth: rect.width,
+              elemHeight: rect.height,
+              vpWidth: window.innerWidth,
+              vpHeight: window.innerHeight
+            };
+          }
+        });
+
+        if (!elemPos) {
+          throw new Error('Element non trouve pendant la capture');
         }
+
+        // Calculate what part of element is visible in this capture
+        // The crop position in the screenshot
+        const cropX = Math.max(0, elemPos.elemLeft);
+        const cropY = Math.max(0, elemPos.elemTop);
+
+        // Width to capture (capped at element width and viewport)
+        const cropW = Math.min(width, vpWidth - cropX, elemPos.elemWidth);
+
+        // For last section, only capture remaining height
+        const isLast = sectionIdx === sectionsY - 1;
+        const remainingHeight = height - (sectionIdx * vpHeight);
+        const cropH = isLast ? Math.min(remainingHeight, vpHeight - cropY) : Math.min(vpHeight - cropY, vpHeight);
+
+        captures.push({
+          dataUrl,
+          sectionIndex: sectionIdx,
+          cropX,
+          cropY,
+          cropW,
+          cropH,
+          vpHeight,
+          isLast,
+          elementWidth: width,
+          elementHeight: height
+        });
+
+        statusDiv.textContent = `Capture: ${sectionIdx + 1}/${totalSections}...`;
       }
 
-      // Restore fixed elements
+      // Restore fixed elements and clean up
       await chrome.scripting.executeScript({
         target: { tabId },
         func: () => {
@@ -258,13 +338,16 @@ export async function initScreenshot() {
             });
             delete window.__screenshotFixedElements;
           }
+          // Clean up the data attribute
+          const element = document.querySelector('[data-screenshot-target]');
+          if (element) element.removeAttribute('data-screenshot-target');
         }
       });
 
       statusDiv.textContent = 'Assemblage...';
 
-      // Stitch captures
-      const finalDataUrl = await stitchElementCaptures(captures, width, height, dpr);
+      // Stitch captures using section index
+      const finalDataUrl = await stitchElementCaptures(captures, width, height, vpHeight, dpr);
       currentScreenshot = finalDataUrl;
       displayPreview(finalDataUrl);
       statusDiv.textContent = 'Capture element reussie!';
@@ -286,14 +369,16 @@ export async function initScreenshot() {
               });
               delete window.__screenshotFixedElements;
             }
+            const element = document.querySelector('[data-screenshot-target]');
+            if (element) element.removeAttribute('data-screenshot-target');
           }
         });
       } catch (e) { /* ignore */ }
     }
   }
 
-  // Stitch element captures - load all images first, then draw
-  async function stitchElementCaptures(captures, width, height, dpr) {
+  // Stitch element captures - load all images first, then draw by section index
+  async function stitchElementCaptures(captures, width, height, vpHeight, dpr) {
     // Load all images first using Promise.all
     const loadImage = (dataUrl) => {
       return new Promise((resolve, reject) => {
@@ -312,15 +397,23 @@ export async function initScreenshot() {
     canvas.height = height * dpr;
     const ctx = canvas.getContext('2d');
 
-    // Draw each section
+    // Draw each section at its intended position (by section index)
     captures.forEach((capture, index) => {
       const img = images[index];
+      // Position in final canvas based on section index
+      const destY = capture.sectionIndex * vpHeight * dpr;
+
+      // How much height to draw for this section
+      const isLast = capture.isLast;
+      const sectionHeight = isLast ? (height - capture.sectionIndex * vpHeight) : vpHeight;
+
+      // Draw from crop position in source to section position in dest
       ctx.drawImage(
         img,
-        capture.srcX * dpr, capture.srcY * dpr,
-        capture.srcWidth * dpr, capture.srcHeight * dpr,
-        capture.destX * dpr, capture.destY * dpr,
-        capture.srcWidth * dpr, capture.srcHeight * dpr
+        capture.cropX * dpr, capture.cropY * dpr,
+        capture.cropW * dpr, Math.min(sectionHeight * dpr, capture.cropH * dpr),
+        0, destY,
+        capture.cropW * dpr, Math.min(sectionHeight * dpr, capture.cropH * dpr)
       );
     });
 
@@ -664,6 +757,10 @@ function initElementSelector() {
   const existingOverlay = document.getElementById('screenshot-element-overlay');
   if (existingOverlay) existingOverlay.remove();
 
+  // Clean up any previous screenshot target
+  const previousTarget = document.querySelector('[data-screenshot-target]');
+  if (previousTarget) previousTarget.removeAttribute('data-screenshot-target');
+
   const overlay = document.createElement('div');
   overlay.id = 'screenshot-element-overlay';
   overlay.style.cssText = `
@@ -730,6 +827,9 @@ function initElementSelector() {
     e.stopPropagation();
 
     if (!currentElement) return;
+
+    // Mark the element with a data attribute so we can find it later
+    currentElement.setAttribute('data-screenshot-target', 'true');
 
     // Get element's absolute position on page (not just viewport)
     const rect = currentElement.getBoundingClientRect();
