@@ -59,6 +59,7 @@
     "measure": { "category": "design", "hasPanel": true },
     "gridoverlay": { "category": "design", "hasPanel": true },
     "favicon": { "category": "design", "hasPanel": true },
+    "screenshot": { "category": "design", "hasPanel": true },
     "downloads": { "category": "browser", "hasPanel": true },
     "bookmarks": { "category": "browser", "hasPanel": true },
     "folders": { "category": "browser", "hasPanel": true },

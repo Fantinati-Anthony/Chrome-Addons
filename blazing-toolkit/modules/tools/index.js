@@ -54,6 +54,7 @@ export { initHashGen } from './hashgen/index.js';
 export { initUrlEncoder } from './urlencoder/index.js';
 export { initPasswordGen } from './passwordgen/index.js';
 export { initFavicon } from './favicon/index.js';
+export { initScreenshot } from './screenshot/index.js';
 
 // Text Tools
 export { initWordCount } from './wordcount/index.js';

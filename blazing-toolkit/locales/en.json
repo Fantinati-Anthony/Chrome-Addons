@@ -110,7 +110,8 @@
     "favicon": { "label": "Favicon", "title": "Favicon Generator", "description": "Extracts and generates favicon in different sizes." },
     "hashgen": { "label": "Hash", "title": "Hash Generator", "description": "Generates SHA-256, SHA-512, SHA-1 hashes for text." },
     "urlencoder": { "label": "URL Enc", "title": "URL Encoder", "description": "Encodes and decodes special characters in URLs." },
-    "passwordgen": { "label": "Password", "title": "Password Generator", "description": "Generates secure passwords with customizable options." }
+    "passwordgen": { "label": "Password", "title": "Password Generator", "description": "Generates secure passwords with customizable options." },
+    "screenshot": { "label": "Screenshot", "title": "Screenshot", "description": "Capture screenshots of web pages: visible area, selection, or full page." }
   },
 
   "actions": {
@@ -478,5 +479,13 @@
   "passwordgen": {
     "length": "Length",
     "generate": "Generate"
+  },
+
+  "screenshot": {
+    "captureVisible": "Visible area",
+    "captureSelection": "Selection",
+    "captureFullPage": "Full page",
+    "download": "Download",
+    "copy": "Copy"
   }
 }

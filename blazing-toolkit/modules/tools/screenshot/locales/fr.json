@@ -1,0 +1,19 @@
+{
+  "label": "Capture",
+  "title": "Capture d'ecran",
+  "description": "Capturez des screenshots de pages web: zone visible, selection ou page complete.",
+  "captureVisible": "Zone visible",
+  "captureSelection": "Selection",
+  "captureFullPage": "Page complete",
+  "download": "Telecharger",
+  "copy": "Copier",
+  "capturing": "Capture en cours...",
+  "success": "Capture reussie!",
+  "selectArea": "Selectionnez une zone sur la page...",
+  "cancelled": "Selection annulee",
+  "fullPageProgress": "Capture {current}/{total}...",
+  "fullPageSuccess": "Capture page complete reussie!",
+  "copySuccess": "Copie!",
+  "error": "Erreur",
+  "instructions": "Dessinez un rectangle pour capturer. Appuyez sur Echap pour annuler."
+}

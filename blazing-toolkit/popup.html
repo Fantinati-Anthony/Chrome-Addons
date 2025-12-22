@@ -349,6 +349,10 @@
             <span class="tool-emoji">🖼️</span>
             <span class="tool-label" data-i18n="tools.favicon.label">Favicon</span>
           </button>
+          <button class="tool-icon" data-tool="screenshot" data-title="Capture d'ecran">
+            <span class="tool-emoji">📸</span>
+            <span class="tool-label" data-i18n="tools.screenshot.label">Capture</span>
+          </button>
         </div>
       </div>
 
@@ -965,6 +969,22 @@
       <button id="btn-extract-favicon" class="action-btn" data-i18n="favicon.extract">Extraire le favicon</button>
       <div id="favicon-results" class="favicon-sizes"></div>
       <button id="btn-generate-favicon" class="small-btn" data-i18n="favicon.generate">Generer multi-tailles</button>
+    </div>
+  </template>
+
+  <template id="tpl-screenshot">
+    <div class="tool-content">
+      <div class="screenshot-buttons">
+        <button id="btn-screenshot-visible" class="action-btn" data-i18n="screenshot.captureVisible">Zone visible</button>
+        <button id="btn-screenshot-selection" class="action-btn" data-i18n="screenshot.captureSelection">Selection</button>
+        <button id="btn-screenshot-fullpage" class="action-btn" data-i18n="screenshot.captureFullPage">Page complete</button>
+      </div>
+      <div id="screenshot-status" class="status-message"></div>
+      <div id="screenshot-preview" class="screenshot-preview"></div>
+      <div class="tool-actions">
+        <button id="btn-download-screenshot" class="action-btn" data-i18n="screenshot.download">Telecharger</button>
+        <button id="btn-copy-screenshot" class="small-btn" data-i18n="screenshot.copy">Copier</button>
+      </div>
     </div>
   </template>
 
