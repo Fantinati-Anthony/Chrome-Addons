@@ -1,5 +1,5 @@
 {
-  "version": "3.8.11",
+  "version": "3.8.12",
   "releaseDate": "2025-12-22",
-  "changelog": "Feature: Added page loader during screenshot captures with progress indicator."
+  "changelog": "Feature: Added image import for favicon generation with drag-drop support and ICO export."
 }
