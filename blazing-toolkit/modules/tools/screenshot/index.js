@@ -68,76 +68,137 @@ export async function initScreenshot() {
   // Capture full page (scroll and stitch)
   fullPageBtn.addEventListener('click', async () => {
     try {
-      statusDiv.textContent = 'Capture de la page complete...';
+      statusDiv.textContent = 'Preparation de la capture...';
       statusDiv.className = 'status-message info';
 
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-      // Get page dimensions
-      const dimensions = await chrome.scripting.executeScript({
+      // Get page dimensions and hide fixed elements
+      const pageInfo = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         func: () => {
+          // Get dimensions
+          const scrollHeight = Math.max(
+            document.documentElement.scrollHeight,
+            document.body.scrollHeight
+          );
+          const scrollWidth = Math.max(
+            document.documentElement.scrollWidth,
+            document.body.scrollWidth
+          );
+          const viewportHeight = window.innerHeight;
+          const viewportWidth = window.innerWidth;
+          const originalScrollX = window.scrollX;
+          const originalScrollY = window.scrollY;
+          const dpr = window.devicePixelRatio || 1;
+
+          // Hide fixed/sticky elements temporarily
+          const fixedElements = [];
+          document.querySelectorAll('*').forEach(el => {
+            const style = getComputedStyle(el);
+            if (style.position === 'fixed' || style.position === 'sticky') {
+              fixedElements.push({
+                element: el,
+                originalDisplay: el.style.display
+              });
+              el.style.display = 'none';
+            }
+          });
+
+          // Store reference for cleanup
+          window.__screenshotFixedElements = fixedElements;
+
           return {
-            scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
-            scrollHeight: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight),
-            viewportWidth: window.innerWidth,
-            viewportHeight: window.innerHeight,
-            scrollX: window.scrollX,
-            scrollY: window.scrollY,
-            devicePixelRatio: window.devicePixelRatio || 1
+            scrollHeight,
+            scrollWidth,
+            viewportHeight,
+            viewportWidth,
+            originalScrollX,
+            originalScrollY,
+            dpr
           };
         }
       });
 
-      const dim = dimensions[0].result;
-      const dpr = dim.devicePixelRatio;
+      const info = pageInfo[0].result;
+      const { scrollHeight, viewportHeight, viewportWidth, dpr } = info;
 
-      // Calculate number of captures needed
-      const numRows = Math.ceil(dim.scrollHeight / dim.viewportHeight);
+      // Calculate captures needed
+      const totalCaptures = Math.ceil(scrollHeight / viewportHeight);
       const captures = [];
 
-      // Save original scroll position
-      const originalScroll = { x: dim.scrollX, y: dim.scrollY };
+      statusDiv.textContent = `Capture de ${totalCaptures} sections...`;
 
-      for (let row = 0; row < numRows; row++) {
-        const scrollY = row * dim.viewportHeight;
-        const remainingHeight = dim.scrollHeight - scrollY;
-        const captureHeight = Math.min(dim.viewportHeight, remainingHeight);
+      // Scroll and capture each section
+      for (let i = 0; i < totalCaptures; i++) {
+        const scrollY = i * viewportHeight;
+        const isLastCapture = i === totalCaptures - 1;
+
+        // For last capture, we need to scroll to show the bottom of the page
+        const actualScrollY = isLastCapture
+          ? Math.max(0, scrollHeight - viewportHeight)
+          : scrollY;
 
         // Scroll to position
         await chrome.scripting.executeScript({
           target: { tabId: tab.id },
-          func: (y) => window.scrollTo(0, y),
-          args: [scrollY]
+          func: (y) => {
+            window.scrollTo({ top: y, left: 0, behavior: 'instant' });
+          },
+          args: [actualScrollY]
         });
 
-        // Wait for scroll and render
-        await new Promise(resolve => setTimeout(resolve, 150));
+        // Wait for content to render
+        await new Promise(resolve => setTimeout(resolve, 200));
 
-        // Capture visible area
+        // Capture current view
         const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
+
+        // Calculate crop info for this capture
+        let cropY = 0;
+        let cropHeight = viewportHeight * dpr;
+
+        if (isLastCapture && totalCaptures > 1) {
+          // For last capture, only take the bottom portion that wasn't captured before
+          const overlap = (totalCaptures * viewportHeight) - scrollHeight;
+          cropY = overlap * dpr;
+          cropHeight = (viewportHeight - overlap) * dpr;
+        }
 
         captures.push({
           dataUrl,
-          y: scrollY,
-          height: captureHeight,
-          isLast: row === numRows - 1
+          cropY,
+          cropHeight,
+          destY: i === 0 ? 0 : (isLastCapture ? (scrollHeight - (viewportHeight - (cropY / dpr))) * dpr : scrollY * dpr)
         });
 
-        statusDiv.textContent = `Capture ${row + 1}/${numRows}...`;
+        statusDiv.textContent = `Capture ${i + 1}/${totalCaptures}...`;
       }
 
-      // Restore original scroll position
+      // Restore page state
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        func: (x, y) => window.scrollTo(x, y),
-        args: [originalScroll.x, originalScroll.y]
+        func: (origX, origY) => {
+          // Restore fixed elements
+          if (window.__screenshotFixedElements) {
+            window.__screenshotFixedElements.forEach(item => {
+              item.element.style.display = item.originalDisplay;
+            });
+            delete window.__screenshotFixedElements;
+          }
+          // Restore scroll position
+          window.scrollTo(origX, origY);
+        },
+        args: [info.originalScrollX, info.originalScrollY]
       });
 
-      // Stitch images together
-      const stitchedImage = await stitchImages(captures, dim.viewportWidth, dim.scrollHeight, dpr);
-      currentScreenshot = stitchedImage;
-      displayPreview(stitchedImage);
+      statusDiv.textContent = 'Assemblage de l\'image...';
+
+      // Stitch all captures into one image
+      const finalImage = await stitchFullPageCaptures(captures, viewportWidth * dpr, scrollHeight * dpr, viewportHeight * dpr);
+
+      currentScreenshot = finalImage;
+      displayPreview(finalImage);
       statusDiv.textContent = 'Capture page complete reussie!';
       statusDiv.className = 'status-message success';
 
@@ -145,6 +206,24 @@ export async function initScreenshot() {
       console.error('Full page capture error:', error);
       statusDiv.textContent = 'Erreur: ' + error.message;
       statusDiv.className = 'status-message error';
+
+      // Try to restore page state on error
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => {
+            if (window.__screenshotFixedElements) {
+              window.__screenshotFixedElements.forEach(item => {
+                item.element.style.display = item.originalDisplay;
+              });
+              delete window.__screenshotFixedElements;
+            }
+          }
+        });
+      } catch (e) {
+        console.error('Error restoring page state:', e);
+      }
     }
   });
 
@@ -345,16 +424,25 @@ async function cropImage(dataUrl, rect) {
   });
 }
 
-// Stitch multiple screenshots together for full page capture
-async function stitchImages(captures, viewportWidth, totalHeight, dpr) {
+// Stitch full page captures into a single image
+async function stitchFullPageCaptures(captures, canvasWidth, canvasHeight, viewportHeightPx) {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
-    canvas.width = viewportWidth * dpr;
-    canvas.height = totalHeight * dpr;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
     const ctx = canvas.getContext('2d');
+
+    // Fill with white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     let loadedCount = 0;
     const images = [];
+
+    if (captures.length === 0) {
+      resolve(canvas.toDataURL('image/png'));
+      return;
+    }
 
     captures.forEach((capture, index) => {
       const img = new Image();
@@ -363,30 +451,44 @@ async function stitchImages(captures, viewportWidth, totalHeight, dpr) {
         loadedCount++;
 
         if (loadedCount === captures.length) {
-          // Draw all images
+          // Draw all images in order
           let currentY = 0;
-          captures.forEach((cap, i) => {
-            const sourceHeight = cap.isLast ?
-              (cap.height * dpr) :
-              (images[i].height);
 
-            const sourceY = cap.isLast ?
-              (images[i].height - cap.height * dpr) :
-              0;
+          for (let i = 0; i < captures.length; i++) {
+            const cap = captures[i];
+            const sourceImg = images[i];
 
-            ctx.drawImage(
-              images[i],
-              0, sourceY, images[i].width, sourceHeight,
-              0, currentY, canvas.width, sourceHeight
-            );
+            if (i === captures.length - 1 && captures.length > 1) {
+              // Last capture - only draw the non-overlapping bottom portion
+              const heightToDraw = canvasHeight - currentY;
+              const sourceY = sourceImg.height - heightToDraw;
 
-            currentY += cap.height * dpr;
-          });
+              ctx.drawImage(
+                sourceImg,
+                0, Math.max(0, sourceY), sourceImg.width, heightToDraw,
+                0, currentY, canvasWidth, heightToDraw
+              );
+            } else {
+              // First or middle captures - draw full viewport
+              const heightToDraw = Math.min(viewportHeightPx, canvasHeight - currentY);
+
+              ctx.drawImage(
+                sourceImg,
+                0, 0, sourceImg.width, heightToDraw,
+                0, currentY, canvasWidth, heightToDraw
+              );
+
+              currentY += heightToDraw;
+            }
+          }
 
           resolve(canvas.toDataURL('image/png'));
         }
       };
-      img.onerror = reject;
+      img.onerror = () => {
+        console.error('Failed to load image:', index);
+        reject(new Error('Failed to load capture ' + index));
+      };
       img.src = capture.dataUrl;
     });
   });
