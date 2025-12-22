@@ -34,12 +34,17 @@ export async function initScreenshot() {
   const selectionBtn = document.getElementById('btn-screenshot-selection');
   const elementBtn = document.getElementById('btn-screenshot-element');
   const fullPageBtn = document.getElementById('btn-screenshot-fullpage');
+  const markdownBtn = document.getElementById('btn-screenshot-markdown');
   const previewContainer = document.getElementById('screenshot-preview');
+  const markdownOutput = document.getElementById('markdown-output');
+  const markdownResult = document.getElementById('markdown-result');
   const downloadBtn = document.getElementById('btn-download-screenshot');
   const copyBtn = document.getElementById('btn-copy-screenshot');
+  const copyMarkdownBtn = document.getElementById('btn-copy-markdown');
   const statusDiv = document.getElementById('screenshot-status');
 
   let currentScreenshot = null;
+  let currentMarkdown = null;
 
   // Capture visible area
   visibleBtn.addEventListener('click', async () => {
@@ -532,6 +537,123 @@ export async function initScreenshot() {
     }
   });
 
+  // Markdown capture - select element and convert HTML to Markdown via API
+  markdownBtn.addEventListener('click', async () => {
+    try {
+      // Hide image preview, show markdown output
+      previewContainer.style.display = 'none';
+      markdownOutput.style.display = 'none';
+      copyMarkdownBtn.style.display = 'none';
+      downloadBtn.disabled = true;
+      copyBtn.disabled = true;
+
+      statusDiv.textContent = 'Selectionnez un element pour convertir en Markdown...';
+      statusDiv.className = 'status-message info';
+
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: initMarkdownSelector
+      });
+
+      const handleMessage = async (message) => {
+        if (message.type === 'markdown-element-selected') {
+          chrome.runtime.onMessage.removeListener(handleMessage);
+          await convertToMarkdown(message.html, message.text);
+        } else if (message.type === 'markdown-element-cancelled') {
+          chrome.runtime.onMessage.removeListener(handleMessage);
+          statusDiv.textContent = 'Selection annulee';
+          statusDiv.className = 'status-message info';
+        }
+      };
+
+      chrome.runtime.onMessage.addListener(handleMessage);
+    } catch (error) {
+      console.error('Markdown error:', error);
+      statusDiv.textContent = 'Erreur: ' + error.message;
+      statusDiv.className = 'status-message error';
+    }
+  });
+
+  // Convert HTML to Markdown using OpenAI API
+  async function convertToMarkdown(html, text) {
+    try {
+      statusDiv.textContent = 'Conversion en Markdown...';
+      statusDiv.className = 'status-message info';
+
+      // Get API key from storage
+      const data = await chrome.storage.sync.get(['openaiApiKey']);
+      const apiKey = data.openaiApiKey;
+
+      if (!apiKey) {
+        statusDiv.textContent = 'Cle API OpenAI non configuree. Allez dans les options.';
+        statusDiv.className = 'status-message error';
+        return;
+      }
+
+      // Call OpenAI API
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'Tu es un expert en conversion HTML vers Markdown. Convertis le contenu HTML fourni en Markdown propre et bien structure. Garde la structure semantique (titres, listes, liens, images, tableaux, etc.). Ne rajoute pas de commentaires, retourne uniquement le Markdown.'
+            },
+            {
+              role: 'user',
+              content: `Convertis ce HTML en Markdown:\n\n${html}`
+            }
+          ],
+          temperature: 0.3,
+          max_tokens: 4000
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Erreur API');
+      }
+
+      const result = await response.json();
+      const markdown = result.choices[0]?.message?.content || '';
+
+      // Display result
+      currentMarkdown = markdown;
+      markdownResult.value = markdown;
+      markdownOutput.style.display = 'block';
+      copyMarkdownBtn.style.display = 'inline-block';
+      previewContainer.style.display = 'none';
+
+      statusDiv.textContent = 'Markdown genere!';
+      statusDiv.className = 'status-message success';
+
+    } catch (error) {
+      console.error('API error:', error);
+      statusDiv.textContent = 'Erreur API: ' + error.message;
+      statusDiv.className = 'status-message error';
+    }
+  }
+
+  // Copy Markdown to clipboard
+  copyMarkdownBtn.addEventListener('click', async () => {
+    if (!currentMarkdown) return;
+    try {
+      await navigator.clipboard.writeText(currentMarkdown);
+      copyMarkdownBtn.textContent = 'Copie!';
+      setTimeout(() => { copyMarkdownBtn.textContent = 'Copier MD'; }, 1500);
+    } catch (error) {
+      statusDiv.textContent = 'Erreur de copie: ' + error.message;
+      statusDiv.className = 'status-message error';
+    }
+  });
+
   // Disable buttons initially
   downloadBtn.disabled = true;
   copyBtn.disabled = true;
@@ -762,4 +884,104 @@ async function cropImage(dataUrl, rect) {
     img.onerror = reject;
     img.src = dataUrl;
   });
+}
+
+// Content script: Markdown element selector
+function initMarkdownSelector() {
+  const existingOverlay = document.getElementById('markdown-element-overlay');
+  if (existingOverlay) existingOverlay.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'markdown-element-overlay';
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2147483646;
+    cursor: crosshair;
+  `;
+
+  const highlightBox = document.createElement('div');
+  highlightBox.id = 'markdown-highlight-box';
+  highlightBox.style.cssText = `
+    position: fixed;
+    border: 3px solid #10b981;
+    background: rgba(16, 185, 129, 0.1);
+    pointer-events: none;
+    z-index: 2147483647;
+    display: none;
+    box-sizing: border-box;
+  `;
+  document.body.appendChild(highlightBox);
+
+  const instructions = document.createElement('div');
+  instructions.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.85);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    z-index: 2147483648;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  `;
+  instructions.innerHTML = 'Cliquez sur l\'element a convertir en Markdown<br><small style="opacity:0.7">Appuyez sur Echap pour annuler</small>';
+  overlay.appendChild(instructions);
+
+  let currentElement = null;
+
+  const handleMouseMove = (e) => {
+    overlay.style.pointerEvents = 'none';
+    const element = document.elementFromPoint(e.clientX, e.clientY);
+    overlay.style.pointerEvents = 'auto';
+
+    if (element && element !== overlay && element !== highlightBox && !overlay.contains(element)) {
+      currentElement = element;
+      const rect = element.getBoundingClientRect();
+      highlightBox.style.display = 'block';
+      highlightBox.style.left = rect.left + 'px';
+      highlightBox.style.top = rect.top + 'px';
+      highlightBox.style.width = rect.width + 'px';
+      highlightBox.style.height = rect.height + 'px';
+    }
+  };
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!currentElement) return;
+
+    // Get element's HTML and text content
+    const html = currentElement.outerHTML;
+    const text = currentElement.innerText;
+
+    cleanup();
+    chrome.runtime.sendMessage({ type: 'markdown-element-selected', html, text });
+  };
+
+  const handleKeydown = (e) => {
+    if (e.key === 'Escape') {
+      cleanup();
+      chrome.runtime.sendMessage({ type: 'markdown-element-cancelled' });
+    }
+  };
+
+  const cleanup = () => {
+    overlay.remove();
+    highlightBox.remove();
+    document.removeEventListener('keydown', handleKeydown);
+  };
+
+  overlay.addEventListener('mousemove', handleMouseMove);
+  overlay.addEventListener('click', handleClick);
+  document.addEventListener('keydown', handleKeydown);
+
+  document.body.appendChild(overlay);
 }

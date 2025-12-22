@@ -6,8 +6,10 @@
   "captureSelection": "Seleccion",
   "captureElement": "Elemento",
   "captureFullPage": "Pagina completa",
+  "captureMarkdown": "Markdown",
   "download": "Descargar",
   "copy": "Copiar",
+  "copyMarkdown": "Copiar MD",
   "capturing": "Capturando...",
   "success": "Captura exitosa!",
   "selectArea": "Seleccione un area en la pagina...",
@@ -16,5 +18,9 @@
   "fullPageSuccess": "Captura de pagina completa exitosa!",
   "copySuccess": "Copiado!",
   "error": "Error",
-  "instructions": "Dibuje un rectangulo para capturar. Presione Escape para cancelar."
+  "instructions": "Dibuje un rectangulo para capturar. Presione Escape para cancelar.",
+  "markdownConverting": "Convirtiendo a Markdown...",
+  "markdownSuccess": "Markdown generado!",
+  "markdownNoApiKey": "Clave API de OpenAI no configurada. Vaya a opciones.",
+  "markdownApiError": "Error de API: {error}"
 }
