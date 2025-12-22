@@ -1,5 +1,5 @@
 {
-  "version": "3.8.10",
+  "version": "3.8.11",
   "releaseDate": "2025-12-22",
-  "changelog": "Fix: Element capture now scrolls properly on sites with custom scroll containers."
+  "changelog": "Feature: Added page loader during screenshot captures with progress indicator."
 }
