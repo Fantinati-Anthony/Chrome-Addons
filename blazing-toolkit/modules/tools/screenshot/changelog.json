@@ -1,6 +1,17 @@
 {
-  "version": "1.3.0",
+  "version": "1.4.0",
   "changelog": [
+    {
+      "version": "1.4.0",
+      "date": "2025-12-22",
+      "type": "added",
+      "messages": {
+        "en": "Added page loader with progress indicator during captures",
+        "fr": "Ajout d'un loader sur la page avec indicateur de progression pendant les captures",
+        "es": "Añadido loader en la pagina con indicador de progreso durante las capturas",
+        "pt": "Adicionado loader na pagina com indicador de progresso durante as capturas"
+      }
+    },
     {
       "version": "1.3.0",
       "date": "2025-12-22",

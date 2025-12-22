@@ -29,6 +29,88 @@ async function rateLimitedCapture() {
   }
 }
 
+// Show loader overlay on page
+async function showPageLoader(tabId, message = 'Capture en cours...', current = null, total = null) {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: (msg, cur, tot) => {
+      let loader = document.getElementById('screenshot-page-loader');
+      if (!loader) {
+        loader = document.createElement('div');
+        loader.id = 'screenshot-page-loader';
+        loader.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.85);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 2147483647;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        `;
+        document.body.appendChild(loader);
+      }
+
+      const progress = cur && tot ? `<div style="font-size: 14px; color: #888; margin-top: 8px;">Section ${cur}/${tot}</div>` : '';
+
+      loader.innerHTML = `
+        <div style="
+          width: 50px;
+          height: 50px;
+          border: 4px solid rgba(255,255,255,0.1);
+          border-top-color: #4285f4;
+          border-radius: 50%;
+          animation: screenshot-spin 1s linear infinite;
+        "></div>
+        <div style="color: white; font-size: 18px; margin-top: 20px; text-align: center;">
+          ${msg}
+        </div>
+        ${progress}
+        <div style="color: #888; font-size: 13px; margin-top: 15px;">
+          Merci de ne rien toucher
+        </div>
+        <style>
+          @keyframes screenshot-spin {
+            to { transform: rotate(360deg); }
+          }
+        </style>
+      `;
+      loader.style.display = 'flex';
+    },
+    args: [message, current, total]
+  });
+}
+
+// Hide loader overlay on page
+async function hidePageLoader(tabId) {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      const loader = document.getElementById('screenshot-page-loader');
+      if (loader) {
+        loader.style.display = 'none';
+      }
+    }
+  });
+}
+
+// Remove loader overlay completely
+async function removePageLoader(tabId) {
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      const loader = document.getElementById('screenshot-page-loader');
+      if (loader) {
+        loader.remove();
+      }
+    }
+  });
+}
+
 export async function initScreenshot() {
   const visibleBtn = document.getElementById('btn-screenshot-visible');
   const selectionBtn = document.getElementById('btn-screenshot-selection');
@@ -151,6 +233,9 @@ export async function initScreenshot() {
 
       // If element fits in viewport, scroll to it and capture
       if (width <= vpWidth && height <= vpHeight) {
+        // Show loader
+        await showPageLoader(tabId, 'Capture en cours...', 1, 1);
+
         // Scroll element into view using the data attribute
         await chrome.scripting.executeScript({
           target: { tabId },
@@ -163,7 +248,14 @@ export async function initScreenshot() {
         });
         await new Promise(r => setTimeout(r, 300));
 
+        // Hide loader for capture
+        await hidePageLoader(tabId);
+        await new Promise(r => setTimeout(r, 100));
+
         const dataUrl = await rateLimitedCapture();
+
+        // Remove loader completely
+        await removePageLoader(tabId);
 
         // Get element's current viewport position after scroll
         const [{ result: currentRect }] = await chrome.scripting.executeScript({
@@ -211,6 +303,9 @@ export async function initScreenshot() {
       const sectionsY = Math.ceil(height / vpHeight);
       const totalSections = sectionsY;
 
+      // Show initial loader
+      await showPageLoader(tabId, 'Preparation...', 0, totalSections);
+
       // Hide fixed elements
       await chrome.scripting.executeScript({
         target: { tabId },
@@ -230,8 +325,11 @@ export async function initScreenshot() {
 
       // For each vertical section, use scrollIntoView with a virtual anchor
       for (let sectionIdx = 0; sectionIdx < sectionsY; sectionIdx++) {
+        // Show loader with progress
+        await showPageLoader(tabId, 'Capture en cours...', sectionIdx + 1, totalSections);
+
         // Create a virtual anchor at the target position and scrollIntoView
-        const [{ result: scrollResult }] = await chrome.scripting.executeScript({
+        await chrome.scripting.executeScript({
           target: { tabId },
           func: (sectionIndex, vpH) => {
             const element = document.querySelector('[data-screenshot-target]');
@@ -272,7 +370,11 @@ export async function initScreenshot() {
           args: [sectionIdx, vpHeight]
         });
 
-        await new Promise(r => setTimeout(r, 400)); // Wait for scroll to settle
+        await new Promise(r => setTimeout(r, 300)); // Wait for scroll to settle
+
+        // Hide loader for capture
+        await hidePageLoader(tabId);
+        await new Promise(r => setTimeout(r, 100));
 
         // Capture visible area
         const dataUrl = await rateLimitedCapture();
@@ -328,6 +430,9 @@ export async function initScreenshot() {
         statusDiv.textContent = `Capture: ${sectionIdx + 1}/${totalSections}...`;
       }
 
+      // Show assembling loader
+      await showPageLoader(tabId, 'Assemblage en cours...');
+
       // Restore fixed elements and clean up
       await chrome.scripting.executeScript({
         target: { tabId },
@@ -348,6 +453,10 @@ export async function initScreenshot() {
 
       // Stitch captures using section index
       const finalDataUrl = await stitchElementCaptures(captures, width, height, vpHeight, dpr);
+
+      // Remove loader
+      await removePageLoader(tabId);
+
       currentScreenshot = finalDataUrl;
       displayPreview(finalDataUrl);
       statusDiv.textContent = 'Capture element reussie!';
@@ -358,7 +467,10 @@ export async function initScreenshot() {
       statusDiv.textContent = 'Erreur: ' + error.message;
       statusDiv.className = 'status-message error';
 
-      // Restore fixed elements on error
+      // Remove loader and restore fixed elements on error
+      try {
+        await removePageLoader(tabId);
+      } catch (e) { /* ignore */ }
       try {
         await chrome.scripting.executeScript({
           target: { tabId },
@@ -422,15 +534,17 @@ export async function initScreenshot() {
 
   // Capture full page using scroll and stitch
   fullPageBtn.addEventListener('click', async () => {
+    let tabId = null;
     try {
       statusDiv.textContent = 'Capture page complete en cours...';
       statusDiv.className = 'status-message info';
 
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      tabId = tab.id;
 
       // Get page dimensions
       const [{ result: dimensions }] = await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
+        target: { tabId },
         func: () => ({
           scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
           scrollHeight: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight),
@@ -443,11 +557,14 @@ export async function initScreenshot() {
       const { scrollWidth, scrollHeight, viewportWidth, viewportHeight, dpr } = dimensions;
       const totalSections = Math.ceil(scrollHeight / viewportHeight);
 
+      // Show initial loader
+      await showPageLoader(tabId, 'Preparation...', 0, totalSections);
+
       statusDiv.textContent = `Capture: 0/${totalSections} sections...`;
 
       // Hide fixed elements
       await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
+        target: { tabId },
         func: () => {
           window.__screenshotFixedElements = [];
           document.querySelectorAll('*').forEach(el => {
@@ -462,7 +579,7 @@ export async function initScreenshot() {
 
       // Scroll to top
       await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
+        target: { tabId },
         func: () => window.scrollTo(0, 0)
       });
       await new Promise(r => setTimeout(r, 200)); // Wait for scroll to settle
@@ -470,14 +587,21 @@ export async function initScreenshot() {
       // Capture each section
       const captures = [];
       for (let i = 0; i < totalSections; i++) {
+        // Show loader with progress
+        await showPageLoader(tabId, 'Capture en cours...', i + 1, totalSections);
+
         const scrollY = i * viewportHeight;
 
         await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
+          target: { tabId },
           func: (y) => window.scrollTo(0, y),
           args: [scrollY]
         });
         await new Promise(r => setTimeout(r, 200)); // Wait for scroll to settle
+
+        // Hide loader for capture
+        await hidePageLoader(tabId);
+        await new Promise(r => setTimeout(r, 100));
 
         const dataUrl = await rateLimitedCapture();
         const isLast = i === totalSections - 1;
@@ -495,9 +619,12 @@ export async function initScreenshot() {
         statusDiv.textContent = `Capture: ${i + 1}/${totalSections} sections...`;
       }
 
+      // Show assembling loader
+      await showPageLoader(tabId, 'Assemblage en cours...');
+
       // Restore fixed elements
       await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
+        target: { tabId },
         func: () => {
           if (window.__screenshotFixedElements) {
             window.__screenshotFixedElements.forEach(({ el, display }) => {
@@ -512,6 +639,10 @@ export async function initScreenshot() {
       statusDiv.textContent = 'Assemblage...';
 
       const finalDataUrl = await stitchImages(captures, scrollWidth, scrollHeight, viewportHeight, dpr);
+
+      // Remove loader
+      await removePageLoader(tabId);
+
       currentScreenshot = finalDataUrl;
       displayPreview(finalDataUrl);
       statusDiv.textContent = 'Capture page complete reussie!';
@@ -521,6 +652,13 @@ export async function initScreenshot() {
       console.error('Full page capture error:', error);
       statusDiv.textContent = 'Erreur: ' + error.message;
       statusDiv.className = 'status-message error';
+
+      // Remove loader on error
+      if (tabId) {
+        try {
+          await removePageLoader(tabId);
+        } catch (e) { /* ignore */ }
+      }
 
       try {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -671,15 +809,23 @@ export async function initScreenshot() {
 
   // Convert HTML to Markdown using OpenAI API
   async function convertToMarkdown(html, text) {
+    let tabId = null;
     try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      tabId = tab.id;
+
       statusDiv.textContent = 'Conversion en Markdown...';
       statusDiv.className = 'status-message info';
+
+      // Show loader on page
+      await showPageLoader(tabId, 'Conversion en Markdown...');
 
       // Get API key from storage
       const data = await chrome.storage.sync.get(['openaiApiKey']);
       const apiKey = data.openaiApiKey;
 
       if (!apiKey) {
+        await removePageLoader(tabId);
         statusDiv.textContent = 'Cle API OpenAI non configuree. Allez dans les options.';
         statusDiv.className = 'status-message error';
         return;
@@ -717,6 +863,9 @@ export async function initScreenshot() {
       const result = await response.json();
       const markdown = result.choices[0]?.message?.content || '';
 
+      // Remove loader
+      await removePageLoader(tabId);
+
       // Display result
       currentMarkdown = markdown;
       markdownResult.value = markdown;
@@ -729,6 +878,12 @@ export async function initScreenshot() {
 
     } catch (error) {
       console.error('API error:', error);
+      // Remove loader on error
+      if (tabId) {
+        try {
+          await removePageLoader(tabId);
+        } catch (e) { /* ignore */ }
+      }
       statusDiv.textContent = 'Erreur API: ' + error.message;
       statusDiv.className = 'status-message error';
     }
