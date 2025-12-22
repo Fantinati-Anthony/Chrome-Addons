@@ -1,15 +1,26 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "changelog": [
+    {
+      "version": "1.2.0",
+      "date": "2025-12-22",
+      "type": "fixed",
+      "messages": {
+        "en": "Element capture now uses native scroll-and-stitch (no external dependency)",
+        "fr": "Capture d'element utilise maintenant le scroll natif (sans dependance externe)",
+        "es": "Captura de elemento ahora usa scroll nativo (sin dependencia externa)",
+        "pt": "Captura de elemento agora usa scroll nativo (sem dependencia externa)"
+      }
+    },
     {
       "version": "1.1.0",
       "date": "2025-12-22",
       "type": "added",
       "messages": {
-        "en": "Added element capture mode using html2canvas for sites with custom scroll",
-        "fr": "Ajout du mode capture d'element avec html2canvas pour les sites avec scroll personnalise",
-        "es": "Agregado modo de captura de elemento con html2canvas para sitios con scroll personalizado",
-        "pt": "Adicionado modo de captura de elemento com html2canvas para sites com scroll personalizado"
+        "en": "Added element capture mode for sites with custom scroll",
+        "fr": "Ajout du mode capture d'element pour les sites avec scroll personnalise",
+        "es": "Agregado modo de captura de elemento para sitios con scroll personalizado",
+        "pt": "Adicionado modo de captura de elemento para sites com scroll personalizado"
       }
     },
     {

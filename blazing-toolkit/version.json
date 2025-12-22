@@ -1,5 +1,5 @@
 {
-  "version": "3.8.3",
+  "version": "3.8.4",
   "releaseDate": "2025-12-22",
-  "changelog": "Feature: Added element capture mode using html2canvas (for sites with custom scroll). Full page scroll-based capture kept for standard sites."
+  "changelog": "Fix: Element capture now uses native scroll-and-stitch approach instead of html2canvas (no external dependency)."
 }
