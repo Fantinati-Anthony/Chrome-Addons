@@ -1,5 +1,5 @@
 {
-  "version": "3.8.4",
+  "version": "3.8.5",
   "releaseDate": "2025-12-22",
-  "changelog": "Fix: Element capture now uses native scroll-and-stitch approach instead of html2canvas (no external dependency)."
+  "changelog": "Fix: Added delay between captures to respect Chrome's rate limit (1 capture/sec)."
 }
