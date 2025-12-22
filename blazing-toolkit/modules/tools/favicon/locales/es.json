@@ -3,5 +3,9 @@
   "title": "Generador Favicon",
   "description": "Extrae y genera favicon en diferentes tamanos.",
   "extract": "Extraer favicon",
-  "generate": "Generar multi-tamanos"
+  "generate": "Generar multi-tamanos",
+  "importTitle": "Importar una imagen",
+  "dropText": "Arrastra una imagen o haz clic para importar",
+  "downloadAllPng": "Descargar todo (PNG)",
+  "downloadIco": "Descargar .ICO"
 }

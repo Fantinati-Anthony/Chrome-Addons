@@ -969,6 +969,23 @@
       <button id="btn-extract-favicon" class="action-btn" data-i18n="favicon.extract">Extraire le favicon</button>
       <div id="favicon-results" class="favicon-sizes"></div>
       <button id="btn-generate-favicon" class="small-btn" data-i18n="favicon.generate">Generer multi-tailles</button>
+
+      <div class="favicon-separator"></div>
+
+      <div class="favicon-import-section">
+        <h4 data-i18n="favicon.importTitle">Importer une image</h4>
+        <input type="file" id="favicon-import-input" accept="image/*" hidden>
+        <div class="favicon-import-drop" id="favicon-drop-zone">
+          <span class="drop-icon">📁</span>
+          <span class="drop-text" data-i18n="favicon.dropText">Glisser une image ou cliquer pour importer</span>
+        </div>
+        <div id="favicon-import-preview" class="favicon-import-preview"></div>
+        <div id="favicon-generated" class="favicon-sizes"></div>
+        <div id="favicon-download-actions" class="favicon-download-actions" style="display:none;">
+          <button id="btn-download-all-png" class="small-btn" data-i18n="favicon.downloadAllPng">Telecharger tout (PNG)</button>
+          <button id="btn-download-ico" class="small-btn" data-i18n="favicon.downloadIco">Telecharger .ICO</button>
+        </div>
+      </div>
     </div>
   </template>
 
