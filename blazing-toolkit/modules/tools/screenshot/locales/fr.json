@@ -4,6 +4,7 @@
   "description": "Capturez des screenshots de pages web: zone visible, selection ou page complete.",
   "captureVisible": "Zone visible",
   "captureSelection": "Selection",
+  "captureElement": "Element",
   "captureFullPage": "Page complete",
   "download": "Telecharger",
   "copy": "Copier",

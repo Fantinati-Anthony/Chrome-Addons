@@ -4,6 +4,7 @@
   "description": "Capture capturas de pantalla de paginas web: area visible, seleccion o pagina completa.",
   "captureVisible": "Area visible",
   "captureSelection": "Seleccion",
+  "captureElement": "Elemento",
   "captureFullPage": "Pagina completa",
   "download": "Descargar",
   "copy": "Copiar",
