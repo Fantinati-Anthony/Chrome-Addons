@@ -1,5 +1,5 @@
 {
-  "version": "3.8.1",
+  "version": "3.8.2",
   "releaseDate": "2025-12-22",
-  "changelog": "Fix: Improved full page screenshot with better scrolling, hidden fixed elements, and seamless stitching."
+  "changelog": "Fix: Rewritten full page capture with proper scrolling, accurate positioning and seamless stitching."
 }

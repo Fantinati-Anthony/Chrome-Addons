@@ -73,129 +73,74 @@ export async function initScreenshot() {
 
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-      // Get page dimensions and hide fixed elements
+      // Step 1: Get page info and prepare page
       const pageInfo = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        func: () => {
-          // Get dimensions
-          const scrollHeight = Math.max(
-            document.documentElement.scrollHeight,
-            document.body.scrollHeight
-          );
-          const scrollWidth = Math.max(
-            document.documentElement.scrollWidth,
-            document.body.scrollWidth
-          );
-          const viewportHeight = window.innerHeight;
-          const viewportWidth = window.innerWidth;
-          const originalScrollX = window.scrollX;
-          const originalScrollY = window.scrollY;
-          const dpr = window.devicePixelRatio || 1;
-
-          // Hide fixed/sticky elements temporarily
-          const fixedElements = [];
-          document.querySelectorAll('*').forEach(el => {
-            const style = getComputedStyle(el);
-            if (style.position === 'fixed' || style.position === 'sticky') {
-              fixedElements.push({
-                element: el,
-                originalDisplay: el.style.display
-              });
-              el.style.display = 'none';
-            }
-          });
-
-          // Store reference for cleanup
-          window.__screenshotFixedElements = fixedElements;
-
-          return {
-            scrollHeight,
-            scrollWidth,
-            viewportHeight,
-            viewportWidth,
-            originalScrollX,
-            originalScrollY,
-            dpr
-          };
-        }
+        func: preparePageForCapture
       });
 
       const info = pageInfo[0].result;
-      const { scrollHeight, viewportHeight, viewportWidth, dpr } = info;
+      const { totalHeight, viewportHeight, viewportWidth, originalScrollY, dpr } = info;
 
-      // Calculate captures needed
-      const totalCaptures = Math.ceil(scrollHeight / viewportHeight);
+      // Calculate number of captures needed
+      const numCaptures = Math.ceil(totalHeight / viewportHeight);
       const captures = [];
 
-      statusDiv.textContent = `Capture de ${totalCaptures} sections...`;
+      statusDiv.textContent = `Defilement et capture: 0/${numCaptures}`;
 
-      // Scroll and capture each section
-      for (let i = 0; i < totalCaptures; i++) {
-        const scrollY = i * viewportHeight;
-        const isLastCapture = i === totalCaptures - 1;
+      // Step 2: Scroll to top first
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => window.scrollTo(0, 0)
+      });
+      await sleep(100);
 
-        // For last capture, we need to scroll to show the bottom of the page
-        const actualScrollY = isLastCapture
-          ? Math.max(0, scrollHeight - viewportHeight)
-          : scrollY;
+      // Step 3: Capture each viewport section
+      for (let i = 0; i < numCaptures; i++) {
+        const targetScrollY = i * viewportHeight;
 
         // Scroll to position
         await chrome.scripting.executeScript({
           target: { tabId: tab.id },
           func: (y) => {
-            window.scrollTo({ top: y, left: 0, behavior: 'instant' });
+            window.scrollTo(0, y);
           },
-          args: [actualScrollY]
+          args: [targetScrollY]
         });
 
-        // Wait for content to render
-        await new Promise(resolve => setTimeout(resolve, 200));
+        // Wait for scroll to complete and content to render
+        await sleep(300);
 
-        // Capture current view
+        // Get actual scroll position
+        const scrollResult = await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => window.scrollY
+        });
+        const actualScrollY = scrollResult[0].result;
+
+        // Capture visible area
         const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
-
-        // Calculate crop info for this capture
-        let cropY = 0;
-        let cropHeight = viewportHeight * dpr;
-
-        if (isLastCapture && totalCaptures > 1) {
-          // For last capture, only take the bottom portion that wasn't captured before
-          const overlap = (totalCaptures * viewportHeight) - scrollHeight;
-          cropY = overlap * dpr;
-          cropHeight = (viewportHeight - overlap) * dpr;
-        }
 
         captures.push({
           dataUrl,
-          cropY,
-          cropHeight,
-          destY: i === 0 ? 0 : (isLastCapture ? (scrollHeight - (viewportHeight - (cropY / dpr))) * dpr : scrollY * dpr)
+          scrollY: actualScrollY,
+          index: i
         });
 
-        statusDiv.textContent = `Capture ${i + 1}/${totalCaptures}...`;
+        statusDiv.textContent = `Defilement et capture: ${i + 1}/${numCaptures}`;
       }
 
-      // Restore page state
+      // Step 4: Restore page state
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        func: (origX, origY) => {
-          // Restore fixed elements
-          if (window.__screenshotFixedElements) {
-            window.__screenshotFixedElements.forEach(item => {
-              item.element.style.display = item.originalDisplay;
-            });
-            delete window.__screenshotFixedElements;
-          }
-          // Restore scroll position
-          window.scrollTo(origX, origY);
-        },
-        args: [info.originalScrollX, info.originalScrollY]
+        func: restorePageAfterCapture,
+        args: [originalScrollY]
       });
 
-      statusDiv.textContent = 'Assemblage de l\'image...';
+      statusDiv.textContent = 'Assemblage de l\'image finale...';
 
-      // Stitch all captures into one image
-      const finalImage = await stitchFullPageCaptures(captures, viewportWidth * dpr, scrollHeight * dpr, viewportHeight * dpr);
+      // Step 5: Stitch all captures into one image
+      const finalImage = await stitchCaptures(captures, viewportWidth, viewportHeight, totalHeight, dpr);
 
       currentScreenshot = finalImage;
       displayPreview(finalImage);
@@ -212,14 +157,8 @@ export async function initScreenshot() {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         await chrome.scripting.executeScript({
           target: { tabId: tab.id },
-          func: () => {
-            if (window.__screenshotFixedElements) {
-              window.__screenshotFixedElements.forEach(item => {
-                item.element.style.display = item.originalDisplay;
-              });
-              delete window.__screenshotFixedElements;
-            }
-          }
+          func: restorePageAfterCapture,
+          args: [0]
         });
       } catch (e) {
         console.error('Error restoring page state:', e);
@@ -230,10 +169,7 @@ export async function initScreenshot() {
   // Capture selected area
   async function captureSelection(tabId, rect) {
     try {
-      // First capture the visible area
       const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
-
-      // Crop to selection
       const croppedImage = await cropImage(dataUrl, rect);
       currentScreenshot = croppedImage;
       displayPreview(croppedImage);
@@ -291,13 +227,75 @@ export async function initScreenshot() {
   copyBtn.disabled = true;
 }
 
+// Helper: sleep function
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Content script: Prepare page for capture
+function preparePageForCapture() {
+  // Get dimensions
+  const totalHeight = Math.max(
+    document.body.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.clientHeight,
+    document.documentElement.scrollHeight,
+    document.documentElement.offsetHeight
+  );
+  const viewportHeight = window.innerHeight;
+  const viewportWidth = window.innerWidth;
+  const originalScrollY = window.scrollY;
+  const dpr = window.devicePixelRatio || 1;
+
+  // Hide fixed/sticky elements
+  const fixedElements = [];
+  const allElements = document.querySelectorAll('*');
+  allElements.forEach(el => {
+    const style = window.getComputedStyle(el);
+    if (style.position === 'fixed' || style.position === 'sticky') {
+      fixedElements.push({
+        element: el,
+        originalVisibility: el.style.visibility,
+        originalDisplay: el.style.display
+      });
+      el.style.visibility = 'hidden';
+    }
+  });
+
+  // Store for restoration
+  window.__screenshotState = {
+    fixedElements,
+    originalScrollY
+  };
+
+  return {
+    totalHeight,
+    viewportHeight,
+    viewportWidth,
+    originalScrollY,
+    dpr
+  };
+}
+
+// Content script: Restore page after capture
+function restorePageAfterCapture(scrollY) {
+  if (window.__screenshotState) {
+    // Restore fixed elements
+    window.__screenshotState.fixedElements.forEach(item => {
+      item.element.style.visibility = item.originalVisibility;
+      item.element.style.display = item.originalDisplay;
+    });
+    delete window.__screenshotState;
+  }
+  // Restore scroll position
+  window.scrollTo(0, scrollY);
+}
+
 // Content script function for selection
 function initSelectionCapture() {
-  // Remove existing overlay if any
   const existingOverlay = document.getElementById('screenshot-selection-overlay');
   if (existingOverlay) existingOverlay.remove();
 
-  // Create overlay
   const overlay = document.createElement('div');
   overlay.id = 'screenshot-selection-overlay';
   overlay.style.cssText = `
@@ -311,7 +309,6 @@ function initSelectionCapture() {
     z-index: 2147483647;
   `;
 
-  // Selection box
   const selectionBox = document.createElement('div');
   selectionBox.style.cssText = `
     position: fixed;
@@ -322,7 +319,6 @@ function initSelectionCapture() {
   `;
   overlay.appendChild(selectionBox);
 
-  // Instructions
   const instructions = document.createElement('div');
   instructions.style.cssText = `
     position: fixed;
@@ -394,7 +390,6 @@ function initSelectionCapture() {
     }
   });
 
-  // Cancel on Escape
   const handleKeydown = (e) => {
     if (e.key === 'Escape') {
       overlay.remove();
@@ -424,72 +419,67 @@ async function cropImage(dataUrl, rect) {
   });
 }
 
-// Stitch full page captures into a single image
-async function stitchFullPageCaptures(captures, canvasWidth, canvasHeight, viewportHeightPx) {
-  return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    const ctx = canvas.getContext('2d');
+// Stitch captures into final image
+async function stitchCaptures(captures, viewportWidth, viewportHeight, totalHeight, dpr) {
+  // Load all images first
+  const images = await Promise.all(captures.map(cap => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve({ img, scrollY: cap.scrollY, index: cap.index });
+      img.onerror = reject;
+      img.src = cap.dataUrl;
+    });
+  }));
 
-    // Fill with white background
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  // Create final canvas
+  const canvas = document.createElement('canvas');
+  const canvasWidth = Math.round(viewportWidth * dpr);
+  const canvasHeight = Math.round(totalHeight * dpr);
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  const ctx = canvas.getContext('2d');
 
-    let loadedCount = 0;
-    const images = [];
+  // Fill with white background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    if (captures.length === 0) {
-      resolve(canvas.toDataURL('image/png'));
-      return;
+  // Sort images by scroll position
+  images.sort((a, b) => a.scrollY - b.scrollY);
+
+  // Draw each capture at its correct position
+  for (let i = 0; i < images.length; i++) {
+    const { img, scrollY } = images[i];
+    const isLast = i === images.length - 1;
+
+    // Calculate destination Y position
+    const destY = Math.round(scrollY * dpr);
+
+    // Calculate how much of this capture to use
+    let sourceHeight = img.height;
+    let sourceY = 0;
+    let drawHeight = sourceHeight;
+
+    if (isLast) {
+      // For last capture, only draw the remaining height
+      const remainingHeight = canvasHeight - destY;
+      if (remainingHeight < img.height) {
+        // We need to take from the bottom of the capture
+        sourceY = img.height - remainingHeight;
+        sourceHeight = remainingHeight;
+        drawHeight = remainingHeight;
+      }
+    } else {
+      // For non-last captures, draw full viewport height
+      drawHeight = Math.min(img.height, canvasHeight - destY);
+      sourceHeight = drawHeight;
     }
 
-    captures.forEach((capture, index) => {
-      const img = new Image();
-      img.onload = () => {
-        images[index] = img;
-        loadedCount++;
+    ctx.drawImage(
+      img,
+      0, sourceY, img.width, sourceHeight,
+      0, destY, canvasWidth, drawHeight
+    );
+  }
 
-        if (loadedCount === captures.length) {
-          // Draw all images in order
-          let currentY = 0;
-
-          for (let i = 0; i < captures.length; i++) {
-            const cap = captures[i];
-            const sourceImg = images[i];
-
-            if (i === captures.length - 1 && captures.length > 1) {
-              // Last capture - only draw the non-overlapping bottom portion
-              const heightToDraw = canvasHeight - currentY;
-              const sourceY = sourceImg.height - heightToDraw;
-
-              ctx.drawImage(
-                sourceImg,
-                0, Math.max(0, sourceY), sourceImg.width, heightToDraw,
-                0, currentY, canvasWidth, heightToDraw
-              );
-            } else {
-              // First or middle captures - draw full viewport
-              const heightToDraw = Math.min(viewportHeightPx, canvasHeight - currentY);
-
-              ctx.drawImage(
-                sourceImg,
-                0, 0, sourceImg.width, heightToDraw,
-                0, currentY, canvasWidth, heightToDraw
-              );
-
-              currentY += heightToDraw;
-            }
-          }
-
-          resolve(canvas.toDataURL('image/png'));
-        }
-      };
-      img.onerror = () => {
-        console.error('Failed to load image:', index);
-        reject(new Error('Failed to load capture ' + index));
-      };
-      img.src = capture.dataUrl;
-    });
-  });
+  return canvas.toDataURL('image/png');
 }
