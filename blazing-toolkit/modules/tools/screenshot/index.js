@@ -287,40 +287,39 @@ export async function initScreenshot() {
     }
   }
 
-  // Stitch element captures
+  // Stitch element captures - load all images first, then draw
   async function stitchElementCaptures(captures, width, height, dpr) {
-    return new Promise((resolve, reject) => {
-      const canvas = document.createElement('canvas');
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      const ctx = canvas.getContext('2d');
-
-      let loadedCount = 0;
-      const images = [];
-
-      captures.forEach((capture, index) => {
+    // Load all images first using Promise.all
+    const loadImage = (dataUrl) => {
+      return new Promise((resolve, reject) => {
         const img = new Image();
-        img.onload = () => {
-          images[index] = { img, capture };
-          loadedCount++;
-
-          if (loadedCount === captures.length) {
-            images.forEach(({ img, capture }) => {
-              ctx.drawImage(
-                img,
-                capture.srcX * dpr, capture.srcY * dpr,
-                capture.srcWidth * dpr, capture.srcHeight * dpr,
-                capture.destX * dpr, capture.destY * dpr,
-                capture.srcWidth * dpr, capture.srcHeight * dpr
-              );
-            });
-            resolve(canvas.toDataURL('image/png'));
-          }
-        };
-        img.onerror = reject;
-        img.src = capture.dataUrl;
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Image load failed'));
+        img.src = dataUrl;
       });
+    };
+
+    const images = await Promise.all(captures.map(c => loadImage(c.dataUrl)));
+
+    // Create canvas and draw all sections
+    const canvas = document.createElement('canvas');
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    const ctx = canvas.getContext('2d');
+
+    // Draw each section
+    captures.forEach((capture, index) => {
+      const img = images[index];
+      ctx.drawImage(
+        img,
+        capture.srcX * dpr, capture.srcY * dpr,
+        capture.srcWidth * dpr, capture.srcHeight * dpr,
+        capture.destX * dpr, capture.destY * dpr,
+        capture.srcWidth * dpr, capture.srcHeight * dpr
+      );
     });
+
+    return canvas.toDataURL('image/png');
   }
 
   // Capture full page using scroll and stitch
@@ -382,17 +381,15 @@ export async function initScreenshot() {
         });
         await new Promise(r => setTimeout(r, 200)); // Wait for scroll to settle
 
-        const [{ result: actualScrollY }] = await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          func: () => window.scrollY
-        });
-
         const dataUrl = await rateLimitedCapture();
         const isLast = i === totalSections - 1;
 
+        // Use intended position (i * viewportHeight) not actual scroll
+        // This ensures sections are placed correctly even if scroll is limited
         captures.push({
           dataUrl,
-          scrollY: actualScrollY,
+          sectionIndex: i,
+          viewportHeight,
           captureHeight: isLast ? (scrollHeight - scrollY) : viewportHeight,
           isLast
         });
@@ -444,41 +441,41 @@ export async function initScreenshot() {
     }
   });
 
-  // Stitch full page images
+  // Stitch full page images - load all images first, then draw
   async function stitchImages(captures, pageWidth, pageHeight, viewportHeight, dpr) {
-    return new Promise((resolve, reject) => {
-      const canvas = document.createElement('canvas');
-      canvas.width = pageWidth * dpr;
-      canvas.height = pageHeight * dpr;
-      const ctx = canvas.getContext('2d');
-
-      let loadedCount = 0;
-      const images = [];
-
-      captures.forEach((capture, index) => {
+    // Load all images first using Promise.all
+    const loadImage = (dataUrl) => {
+      return new Promise((resolve, reject) => {
         const img = new Image();
-        img.onload = () => {
-          images[index] = { img, capture };
-          loadedCount++;
-
-          if (loadedCount === captures.length) {
-            images.forEach(({ img, capture }) => {
-              const destY = capture.scrollY * dpr;
-              const sourceHeight = capture.isLast ? capture.captureHeight * dpr : img.height;
-
-              ctx.drawImage(
-                img,
-                0, 0, img.width, sourceHeight,
-                0, destY, img.width, sourceHeight
-              );
-            });
-            resolve(canvas.toDataURL('image/png'));
-          }
-        };
-        img.onerror = reject;
-        img.src = capture.dataUrl;
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Image load failed'));
+        img.src = dataUrl;
       });
+    };
+
+    const images = await Promise.all(captures.map(c => loadImage(c.dataUrl)));
+
+    // Create canvas and draw all sections
+    const canvas = document.createElement('canvas');
+    canvas.width = pageWidth * dpr;
+    canvas.height = pageHeight * dpr;
+    const ctx = canvas.getContext('2d');
+
+    // Draw each section at its intended position
+    captures.forEach((capture, index) => {
+      const img = images[index];
+      // Use section index * viewport height for positioning
+      const destY = capture.sectionIndex * capture.viewportHeight * dpr;
+      const sourceHeight = capture.isLast ? capture.captureHeight * dpr : img.height;
+
+      ctx.drawImage(
+        img,
+        0, 0, img.width, sourceHeight,
+        0, destY, img.width, sourceHeight
+      );
     });
+
+    return canvas.toDataURL('image/png');
   }
 
   // Capture selected area

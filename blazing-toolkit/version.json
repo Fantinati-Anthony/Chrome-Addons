@@ -1,5 +1,5 @@
 {
-  "version": "3.8.7",
+  "version": "3.8.8",
   "releaseDate": "2025-12-22",
-  "changelog": "Fix: Favorites buttons now properly open tool panels when clicked."
+  "changelog": "Fix: Full page screenshot now correctly stitches all sections using Promise.all for reliable image loading."
 }
