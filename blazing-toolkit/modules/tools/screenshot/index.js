@@ -125,7 +125,7 @@ export async function initScreenshot() {
           func: (t, l) => window.scrollTo(l, t),
           args: [top, left]
         });
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 1100)); // Chrome rate limit: 1 capture/sec
 
         const dataUrl = await chrome.tabs.captureVisibleTab(null, { format: 'png' });
 
@@ -185,7 +185,7 @@ export async function initScreenshot() {
             func: (sx, sy) => window.scrollTo(sx, sy),
             args: [scrollX, scrollY]
           });
-          await new Promise(r => setTimeout(r, 300));
+          await new Promise(r => setTimeout(r, 1100)); // Chrome rate limit: 1 capture/sec
 
           // Get actual scroll position
           const [{ result: actualScroll }] = await chrome.scripting.executeScript({
@@ -342,7 +342,7 @@ export async function initScreenshot() {
         target: { tabId: tab.id },
         func: () => window.scrollTo(0, 0)
       });
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => setTimeout(r, 1100)); // Chrome rate limit: 1 capture/sec
 
       // Capture each section
       const captures = [];
@@ -354,7 +354,7 @@ export async function initScreenshot() {
           func: (y) => window.scrollTo(0, y),
           args: [scrollY]
         });
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 1100)); // Chrome rate limit: 1 capture/sec
 
         const [{ result: actualScrollY }] = await chrome.scripting.executeScript({
           target: { tabId: tab.id },
