@@ -1,0 +1,16 @@
+{
+  "currentVersion": "1.0.0",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "date": "2024-12-23",
+      "changes": [
+        "Initial release",
+        "Extract sitemap.xml with nested sitemap support",
+        "Extract and parse robots.txt",
+        "Copy and download functionality",
+        "Statistics display"
+      ]
+    }
+  ]
+}

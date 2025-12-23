@@ -3249,3 +3249,167 @@ body.dark-mode .tab-btn.active {
 body.dark-mode .tab-btn:hover:not(.active) {
   background: #3a3a5e;
 }
+
+/* ================================
+   SEO Extractor Tool Styles
+   ================================ */
+
+.seo-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.seo-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: #e9ecef;
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.seo-tab:hover {
+  background: #dee2e6;
+}
+
+.seo-tab.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.seo-tab-content {
+  display: none;
+}
+
+.seo-tab-content.active {
+  display: block;
+}
+
+.seo-stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: var(--radius-small);
+}
+
+.seo-stats .stat-item {
+  font-size: 13px;
+  color: #666;
+}
+
+.seo-stats .stat-item strong {
+  color: var(--primary-color);
+  font-size: 15px;
+}
+
+.seo-results {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.seo-section {
+  margin-bottom: 16px;
+}
+
+.seo-section h4 {
+  font-size: 13px;
+  color: #495057;
+  margin: 0 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.seo-item {
+  padding: 6px 8px;
+  font-size: 12px;
+  border-bottom: 1px solid #f1f3f5;
+  word-break: break-all;
+}
+
+.seo-item:last-child {
+  border-bottom: none;
+}
+
+.seo-item a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.seo-item a:hover {
+  text-decoration: underline;
+}
+
+.seo-item.sitemap-item {
+  background: #fff3cd;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.seo-more {
+  padding: 8px;
+  text-align: center;
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.robots-raw {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: var(--radius-small);
+  font-size: 11px;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+/* Dark mode for SEO Extractor */
+body.dark-mode .seo-tab {
+  background: #2a2a4e;
+  color: #e0e0e0;
+}
+
+body.dark-mode .seo-tab:hover {
+  background: #3a3a5e;
+}
+
+body.dark-mode .seo-tab.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+body.dark-mode .seo-stats {
+  background: #1a1a3e;
+}
+
+body.dark-mode .seo-stats .stat-item {
+  color: #aaa;
+}
+
+body.dark-mode .seo-section h4 {
+  color: #e0e0e0;
+  border-bottom-color: #3a3a5e;
+}
+
+body.dark-mode .seo-item {
+  border-bottom-color: #2a2a4e;
+}
+
+body.dark-mode .seo-item.sitemap-item {
+  background: #4a3a00;
+}
+
+body.dark-mode .robots-raw {
+  background: #1a1a3e;
+  color: #e0e0e0;
+}

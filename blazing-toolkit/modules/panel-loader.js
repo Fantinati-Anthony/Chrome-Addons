@@ -36,6 +36,7 @@ import {
   initBrokenLinks,
   initReadability,
   initRobotsTxt,
+  initSeoExtractor,
   initSocialPreview,
   // Security & Performance
   initSSL,
@@ -112,6 +113,7 @@ const PanelLoader = (function() {
     brokenlinks: initBrokenLinks,
     readability: initReadability,
     robotstxt: initRobotsTxt,
+    seoextractor: initSeoExtractor,
     socialpreview: initSocialPreview,
     // Security & Performance
     ssl: initSSL,

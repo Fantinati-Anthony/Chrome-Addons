@@ -1,0 +1,21 @@
+{
+  "label": "SEO Extract",
+  "title": "SEO Extractor",
+  "description": "Extrai e analisa os arquivos sitemap.xml e robots.txt de um site.",
+  "load": "Carregar SEO",
+  "sitemap": "Sitemap",
+  "robots": "Robots.txt",
+  "copySitemap": "Copiar URLs",
+  "copyRobots": "Copiar",
+  "downloadSitemap": "Baixar",
+  "downloadRobots": "Baixar",
+  "urls": "URLs",
+  "sitemaps": "Sitemaps",
+  "userAgents": "User-Agents",
+  "disallow": "Disallow",
+  "allow": "Allow",
+  "rawContent": "Conteudo bruto",
+  "declaredSitemaps": "Sitemaps declarados",
+  "crawlDelay": "Crawl-Delay",
+  "moreUrls": "e mais {count} URLs"
+}
