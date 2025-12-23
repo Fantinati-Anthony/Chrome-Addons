@@ -197,6 +197,10 @@
             <span class="tool-emoji">🤖</span>
             <span class="tool-label" data-i18n="tools.robotstxt.label">Robots</span>
           </button>
+          <button class="tool-icon" data-tool="seoextractor" data-title="SEO Extractor">
+            <span class="tool-emoji">📦</span>
+            <span class="tool-label" data-i18n="tools.seoextractor.label">SEO Extract</span>
+          </button>
         </div>
       </div>
 
@@ -1050,6 +1054,33 @@
       <div id="password-output" class="password-result"></div>
       <div class="password-strength" id="pwd-strength"></div>
       <button id="btn-copy-pwd" class="small-btn" data-i18n="actions.copy">Copier</button>
+    </div>
+  </template>
+
+  <template id="tpl-seoextractor">
+    <div class="tool-content">
+      <button id="btn-load-seo" class="action-btn" data-i18n="seoextractor.load">Charger SEO</button>
+      <div id="seo-status"></div>
+      <div id="seo-tabs" class="seo-tabs">
+        <button class="seo-tab active" data-tab="sitemap" data-i18n="seoextractor.sitemap">Sitemap</button>
+        <button class="seo-tab" data-tab="robots" data-i18n="seoextractor.robots">Robots.txt</button>
+      </div>
+      <div id="seo-sitemap-content" class="seo-tab-content active">
+        <div id="sitemap-stats" class="seo-stats"></div>
+        <div class="seo-results"></div>
+        <div class="tool-actions">
+          <button class="small-btn seo-copy-btn" data-type="sitemap" data-i18n="seoextractor.copySitemap">Copier URLs</button>
+          <button class="small-btn seo-download-btn" data-type="sitemap" data-i18n="seoextractor.downloadSitemap">Telecharger</button>
+        </div>
+      </div>
+      <div id="seo-robots-content" class="seo-tab-content">
+        <div id="robots-stats" class="seo-stats"></div>
+        <div class="seo-results"></div>
+        <div class="tool-actions">
+          <button class="small-btn seo-copy-btn" data-type="robots" data-i18n="seoextractor.copyRobots">Copier</button>
+          <button class="small-btn seo-download-btn" data-type="robots" data-i18n="seoextractor.downloadRobots">Telecharger</button>
+        </div>
+      </div>
     </div>
   </template>
 

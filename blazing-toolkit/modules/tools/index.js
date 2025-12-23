@@ -36,6 +36,7 @@ export { initKeywords } from './keywords/index.js';
 export { initBrokenLinks } from './brokenlinks/index.js';
 export { initReadability } from './readability/index.js';
 export { initRobotsTxt } from './robotstxt/index.js';
+export { initSeoExtractor } from './seoextractor/index.js';
 export { initSocialPreview } from './socialpreview/index.js';
 
 // Security & Performance Tools

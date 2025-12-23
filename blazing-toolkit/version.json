@@ -1,5 +1,5 @@
 {
-  "version": "3.8.12",
-  "releaseDate": "2025-12-22",
-  "changelog": "Feature: Added image import for favicon generation with drag-drop support and ICO export."
+  "version": "3.8.13",
+  "releaseDate": "2025-12-23",
+  "changelog": "Feature: Added SEO Extractor tool to extract and analyze sitemap.xml and robots.txt files with copy/download support."
 }
