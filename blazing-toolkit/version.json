@@ -1,5 +1,5 @@
 {
-  "version": "3.8.13",
-  "releaseDate": "2025-12-23",
-  "changelog": "Feature: Added SEO Extractor tool to extract and analyze sitemap.xml and robots.txt files with copy/download support."
+  "version": "3.8.14",
+  "releaseDate": "2025-12-26",
+  "changelog": "Feature: Added custom image upload to Favicon Generator in sidepanel for generating favicons in multiple sizes (PNG & ICO)."
 }

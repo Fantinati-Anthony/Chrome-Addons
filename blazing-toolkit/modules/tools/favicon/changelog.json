@@ -1,6 +1,28 @@
 {
-  "version": "1.0.0",
+  "version": "1.2.0",
   "changelog": [
+    {
+      "version": "1.2.0",
+      "date": "2025-12-26",
+      "type": "added",
+      "messages": {
+        "fr": "Import d'image personnalisee dans le sidepanel avec generation multi-tailles et export PNG/ICO",
+        "en": "Custom image upload in sidepanel with multi-size generation and PNG/ICO export",
+        "es": "Importacion de imagen personalizada en sidepanel con generacion multi-tamano y exportacion PNG/ICO",
+        "pt": "Importacao de imagem personalizada no sidepanel com geracao multi-tamanho e exportacao PNG/ICO"
+      }
+    },
+    {
+      "version": "1.1.0",
+      "date": "2025-12-22",
+      "type": "added",
+      "messages": {
+        "fr": "Import d'image personnalisee avec drag-and-drop, generation multi-tailles et export PNG/ICO",
+        "en": "Custom image upload with drag-and-drop, multi-size generation and PNG/ICO export",
+        "es": "Importacion de imagen personalizada con arrastrar y soltar, generacion multi-tamano y exportacion PNG/ICO",
+        "pt": "Importacao de imagem personalizada com arrastar e soltar, geracao multi-tamanho e exportacao PNG/ICO"
+      }
+    },
     {
       "version": "1.0.0",
       "date": "2024-01-01",
