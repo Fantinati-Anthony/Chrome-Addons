@@ -1,5 +1,5 @@
 {
-  "version": "3.8.37",
+  "version": "3.8.38",
   "releaseDate": "2025-12-27",
-  "changelog": "Change: Logo header now follows theme automatically."
+  "changelog": "Fix: Sidebar switch button now works correctly."
 }
