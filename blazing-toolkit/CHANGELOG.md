@@ -7,6 +7,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.31] - 2025-12-27
+
+### Corrige
+- **Catalogue d'outils** : Remplacement du rechargement de l'extension par un rafraichissement de la grille d'outils a la fermeture du catalogue (ne ferme plus la sidebar)
+
+---
+
 ## [3.8.30] - 2025-12-27
 
 ### Corrige
