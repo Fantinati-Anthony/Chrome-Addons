@@ -1,5 +1,5 @@
 {
-  "version": "3.8.16",
+  "version": "3.8.17",
   "releaseDate": "2025-12-27",
-  "changelog": "Feature: Favicon Generator now supports multiple image selection for batch favicon generation."
+  "changelog": "UI: Favicon Generator groups are now collapsible (collapsed by default) for better organization."
 }

@@ -7,6 +7,17 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.17] - 2025-12-27
+
+### Ameliore
+- **Favicon Generator** : Groupes depliants pour une meilleure organisation
+  - Chaque groupe d'image est replie par defaut
+  - Cliquer sur l'en-tete pour deplier/replier
+  - Indicateur visuel du nombre de tailles generees
+  - Animation fluide d'ouverture/fermeture
+
+---
+
 ## [3.8.16] - 2025-12-27
 
 ### Ajoute
