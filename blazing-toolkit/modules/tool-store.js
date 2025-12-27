@@ -362,26 +362,26 @@ class ToolStore {
       });
     }
 
-    // Close store (with reload)
+    // Close store
     if (closeStoreBtn) {
       closeStoreBtn.addEventListener('click', () => {
         this.closeStore();
-        // Reload extension after closing
-        setTimeout(() => {
-          chrome.runtime.reload();
-        }, 300);
+        // Refresh the grid after closing
+        if (typeof refreshToolGrid === 'function') {
+          refreshToolGrid();
+        }
       });
     }
 
-    // Close on overlay click (with reload)
+    // Close on overlay click
     if (storeModal) {
       storeModal.addEventListener('click', (e) => {
         if (e.target === storeModal) {
           this.closeStore();
-          // Reload extension after closing
-          setTimeout(() => {
-            chrome.runtime.reload();
-          }, 300);
+          // Refresh the grid after closing
+          if (typeof refreshToolGrid === 'function') {
+            refreshToolGrid();
+          }
         }
       });
     }
