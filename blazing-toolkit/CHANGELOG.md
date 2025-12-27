@@ -7,7 +7,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-## [3.8.14] - 2025-12-26
+## [3.8.14] - 2025-12-27
 
 ### Ajoute
 - **Favicon Generator (sidepanel)** : Ajout de l'import d'image personnalisee
@@ -16,6 +16,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   - Telechargement individuel par taille (clic sur l'image)
   - Bouton "Telecharger tout (PNG)" pour tous les formats
   - Bouton "Telecharger .ICO" pour generer un fichier ICO multi-tailles
+  - Nommage intelligent des fichiers bases sur le nom original (ex: logo-32x32.png)
 
 ---
 
