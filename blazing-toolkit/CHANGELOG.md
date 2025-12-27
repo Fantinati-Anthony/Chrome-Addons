@@ -7,6 +7,38 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.14] - 2025-12-26
+
+### Ajoute
+- **Favicon Generator (sidepanel)** : Ajout de l'import d'image personnalisee
+  - Zone de drag-and-drop pour importer une image
+  - Generation automatique en 8 tailles (16, 32, 48, 64, 128, 180, 192, 512px)
+  - Telechargement individuel par taille (clic sur l'image)
+  - Bouton "Telecharger tout (PNG)" pour tous les formats
+  - Bouton "Telecharger .ICO" pour generer un fichier ICO multi-tailles
+
+---
+
+## [3.8.13] - 2025-12-23
+
+### Ajoute
+- **SEO Extractor** : Nouvel outil d'extraction SEO
+  - Extraction et affichage du fichier sitemap.xml
+  - Extraction et affichage du fichier robots.txt
+  - Boutons de copie et telechargement pour chaque fichier
+
+---
+
+## [3.8.12] - 2025-12-22
+
+### Ajoute
+- **Favicon Generator** : Import d'image personnalisee (popup)
+  - Zone de drag-and-drop pour importer une image
+  - Generation de favicons en plusieurs tailles
+  - Export PNG et ICO
+
+---
+
 ## [3.6.0] - 2025-12-14
 
 ### Ajoute
