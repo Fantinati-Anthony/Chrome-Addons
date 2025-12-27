@@ -1,26 +1,115 @@
 /* Sidebar-specific styles for Blazing Toolkit */
 
-/* Body in sidebar mode */
+/* Body in sidebar mode - fixed layout */
 body[data-mode="sidebar"] {
-  min-height: 100vh;
-  overflow-y: auto;
+  width: 100%;
+  min-width: 280px;
+  max-width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Container adjustments for sidebar */
-.sidebar-container {
+body[data-mode="sidebar"] .sidebar-container {
   width: 100%;
-  max-width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   border-radius: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
-/* Header adjustments */
-body[data-mode="sidebar"] .header-top {
-  position: sticky;
+/* Fixed Header */
+body[data-mode="sidebar"] header {
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
-  background: var(--bg-primary);
-  padding-top: 10px;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px;
+  flex-shrink: 0;
+}
+
+body[data-mode="sidebar"] .header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+/* Search toggle button */
+body[data-mode="sidebar"] #btn-search-toggle {
+  font-size: 16px;
+}
+
+/* Search container in header */
+body[data-mode="sidebar"] .search-container {
+  margin-top: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body[data-mode="sidebar"] .search-container.hidden {
+  display: none;
+}
+
+body[data-mode="sidebar"] .search-container input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-medium);
+  font-size: 13px;
+  background: var(--panel-bg);
+  color: var(--text-color);
+}
+
+body[data-mode="sidebar"] .search-container input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+body[data-mode="sidebar"] .search-close-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-small);
+}
+
+body[data-mode="sidebar"] .search-close-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-color);
+}
+
+/* Main content area - scrollable */
+body[data-mode="sidebar"] .main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 60px; /* Height of header */
+  margin-bottom: 35px; /* Height of footer */
+  padding: 10px;
+}
+
+/* Adjust margin when search is visible */
+body[data-mode="sidebar"] .main-content.search-visible {
+  margin-top: 110px;
+}
+
+/* Grid view */
+body[data-mode="sidebar"] .grid-view {
+  padding: 0;
 }
 
 /* Grid adjustments for wider sidebar */
@@ -29,45 +118,83 @@ body[data-mode="sidebar"] .tools-grid {
   gap: 8px;
 }
 
-/* Tool panel full height */
-body[data-mode="sidebar"] .tool-panel {
-  min-height: calc(100vh - 60px);
-}
-
-/* Panel content scrollable */
-body[data-mode="sidebar"] .panel-content {
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
-}
-
-/* Search bar sticky */
-body[data-mode="sidebar"] .search-container {
-  position: sticky;
-  top: 50px;
-  z-index: 99;
-  background: var(--bg-primary);
-  padding: 5px 0;
-}
-
 /* Category sections */
 body[data-mode="sidebar"] .category-section {
   margin-bottom: 10px;
 }
 
-/* Scrollbar styling */
+/* Tool panel */
+body[data-mode="sidebar"] .tool-panel {
+  min-height: auto;
+}
+
+/* Panel content - only scrollable element inside tool-panel */
+body[data-mode="sidebar"] .panel-content {
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Fixed Footer */
+body[data-mode="sidebar"] .version-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg-color);
+  border-top: 1px solid var(--border-color);
+  padding: 8px 10px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--footer-text);
+}
+
+/* Hide default scrollbar on body */
 body[data-mode="sidebar"]::-webkit-scrollbar {
-  width: 8px;
+  display: none;
 }
 
-body[data-mode="sidebar"]::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+/* Scrollbar styling for main-content */
+body[data-mode="sidebar"] .main-content::-webkit-scrollbar {
+  width: 6px;
 }
 
-body[data-mode="sidebar"]::-webkit-scrollbar-thumb {
+body[data-mode="sidebar"] .main-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body[data-mode="sidebar"] .main-content::-webkit-scrollbar-thumb {
   background: var(--border-color);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
-body[data-mode="sidebar"]::-webkit-scrollbar-thumb:hover {
+body[data-mode="sidebar"] .main-content::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
+}
+
+/* Scrollbar styling for panel-content */
+body[data-mode="sidebar"] .panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+body[data-mode="sidebar"] .panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body[data-mode="sidebar"] .panel-content::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+body[data-mode="sidebar"] .panel-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Add tools button positioning */
+body[data-mode="sidebar"] .add-tools-btn {
+  position: fixed;
+  bottom: 45px;
+  right: 10px;
+  z-index: 99;
 }

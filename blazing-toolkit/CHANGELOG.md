@@ -7,6 +7,17 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.20] - 2025-12-27
+
+### Ameliore
+- **Sidebar** : Layout optimise pour une meilleure experience
+  - Header fixe avec toggle de recherche (icone loupe)
+  - Footer fixe en bas de la sidebar
+  - Barre de defilement unique sur le contenu principal
+  - Largeur ajustee a la taille minimale
+
+---
+
 ## [3.8.19] - 2025-12-27
 
 ### Ajoute

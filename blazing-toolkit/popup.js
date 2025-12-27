@@ -318,7 +318,31 @@ async function saveCollapsedState(categoryId, isCollapsed) {
 // ========== SEARCH FUNCTIONALITY ==========
 function initSearch() {
   const searchInput = document.getElementById('search-tools');
+  const searchContainer = document.getElementById('header-search');
+  const searchToggleBtn = document.getElementById('btn-search-toggle');
+  const searchCloseBtn = document.getElementById('btn-search-close');
+  const mainContent = document.querySelector('.main-content');
+
   if (!searchInput) return;
+
+  // Toggle search visibility (sidebar mode)
+  if (searchToggleBtn && searchContainer) {
+    searchToggleBtn.addEventListener('click', () => {
+      searchContainer.classList.remove('hidden');
+      if (mainContent) mainContent.classList.add('search-visible');
+      searchInput.focus();
+    });
+  }
+
+  // Close search (sidebar mode)
+  if (searchCloseBtn && searchContainer) {
+    searchCloseBtn.addEventListener('click', () => {
+      searchContainer.classList.add('hidden');
+      if (mainContent) mainContent.classList.remove('search-visible');
+      searchInput.value = '';
+      filterTools('');
+    });
+  }
 
   searchInput.addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase().trim();
@@ -330,6 +354,11 @@ function initSearch() {
     if (e.key === 'Escape') {
       searchInput.value = '';
       filterTools('');
+      // Also close search container in sidebar mode
+      if (searchContainer && !searchContainer.classList.contains('hidden')) {
+        searchContainer.classList.add('hidden');
+        if (mainContent) mainContent.classList.remove('search-visible');
+      }
     }
   });
 }

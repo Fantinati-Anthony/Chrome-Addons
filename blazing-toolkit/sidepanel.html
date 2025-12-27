@@ -14,6 +14,7 @@
         <h1 id="popup-title">Toolkit</h1>
         <img id="popup-logo" src="" alt="Logo" style="display: none; height: 40px; max-width: 240px; object-fit: contain;">
         <div class="header-actions">
+          <button id="btn-search-toggle" class="settings-btn" title="Rechercher">🔍</button>
           <button id="btn-switch-mode" class="settings-btn" title="Passer en mode Popup">📌</button>
           <button id="btn-reload" class="settings-btn" data-i18n-title="app.reload" title="Recharger l'extension">🔄</button>
           <button id="btn-settings" class="settings-btn" data-i18n-title="app.settings" title="Reglages">⚙️</button>
@@ -21,6 +22,12 @@
             <span class="update-icon">&#8635;</span>
           </div>
         </div>
+      </div>
+
+      <!-- Search Bar (hidden by default, toggled by search icon) -->
+      <div class="search-container hidden" id="header-search">
+        <input type="text" id="search-tools" data-i18n-placeholder="app.searchPlaceholder" placeholder="Rechercher un outil...">
+        <button id="btn-search-close" class="search-close-btn">✕</button>
       </div>
 
       <!-- Update notification banner (hidden by default) -->
@@ -36,13 +43,8 @@
       </div>
     </header>
 
-    <!-- Search Bar -->
-    <div class="search-container">
-      <input type="text" id="search-tools" data-i18n-placeholder="app.searchPlaceholder" placeholder="Rechercher un outil...">
-      <span class="search-icon">🔍</span>
-    </div>
-
-    <!-- Main Grid View (Home) -->
+    <!-- Main Content Wrapper -->
+    <div id="main-content" class="main-content">
     <section id="grid-view" class="grid-view">
       <!-- Favorites Category (always visible, never collapsed) -->
       <div id="category-favorites" class="category-section favorites-section hidden">
@@ -431,9 +433,10 @@
         <!-- Content loaded dynamically -->
       </div>
     </section>
+    </div><!-- End main-content -->
 
     <!-- Version Footer -->
-    <div id="version-footer" class="version-footer"></div>
+    <footer id="version-footer" class="version-footer"></footer>
 
     <!-- Add Tools Button (shown when no tools or to add more) -->
     <button id="btn-add-tools" class="add-tools-btn">
