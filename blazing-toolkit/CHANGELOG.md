@@ -7,7 +7,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
-## [3.8.14] - 2025-12-27
+## [3.8.15] - 2025-12-27
 
 ### Ajoute
 - **Favicon Generator (sidepanel)** : Ajout de l'import d'image personnalisee

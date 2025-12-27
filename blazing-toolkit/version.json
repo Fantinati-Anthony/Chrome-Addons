@@ -1,5 +1,5 @@
 {
-  "version": "3.8.14",
+  "version": "3.8.15",
   "releaseDate": "2025-12-27",
   "changelog": "Feature: Added custom image upload to Favicon Generator in sidepanel with original filename preservation (e.g., logo-32x32.png)."
 }
