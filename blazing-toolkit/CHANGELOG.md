@@ -7,6 +7,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.36] - 2025-12-27
+
+### Corrige
+- **Ordre des categories** : L'ordre des categories dans le popup/sidebar etait inverse par rapport aux reglages
+
+---
+
 ## [3.8.35] - 2025-12-27
 
 ### Corrige
