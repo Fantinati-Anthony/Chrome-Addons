@@ -662,8 +662,8 @@ async function applyHeader() {
   const popupTitleEl = document.getElementById('popup-title');
   const popupLogoEl = document.getElementById('popup-logo');
 
-  const data = await chrome.storage.sync.get(['headerMode', 'popupTitle', 'logoUrl']);
-  const headerMode = data.headerMode || 'logo-light';
+  const data = await chrome.storage.sync.get(['headerMode', 'popupTitle', 'logoUrl', 'theme']);
+  const headerMode = data.headerMode || 'logo';
 
   if (headerMode === 'text') {
     // Show title, hide logo
@@ -683,10 +683,14 @@ async function applyHeader() {
     }
     if (popupLogoEl) {
       popupLogoEl.style.display = '';
-      if (headerMode === 'logo-light') {
-        popupLogoEl.src = 'logos/light-mode.png';
-      } else if (headerMode === 'logo-dark') {
-        popupLogoEl.src = 'logos/dark-mode.png';
+      if (headerMode === 'logo') {
+        // Use logo based on current theme
+        const theme = data.theme || 'light';
+        let isDark = theme === 'dark';
+        if (theme === 'system') {
+          isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        popupLogoEl.src = isDark ? 'logos/dark-mode.png' : 'logos/light-mode.png';
       } else if (headerMode === 'logo-custom' && data.logoUrl) {
         popupLogoEl.src = data.logoUrl;
       }
