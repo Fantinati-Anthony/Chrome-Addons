@@ -266,12 +266,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === 'openSidePanel') {
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      if (tabs[0]) {
-        await chrome.sidePanel.open({ tabId: tabs[0].id });
-        sendResponse({ success: true });
+    (async () => {
+      try {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tabs[0]) {
+          await chrome.sidePanel.open({ tabId: tabs[0].id });
+          sendResponse({ success: true });
+        }
+      } catch (error) {
+        console.error('Error opening side panel:', error);
+        sendResponse({ success: false, error: error.message });
       }
-    });
+    })();
     return true;
   }
 });

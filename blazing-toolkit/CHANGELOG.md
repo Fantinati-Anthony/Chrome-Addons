@@ -7,6 +7,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.35] - 2025-12-27
+
+### Corrige
+- **Erreur I18n** : Correction de l'appel a `I18n.applyToElement` inexistant (utilise `applyTranslations` a la place)
+- **Bouton mode sidebar** : Correction de la gestion async pour l'ouverture du side panel
+
+---
+
 ## [3.8.34] - 2025-12-27
 
 ### Corrige
