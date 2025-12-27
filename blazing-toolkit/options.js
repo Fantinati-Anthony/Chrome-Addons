@@ -46,6 +46,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     }
+
+    // Handle URL hash navigation (e.g., #section-modules)
+    if (window.location.hash) {
+      const targetId = window.location.hash.substring(1);
+      const targetSection = document.getElementById(targetId);
+      if (targetSection && targetSection.classList.contains('section')) {
+        // Expand the target section
+        targetSection.classList.remove('collapsed');
+        // Scroll to the section
+        setTimeout(() => {
+          targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+    }
   });
 
   // Welcome message for first-time users

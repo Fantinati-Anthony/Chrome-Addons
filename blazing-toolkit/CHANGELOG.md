@@ -7,6 +7,24 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.33] - 2025-12-27
+
+### Supprime
+- **Catalogue d'outils** : Suppression complete du code de la modale inutilisee
+  - HTML retire de popup.html et sidepanel.html
+  - Fonctions retirees de tool-store.js (openStore, closeStore, renderStoreContent, etc.)
+  - CSS retire de popup.css (~300 lignes)
+
+---
+
+## [3.8.32] - 2025-12-27
+
+### Modifie
+- **Bouton "Ajouter des outils"** : Ouvre maintenant la page des reglages a la section "Gestion des modules et raccourcis"
+- **Page des reglages** : Navigation par hash URL (ex: options.html#section-modules)
+
+---
+
 ## [3.8.31] - 2025-12-27
 
 ### Corrige

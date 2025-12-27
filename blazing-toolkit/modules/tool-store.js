@@ -123,28 +123,6 @@ class ToolStore {
     return true;
   }
 
-  // Activate all tools
-  async activateAllTools() {
-    const allToolIds = Object.keys(this.registry.tools || {});
-    for (const toolId of allToolIds) {
-      this.activatedTools.add(toolId);
-    }
-    await this.saveActivatedTools();
-    return true;
-  }
-
-  // Activate all tools in a specific category
-  async activateCategoryTools(categoryId) {
-    const allTools = this.registry.tools || {};
-    for (const [toolId, toolInfo] of Object.entries(allTools)) {
-      if (toolInfo.category === categoryId) {
-        this.activatedTools.add(toolId);
-      }
-    }
-    await this.saveActivatedTools();
-    return true;
-  }
-
   // Get tool info
   getToolInfo(toolId) {
     return this.registry.tools[toolId] || null;
@@ -198,112 +176,6 @@ class ToolStore {
       }));
   }
 
-  // Render the tool store content
-  renderStoreContent(container, searchQuery = '') {
-    container.innerHTML = '';
-
-    const categories = this.getSortedCategories();
-    const toolsByCategory = this.getToolsByCategory();
-
-    for (const category of categories) {
-      const categoryTools = toolsByCategory[category.id] || [];
-
-      // Filter by search query
-      const filteredTools = searchQuery
-        ? categoryTools.filter(tool => {
-            const locale = tool.locale;
-            const searchLower = searchQuery.toLowerCase();
-            return (
-              tool.id.toLowerCase().includes(searchLower) ||
-              locale.label?.toLowerCase().includes(searchLower) ||
-              locale.title?.toLowerCase().includes(searchLower) ||
-              locale.description?.toLowerCase().includes(searchLower)
-            );
-          })
-        : categoryTools;
-
-      if (filteredTools.length === 0) continue;
-
-      const categoryEl = document.createElement('div');
-      // Expand categories when searching, collapse by default otherwise
-      const isCollapsed = !searchQuery;
-      categoryEl.className = `store-category ${isCollapsed ? 'collapsed' : ''}`;
-      categoryEl.dataset.collapsed = isCollapsed ? 'true' : 'false';
-      categoryEl.innerHTML = `
-        <div class="store-category-header">
-          <span class="category-toggle">▼</span>
-          <span class="category-emoji">${category.emoji}</span>
-          <span class="category-name">${this.getCategoryLabel(category.id)}</span>
-          <span class="category-tools-count">(${filteredTools.length})</span>
-          <button class="btn-activate-category" data-category="${category.id}" title="Activer tous les outils de cette catégorie">Activer tout</button>
-        </div>
-        <div class="store-tools-grid" data-category="${category.id}"></div>
-      `;
-
-      const toolsGrid = categoryEl.querySelector('.store-tools-grid');
-
-      for (const tool of filteredTools) {
-        const toolEl = this.createToolItem(tool);
-        toolsGrid.appendChild(toolEl);
-      }
-
-      container.appendChild(categoryEl);
-    }
-  }
-
-  // Get category label (uses i18n if available)
-  getCategoryLabel(categoryId) {
-    if (typeof I18n !== 'undefined') {
-      const key = `categories.${categoryId}`;
-      const translated = I18n.t(key);
-      if (translated !== key) return translated;
-    }
-
-    // Fallback labels
-    const fallbacks = {
-      design: 'Design',
-      browser: 'Browser',
-      analysis: 'Analysis',
-      seo: 'SEO',
-      security: 'Security',
-      generators: 'Generators',
-      text: 'Text',
-      marketing: 'Marketing',
-      productivity: 'Productivity',
-      network: 'Network'
-    };
-
-    return fallbacks[categoryId] || categoryId;
-  }
-
-  // Create a tool item element for the store
-  createToolItem(tool) {
-    const div = document.createElement('div');
-    div.className = `store-tool-item ${tool.activated ? 'activated' : ''}`;
-    div.dataset.toolId = tool.id;
-
-    const emoji = this.getToolEmoji(tool.id);
-    const locale = tool.locale;
-
-    div.innerHTML = `
-      <div class="store-tool-icon">${emoji}</div>
-      <div class="store-tool-info">
-        <div class="store-tool-name">${locale.title || locale.label || tool.id}</div>
-        <div class="store-tool-description">${locale.description || ''}</div>
-      </div>
-      <div class="store-tool-actions">
-        <button class="store-tool-toggle ${tool.activated ? 'remove' : 'add'}"
-                data-action="${tool.activated ? 'remove' : 'add'}"
-                data-tool-id="${tool.id}">
-          ${tool.activated ? this.getTranslation('toolStore.remove') : this.getTranslation('toolStore.add')}
-        </button>
-        <button class="store-tool-info-btn" data-tool-id="${tool.id}" title="${this.getTranslation('toolStore.info')}">ℹ</button>
-      </div>
-    `;
-
-    return div;
-  }
-
   // Get tool emoji
   getToolEmoji(toolId) {
     const emojis = {
@@ -328,143 +200,17 @@ class ToolStore {
     return emojis[toolId] || '🔧';
   }
 
-  // Get translation helper
-  getTranslation(key) {
-    if (typeof I18n !== 'undefined') {
-      const translated = I18n.t(key);
-      if (translated !== key) return translated;
-    }
-
-    // Fallback
-    const fallbacks = {
-      'toolStore.add': 'Add',
-      'toolStore.remove': 'Remove',
-      'toolStore.info': 'Info'
-    };
-    return fallbacks[key] || key;
-  }
-
-  // Setup event listeners for the store
+  // Setup event listeners
   setupEventListeners() {
-    const storeModal = document.getElementById('tool-store-modal');
     const addToolsBtn = document.getElementById('btn-add-tools');
-    const closeStoreBtn = document.getElementById('btn-close-store');
-    const storeSearch = document.getElementById('store-search');
-    const storeContent = document.getElementById('tool-store-content');
     const changelogModal = document.getElementById('changelog-modal');
     const closeChangelogBtn = document.getElementById('btn-close-changelog');
-    const activateAllBtn = document.getElementById('btn-activate-all-tools');
 
-    // Open store
+    // Open options page - modules section
     if (addToolsBtn) {
       addToolsBtn.addEventListener('click', () => {
-        this.openStore();
-      });
-    }
-
-    // Close store
-    if (closeStoreBtn) {
-      closeStoreBtn.addEventListener('click', () => {
-        this.closeStore();
-        // Refresh the grid after closing
-        if (typeof refreshToolGrid === 'function') {
-          refreshToolGrid();
-        }
-      });
-    }
-
-    // Close on overlay click
-    if (storeModal) {
-      storeModal.addEventListener('click', (e) => {
-        if (e.target === storeModal) {
-          this.closeStore();
-          // Refresh the grid after closing
-          if (typeof refreshToolGrid === 'function') {
-            refreshToolGrid();
-          }
-        }
-      });
-    }
-
-    // Global "Activate all tools" button
-    if (activateAllBtn) {
-      activateAllBtn.addEventListener('click', async () => {
-        await this.activateAllTools();
-        // Update UI
-        if (storeContent) {
-          this.renderStoreContent(storeContent, storeSearch?.value || '');
-          this.setupToolItemListeners();
-        }
-        // Refresh the main grid
-        if (typeof refreshToolGrid === 'function') {
-          refreshToolGrid();
-        }
-      });
-    }
-
-    // Search
-    if (storeSearch && storeContent) {
-      storeSearch.addEventListener('input', (e) => {
-        this.renderStoreContent(storeContent, e.target.value);
-        this.setupToolItemListeners();
-      });
-    }
-
-    // Tool actions (using delegation)
-    if (storeContent) {
-      storeContent.addEventListener('click', async (e) => {
-        const toggleBtn = e.target.closest('.store-tool-toggle');
-        const infoBtn = e.target.closest('.store-tool-info-btn');
-        const activateCategoryBtn = e.target.closest('.btn-activate-category');
-
-        if (toggleBtn) {
-          const toolId = toggleBtn.dataset.toolId;
-          const action = toggleBtn.dataset.action;
-
-          if (action === 'add') {
-            await this.activateTool(toolId);
-          } else {
-            await this.deactivateTool(toolId);
-          }
-
-          // Update UI
-          this.renderStoreContent(storeContent, storeSearch?.value || '');
-          this.setupToolItemListeners();
-
-          // Refresh the main grid
-          if (typeof refreshToolGrid === 'function') {
-            refreshToolGrid();
-          }
-        }
-
-        if (infoBtn) {
-          const toolId = infoBtn.dataset.toolId;
-          this.showChangelog(toolId);
-        }
-
-        // Toggle category collapse (click on header but not on button)
-        const categoryHeader = e.target.closest('.store-category-header');
-        if (categoryHeader && !activateCategoryBtn) {
-          const categoryEl = categoryHeader.closest('.store-category');
-          if (categoryEl) {
-            const isCollapsed = categoryEl.dataset.collapsed === 'true';
-            categoryEl.dataset.collapsed = isCollapsed ? 'false' : 'true';
-            categoryEl.classList.toggle('collapsed', !isCollapsed);
-          }
-        }
-
-        // Activate all tools in category
-        if (activateCategoryBtn) {
-          const categoryId = activateCategoryBtn.dataset.category;
-          await this.activateCategoryTools(categoryId);
-          // Update UI
-          this.renderStoreContent(storeContent, storeSearch?.value || '');
-          this.setupToolItemListeners();
-          // Refresh the main grid
-          if (typeof refreshToolGrid === 'function') {
-            refreshToolGrid();
-          }
-        }
+        const optionsUrl = chrome.runtime.getURL('options.html#section-modules');
+        chrome.tabs.create({ url: optionsUrl });
       });
     }
 
@@ -481,42 +227,6 @@ class ToolStore {
           this.closeChangelog();
         }
       });
-    }
-  }
-
-  // Open the store modal
-  openStore() {
-    const storeModal = document.getElementById('tool-store-modal');
-    const storeContent = document.getElementById('tool-store-content');
-    const storeSearch = document.getElementById('store-search');
-
-    if (storeModal) {
-      storeModal.classList.remove('hidden');
-      setTimeout(() => {
-        storeModal.classList.add('visible');
-      }, 10);
-    }
-
-    if (storeContent) {
-      this.renderStoreContent(storeContent, '');
-      this.setupToolItemListeners();
-    }
-
-    if (storeSearch) {
-      storeSearch.value = '';
-      storeSearch.focus();
-    }
-  }
-
-  // Close the store modal
-  closeStore() {
-    const storeModal = document.getElementById('tool-store-modal');
-
-    if (storeModal) {
-      storeModal.classList.remove('visible');
-      setTimeout(() => {
-        storeModal.classList.add('hidden');
-      }, 300);
     }
   }
 
@@ -563,11 +273,6 @@ class ToolStore {
     if (modal) {
       modal.classList.remove('visible');
     }
-  }
-
-  // Setup tool item listeners (for hover effects, etc.)
-  setupToolItemListeners() {
-    // Can add additional listeners here if needed
   }
 }
 
