@@ -193,7 +193,9 @@ body[data-mode="sidebar"] .panel-content::-webkit-scrollbar-thumb:hover {
 /* Add tools button positioning */
 body[data-mode="sidebar"] .add-tools-btn {
   position: fixed;
-  bottom: 45px;
-  right: 10px;
+  bottom: 30px;
+  right: 0px;
   z-index: 99;
+  border-radius: 0px;
+  padding: 3px;
 }

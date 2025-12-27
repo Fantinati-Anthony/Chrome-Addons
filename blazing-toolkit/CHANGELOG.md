@@ -7,6 +7,15 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.22] - 2025-12-27
+
+### Corrige
+- **Sidebar** : Ajustement du bouton "Ajouter des outils"
+  - Position fixe en bas a droite
+  - Border-radius et padding reduits
+
+---
+
 ## [3.8.21] - 2025-12-27
 
 ### Corrige
