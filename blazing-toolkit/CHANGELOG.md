@@ -7,6 +7,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.23] - 2025-12-27
+
+### Corrige
+- **Categories** : Correction des artefacts visuels aux angles
+  - Ajout de overflow: hidden sur .category-header
+
+---
+
 ## [3.8.22] - 2025-12-27
 
 ### Corrige
