@@ -1,5 +1,5 @@
 {
-  "version": "3.8.21",
+  "version": "3.8.22",
   "releaseDate": "2025-12-27",
-  "changelog": "Fix: Adjusted logo max-width to 200px and fixed sidebar content height issue."
+  "changelog": "Fix: Adjusted add-tools button positioning in sidebar mode."
 }
