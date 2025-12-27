@@ -7,6 +7,15 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.21] - 2025-12-27
+
+### Corrige
+- **Sidebar** : Ajustements du layout
+  - Logo max-width reduit a 200px
+  - Correction du probleme de hauteur du contenu
+
+---
+
 ## [3.8.20] - 2025-12-27
 
 ### Ameliore
