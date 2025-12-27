@@ -7,6 +7,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.18] - 2025-12-27
+
+### Corrige
+- **Favicon Generator** : Les groupes s'affichent maintenant en colonne (les uns sous les autres)
+
+---
+
 ## [3.8.17] - 2025-12-27
 
 ### Ameliore
