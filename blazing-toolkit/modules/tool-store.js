@@ -123,6 +123,28 @@ class ToolStore {
     return true;
   }
 
+  // Activate all tools
+  async activateAllTools() {
+    const allToolIds = Object.keys(this.registry.tools || {});
+    for (const toolId of allToolIds) {
+      this.activatedTools.add(toolId);
+    }
+    await this.saveActivatedTools();
+    return true;
+  }
+
+  // Activate all tools in a specific category
+  async activateCategoryTools(categoryId) {
+    const allTools = this.registry.tools || {};
+    for (const [toolId, toolInfo] of Object.entries(allTools)) {
+      if (toolInfo.category === categoryId) {
+        this.activatedTools.add(toolId);
+      }
+    }
+    await this.saveActivatedTools();
+    return true;
+  }
+
   // Get tool info
   getToolInfo(toolId) {
     return this.registry.tools[toolId] || null;
@@ -208,6 +230,7 @@ class ToolStore {
         <div class="store-category-header">
           <span class="category-emoji">${category.emoji}</span>
           <span class="category-name">${this.getCategoryLabel(category.id)}</span>
+          <button class="btn-activate-category" data-category="${category.id}" title="Activer tous les outils de cette catégorie">Activer tout</button>
         </div>
         <div class="store-tools-grid" data-category="${category.id}"></div>
       `;
@@ -325,6 +348,7 @@ class ToolStore {
     const storeContent = document.getElementById('tool-store-content');
     const changelogModal = document.getElementById('changelog-modal');
     const closeChangelogBtn = document.getElementById('btn-close-changelog');
+    const activateAllBtn = document.getElementById('btn-activate-all-tools');
 
     // Open store
     if (addToolsBtn) {
@@ -333,18 +357,42 @@ class ToolStore {
       });
     }
 
-    // Close store
+    // Close store (with reload)
     if (closeStoreBtn) {
       closeStoreBtn.addEventListener('click', () => {
         this.closeStore();
+        // Reload extension after closing
+        setTimeout(() => {
+          chrome.runtime.reload();
+        }, 300);
       });
     }
 
-    // Close on overlay click
+    // Close on overlay click (with reload)
     if (storeModal) {
       storeModal.addEventListener('click', (e) => {
         if (e.target === storeModal) {
           this.closeStore();
+          // Reload extension after closing
+          setTimeout(() => {
+            chrome.runtime.reload();
+          }, 300);
+        }
+      });
+    }
+
+    // Global "Activate all tools" button
+    if (activateAllBtn) {
+      activateAllBtn.addEventListener('click', async () => {
+        await this.activateAllTools();
+        // Update UI
+        if (storeContent) {
+          this.renderStoreContent(storeContent, storeSearch?.value || '');
+          this.setupToolItemListeners();
+        }
+        // Refresh the main grid
+        if (typeof refreshToolGrid === 'function') {
+          refreshToolGrid();
         }
       });
     }
@@ -362,6 +410,7 @@ class ToolStore {
       storeContent.addEventListener('click', async (e) => {
         const toggleBtn = e.target.closest('.store-tool-toggle');
         const infoBtn = e.target.closest('.store-tool-info-btn');
+        const activateCategoryBtn = e.target.closest('.btn-activate-category');
 
         if (toggleBtn) {
           const toolId = toggleBtn.dataset.toolId;
@@ -386,6 +435,19 @@ class ToolStore {
         if (infoBtn) {
           const toolId = infoBtn.dataset.toolId;
           this.showChangelog(toolId);
+        }
+
+        // Activate all tools in category
+        if (activateCategoryBtn) {
+          const categoryId = activateCategoryBtn.dataset.category;
+          await this.activateCategoryTools(categoryId);
+          // Update UI
+          this.renderStoreContent(storeContent, storeSearch?.value || '');
+          this.setupToolItemListeners();
+          // Refresh the main grid
+          if (typeof refreshToolGrid === 'function') {
+            refreshToolGrid();
+          }
         }
       });
     }

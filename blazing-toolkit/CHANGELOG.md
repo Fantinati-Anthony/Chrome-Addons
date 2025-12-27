@@ -7,6 +7,17 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.27] - 2025-12-27
+
+### Ajoute
+- **Catalogue d'outils** : Boutons d'activation rapide
+  - Bouton "Tout activer" global pour activer tous les outils
+  - Bouton "Activer tout" par categorie
+  - Rechargement automatique de l'extension a la fermeture du catalogue
+- **Favoris** : Suppression du background sur #category-favorites
+
+---
+
 ## [3.8.26] - 2025-12-27
 
 ### Corrige
