@@ -1,6 +1,17 @@
 {
-  "version": "1.4.0",
+  "version": "1.5.0",
   "changelog": [
+    {
+      "version": "1.5.0",
+      "date": "2025-12-27",
+      "type": "added",
+      "messages": {
+        "fr": "Options couleur de fond et border radius par image",
+        "en": "Background color and border radius options per image",
+        "es": "Opciones de color de fondo y radio de borde por imagen",
+        "pt": "Opcoes de cor de fundo e raio da borda por imagem"
+      }
+    },
     {
       "version": "1.4.0",
       "date": "2025-12-27",

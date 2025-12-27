@@ -2547,6 +2547,70 @@ input[type="number"] {
   overflow: hidden;
 }
 
+.favicon-group-options {
+  display: flex;
+  gap: 15px;
+  padding: 10px 12px;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+
+.favicon-group.collapsed .favicon-group-options {
+  display: none;
+}
+
+.favicon-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+
+.favicon-option label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.favicon-option-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.favicon-bg-enabled {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.favicon-bg-color {
+  width: 32px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-small);
+  cursor: pointer;
+}
+
+.favicon-bg-color:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.favicon-border-radius {
+  width: 80px;
+  height: 4px;
+  cursor: pointer;
+}
+
+.favicon-radius-value {
+  font-size: 11px;
+  color: var(--text-color);
+  min-width: 28px;
+}
+
 .favicon-download-actions {
   display: flex;
   gap: 10px;

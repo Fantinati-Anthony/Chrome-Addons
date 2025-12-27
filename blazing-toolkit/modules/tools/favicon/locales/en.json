@@ -7,5 +7,7 @@
   "importTitle": "Import images",
   "dropText": "Drag images or click to import",
   "downloadAllPng": "Download all (PNG)",
-  "downloadIco": "Download .ICO"
+  "downloadIco": "Download .ICO",
+  "bgColor": "Background color",
+  "borderRadius": "Border radius"
 }
