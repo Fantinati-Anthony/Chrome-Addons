@@ -2474,6 +2474,11 @@ input[type="number"] {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+#favicon-generated {
+  display: flex;
+  flex-direction: column;
+}
+
 .favicon-group {
   margin: 10px 0;
   background: var(--bg-color);
