@@ -1,5 +1,5 @@
 {
-  "version": "3.8.19",
+  "version": "3.8.20",
   "releaseDate": "2025-12-27",
-  "changelog": "Feature: Favicon Generator now supports background color and border radius options for each image."
+  "changelog": "Feature: Sidebar layout improvements - fixed header with search toggle, fixed footer, single scrollbar on content area."
 }
