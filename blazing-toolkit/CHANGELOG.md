@@ -7,6 +7,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.26] - 2025-12-27
+
+### Corrige
+- **Favicon Generator** : Suppression du padding sur favicon-group-items
+
+---
+
 ## [3.8.25] - 2025-12-27
 
 ### Corrige

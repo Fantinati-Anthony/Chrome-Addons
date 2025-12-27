@@ -2537,7 +2537,7 @@ input[type="number"] {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  padding: 10px;
+  padding: 0px;
   max-height: 500px;
   overflow-y: auto;
   transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.2s ease;
@@ -2545,7 +2545,7 @@ input[type="number"] {
 
 .favicon-group.collapsed .favicon-group-items {
   max-height: 0;
-  padding: 0 10px;
+  padding: 0;
   opacity: 0;
   overflow: hidden;
 }
