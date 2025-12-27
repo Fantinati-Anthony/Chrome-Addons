@@ -225,11 +225,16 @@ class ToolStore {
       if (filteredTools.length === 0) continue;
 
       const categoryEl = document.createElement('div');
-      categoryEl.className = 'store-category';
+      // Expand categories when searching, collapse by default otherwise
+      const isCollapsed = !searchQuery;
+      categoryEl.className = `store-category ${isCollapsed ? 'collapsed' : ''}`;
+      categoryEl.dataset.collapsed = isCollapsed ? 'true' : 'false';
       categoryEl.innerHTML = `
         <div class="store-category-header">
+          <span class="category-toggle">▼</span>
           <span class="category-emoji">${category.emoji}</span>
           <span class="category-name">${this.getCategoryLabel(category.id)}</span>
+          <span class="category-tools-count">(${filteredTools.length})</span>
           <button class="btn-activate-category" data-category="${category.id}" title="Activer tous les outils de cette catégorie">Activer tout</button>
         </div>
         <div class="store-tools-grid" data-category="${category.id}"></div>
@@ -435,6 +440,17 @@ class ToolStore {
         if (infoBtn) {
           const toolId = infoBtn.dataset.toolId;
           this.showChangelog(toolId);
+        }
+
+        // Toggle category collapse (click on header but not on button)
+        const categoryHeader = e.target.closest('.store-category-header');
+        if (categoryHeader && !activateCategoryBtn) {
+          const categoryEl = categoryHeader.closest('.store-category');
+          if (categoryEl) {
+            const isCollapsed = categoryEl.dataset.collapsed === 'true';
+            categoryEl.dataset.collapsed = isCollapsed ? 'false' : 'true';
+            categoryEl.classList.toggle('collapsed', !isCollapsed);
+          }
         }
 
         // Activate all tools in category
