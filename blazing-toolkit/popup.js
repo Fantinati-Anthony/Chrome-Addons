@@ -163,12 +163,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       // In popup mode: button opens sidebar
       switchModeBtn.addEventListener('click', async () => {
-        // First, switch to sidebar mode
-        await chrome.runtime.sendMessage({ type: 'switchDisplayMode', mode: 'sidebar' });
-        // Then open the side panel
-        await chrome.runtime.sendMessage({ type: 'openSidePanel' });
-        // Close the popup
-        window.close();
+        try {
+          // Get current tab
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          if (tab) {
+            // Open side panel directly (must be in response to user gesture)
+            await chrome.sidePanel.open({ tabId: tab.id });
+            // Switch to sidebar mode
+            await chrome.runtime.sendMessage({ type: 'switchDisplayMode', mode: 'sidebar' });
+            // Close the popup
+            window.close();
+          }
+        } catch (error) {
+          console.error('Error opening sidebar:', error);
+        }
       });
     }
   }
