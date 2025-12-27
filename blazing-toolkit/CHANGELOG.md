@@ -7,6 +7,16 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.29] - 2025-12-27
+
+### Corrige
+- **Catalogue d'outils** : Ajustements CSS
+  - Modal en pleine hauteur (100vh)
+  - Suppression du margin-bottom sur les en-tetes de categorie
+  - Suppression du padding sur le modal
+
+---
+
 ## [3.8.28] - 2025-12-27
 
 ### Ajoute
