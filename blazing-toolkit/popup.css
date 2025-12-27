@@ -2745,11 +2745,11 @@ input[type="number"] {
   transform: translateX(-50%);
   background: var(--secondary-color);
   color: white;
-  padding: 8px 12px;
+  padding: 3px;
   border-radius: var(--radius-medium);
   font-size: 11px;
   white-space: normal;
-  max-width: 200px;
+  max-width: 150px;
   min-width: 120px;
   text-align: center;
   z-index: 1000;
