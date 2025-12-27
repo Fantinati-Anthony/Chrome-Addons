@@ -2475,25 +2475,71 @@ input[type="number"] {
 }
 
 .favicon-group {
-  margin: 15px 0;
-  padding: 10px;
+  margin: 10px 0;
   background: var(--bg-color);
   border-radius: var(--radius-medium);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.favicon-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg-secondary);
+  transition: background 0.2s;
+}
+
+.favicon-group-header:hover {
+  background: var(--bg-hover);
+}
+
+.favicon-group-toggle {
+  font-size: 10px;
+  color: var(--text-secondary);
+  transition: transform 0.2s;
+}
+
+.favicon-group:not(.collapsed) .favicon-group-toggle {
+  transform: rotate(90deg);
 }
 
 .favicon-group-title {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-color);
-  margin-bottom: 10px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid var(--border-color);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.favicon-group-count {
+  font-size: 10px;
+  color: var(--text-secondary);
+  background: var(--bg-color);
+  padding: 2px 6px;
+  border-radius: 10px;
 }
 
 .favicon-group-items {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+  padding: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.2s ease;
+}
+
+.favicon-group.collapsed .favicon-group-items {
+  max-height: 0;
+  padding: 0 10px;
+  opacity: 0;
+  overflow: hidden;
 }
 
 .favicon-download-actions {

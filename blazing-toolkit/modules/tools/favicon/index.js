@@ -118,11 +118,24 @@ export async function initFavicon() {
           const sizes = [16, 32, 48, 64, 128, 180, 192, 512];
           const favicons = [];
 
-          // Create a group for this image
+          // Create a collapsible group for this image
           const groupDiv = document.createElement('div');
-          groupDiv.className = 'favicon-group';
-          groupDiv.innerHTML = `<div class="favicon-group-title">${originalFileName}</div><div class="favicon-group-items"></div>`;
-          const itemsDiv = groupDiv.querySelector('.favicon-group-items');
+          groupDiv.className = 'favicon-group collapsed';
+
+          const headerDiv = document.createElement('div');
+          headerDiv.className = 'favicon-group-header';
+          headerDiv.innerHTML = `<span class="favicon-group-toggle">▶</span><span class="favicon-group-title">${originalFileName}</span><span class="favicon-group-count">${sizes.length} tailles</span>`;
+
+          const itemsDiv = document.createElement('div');
+          itemsDiv.className = 'favicon-group-items';
+
+          // Toggle collapse on header click
+          headerDiv.addEventListener('click', () => {
+            groupDiv.classList.toggle('collapsed');
+          });
+
+          groupDiv.appendChild(headerDiv);
+          groupDiv.appendChild(itemsDiv);
 
           sizes.forEach(size => {
             const dataUrl = resizeImage(img, size);
