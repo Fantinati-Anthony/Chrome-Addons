@@ -18,6 +18,7 @@ export async function initFavicon() {
 
   // Store generated favicons for download
   let generatedFavicons = [];
+  let originalFileName = 'favicon'; // Default name
 
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -84,6 +85,9 @@ export async function initFavicon() {
   });
 
   async function processImage(file) {
+    // Extract original filename without extension
+    originalFileName = file.name.replace(/\.[^/.]+$/, '') || 'favicon';
+
     const reader = new FileReader();
     reader.onload = async (e) => {
       const img = new Image();
@@ -111,7 +115,7 @@ export async function initFavicon() {
           item.addEventListener('click', () => {
             const size = item.dataset.size;
             const dataUrl = item.dataset.url;
-            downloadFile(dataUrl, `favicon-${size}x${size}.png`);
+            downloadFile(dataUrl, `${originalFileName}-${size}x${size}.png`);
           });
         });
 
@@ -172,10 +176,15 @@ export async function initFavicon() {
     document.body.removeChild(link);
   }
 
-  downloadAllPngBtn.addEventListener('click', () => {
-    generatedFavicons.forEach(({ size, dataUrl }) => {
-      downloadFile(dataUrl, `favicon-${size}x${size}.png`);
-    });
+  downloadAllPngBtn.addEventListener('click', async () => {
+    for (let i = 0; i < generatedFavicons.length; i++) {
+      const { size, dataUrl } = generatedFavicons[i];
+      downloadFile(dataUrl, `${originalFileName}-${size}x${size}.png`);
+      // Small delay between downloads to avoid browser conflicts
+      if (i < generatedFavicons.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 150));
+      }
+    }
   });
 
   downloadIcoBtn.addEventListener('click', async () => {
@@ -183,7 +192,7 @@ export async function initFavicon() {
     const icoSizes = generatedFavicons.filter(f => [16, 32, 48].includes(f.size));
     const icoBlob = await createIcoFile(icoSizes);
     const url = URL.createObjectURL(icoBlob);
-    downloadFile(url, 'favicon.ico');
+    downloadFile(url, `${originalFileName}.ico`);
     URL.revokeObjectURL(url);
   });
 
