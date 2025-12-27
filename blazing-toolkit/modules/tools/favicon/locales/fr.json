@@ -4,8 +4,8 @@
   "description": "Extrait et genere le favicon en differentes tailles.",
   "extract": "Extraire le favicon",
   "generate": "Generer multi-tailles",
-  "importTitle": "Importer une image",
-  "dropText": "Glisser une image ou cliquer pour importer",
+  "importTitle": "Importer des images",
+  "dropText": "Glisser des images ou cliquer pour importer",
   "downloadAllPng": "Telecharger tout (PNG)",
   "downloadIco": "Telecharger .ICO"
 }

@@ -7,6 +7,17 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.16] - 2025-12-27
+
+### Ajoute
+- **Favicon Generator** : Support de la selection multiple d'images
+  - Import de plusieurs images en une seule fois (drag-and-drop ou selection)
+  - Affichage groupe par image avec previsualisation
+  - Generation de tous les formats pour chaque image
+  - Telechargement groupe (tous les PNG et ICO de toutes les images)
+
+---
+
 ## [3.8.15] - 2025-12-27
 
 ### Ajoute
