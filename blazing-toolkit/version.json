@@ -1,5 +1,5 @@
 {
-  "version": "3.8.29",
+  "version": "3.8.30",
   "releaseDate": "2025-12-27",
-  "changelog": "Fix: Adjusted tool store modal to full height and removed category header margin."
+  "changelog": "Fix: Removed padding on tool store modal overlay."
 }

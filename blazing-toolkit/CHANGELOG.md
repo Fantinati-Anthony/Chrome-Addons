@@ -7,6 +7,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.30] - 2025-12-27
+
+### Corrige
+- **Catalogue d'outils** : Suppression du padding sur #tool-store-modal
+
+---
+
 ## [3.8.29] - 2025-12-27
 
 ### Corrige
