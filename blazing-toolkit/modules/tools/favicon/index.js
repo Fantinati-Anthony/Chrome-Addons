@@ -16,8 +16,10 @@ export async function initFavicon() {
   const downloadAllPngBtn = document.getElementById('btn-download-all-png');
   const downloadIcoBtn = document.getElementById('btn-download-ico');
 
-  // Store all generated favicons (array of objects with fileName and favicons)
+  // Store all generated favicons (array of objects with fileName, favicons, and options)
   let allGeneratedFavicons = [];
+  // Store image data for regeneration
+  let imageDataStore = [];
 
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -86,6 +88,7 @@ export async function initFavicon() {
   async function processImages(files) {
     // Clear previous results
     allGeneratedFavicons = [];
+    imageDataStore = [];
     importPreview.innerHTML = '';
     generatedDiv.innerHTML = '';
 
@@ -103,11 +106,20 @@ export async function initFavicon() {
   function processImage(file) {
     return new Promise((resolve) => {
       const originalFileName = file.name.replace(/\.[^/.]+$/, '') || 'favicon';
+      const imageIndex = imageDataStore.length;
 
       const reader = new FileReader();
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
+          // Store image data for regeneration
+          imageDataStore.push({
+            img: img,
+            fileName: originalFileName,
+            bgColor: '',
+            borderRadius: 0
+          });
+
           // Add preview of original image
           const previewItem = document.createElement('div');
           previewItem.className = 'favicon-import-preview-item';
@@ -116,45 +128,85 @@ export async function initFavicon() {
 
           // Generate favicons in different sizes
           const sizes = [16, 32, 48, 64, 128, 180, 192, 512];
-          const favicons = [];
 
           // Create a collapsible group for this image
           const groupDiv = document.createElement('div');
           groupDiv.className = 'favicon-group collapsed';
+          groupDiv.dataset.index = imageIndex;
 
           const headerDiv = document.createElement('div');
           headerDiv.className = 'favicon-group-header';
           headerDiv.innerHTML = `<span class="favicon-group-toggle">▶</span><span class="favicon-group-title">${originalFileName}</span><span class="favicon-group-count">${sizes.length} tailles</span>`;
 
+          // Options container
+          const optionsDiv = document.createElement('div');
+          optionsDiv.className = 'favicon-group-options';
+          optionsDiv.innerHTML = `
+            <div class="favicon-option">
+              <label data-i18n="favicon.bgColor">Couleur de fond</label>
+              <div class="favicon-option-row">
+                <input type="checkbox" class="favicon-bg-enabled" title="Activer la couleur de fond">
+                <input type="color" class="favicon-bg-color" value="#ffffff" disabled>
+              </div>
+            </div>
+            <div class="favicon-option">
+              <label data-i18n="favicon.borderRadius">Border radius</label>
+              <div class="favicon-option-row">
+                <input type="range" class="favicon-border-radius" min="0" max="50" value="0">
+                <span class="favicon-radius-value">0%</span>
+              </div>
+            </div>
+          `;
+
           const itemsDiv = document.createElement('div');
           itemsDiv.className = 'favicon-group-items';
 
           // Toggle collapse on header click
-          headerDiv.addEventListener('click', () => {
-            groupDiv.classList.toggle('collapsed');
+          headerDiv.addEventListener('click', (e) => {
+            if (!e.target.closest('.favicon-group-options')) {
+              groupDiv.classList.toggle('collapsed');
+            }
+          });
+
+          // Options event listeners
+          const bgEnabledCheckbox = optionsDiv.querySelector('.favicon-bg-enabled');
+          const bgColorInput = optionsDiv.querySelector('.favicon-bg-color');
+          const borderRadiusInput = optionsDiv.querySelector('.favicon-border-radius');
+          const radiusValueSpan = optionsDiv.querySelector('.favicon-radius-value');
+
+          bgEnabledCheckbox.addEventListener('change', () => {
+            bgColorInput.disabled = !bgEnabledCheckbox.checked;
+            imageDataStore[imageIndex].bgColor = bgEnabledCheckbox.checked ? bgColorInput.value : '';
+            regenerateFavicons(imageIndex, groupDiv, sizes);
+          });
+
+          bgColorInput.addEventListener('input', () => {
+            if (bgEnabledCheckbox.checked) {
+              imageDataStore[imageIndex].bgColor = bgColorInput.value;
+              regenerateFavicons(imageIndex, groupDiv, sizes);
+            }
+          });
+
+          borderRadiusInput.addEventListener('input', () => {
+            const value = parseInt(borderRadiusInput.value);
+            radiusValueSpan.textContent = `${value}%`;
+            imageDataStore[imageIndex].borderRadius = value;
+            regenerateFavicons(imageIndex, groupDiv, sizes);
+          });
+
+          // Prevent options clicks from toggling collapse
+          optionsDiv.addEventListener('click', (e) => {
+            e.stopPropagation();
           });
 
           groupDiv.appendChild(headerDiv);
+          groupDiv.appendChild(optionsDiv);
           groupDiv.appendChild(itemsDiv);
 
-          sizes.forEach(size => {
-            const dataUrl = resizeImage(img, size);
-            favicons.push({ size, dataUrl, fileName: originalFileName });
-
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'favicon-size-item downloadable';
-            itemDiv.dataset.size = size;
-            itemDiv.dataset.url = dataUrl;
-            itemDiv.dataset.filename = originalFileName;
-            itemDiv.innerHTML = `<img src="${dataUrl}" width="${Math.min(size, 48)}"><span>${size}x${size}</span>`;
-            itemDiv.addEventListener('click', () => {
-              downloadFile(dataUrl, `${originalFileName}-${size}x${size}.png`);
-            });
-            itemsDiv.appendChild(itemDiv);
-          });
+          // Generate initial favicons
+          generateFaviconsForGroup(imageIndex, itemsDiv, sizes);
 
           generatedDiv.appendChild(groupDiv);
-          allGeneratedFavicons.push({ fileName: originalFileName, favicons });
 
           resolve();
         };
@@ -164,7 +216,43 @@ export async function initFavicon() {
     });
   }
 
-  function resizeImage(img, size) {
+  function generateFaviconsForGroup(imageIndex, itemsDiv, sizes) {
+    const imageData = imageDataStore[imageIndex];
+    const favicons = [];
+
+    itemsDiv.innerHTML = '';
+
+    sizes.forEach(size => {
+      const dataUrl = resizeImage(imageData.img, size, imageData.bgColor, imageData.borderRadius);
+      favicons.push({ size, dataUrl, fileName: imageData.fileName });
+
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'favicon-size-item downloadable';
+      itemDiv.dataset.size = size;
+      itemDiv.dataset.url = dataUrl;
+      itemDiv.dataset.filename = imageData.fileName;
+      itemDiv.innerHTML = `<img src="${dataUrl}" width="${Math.min(size, 48)}"><span>${size}x${size}</span>`;
+      itemDiv.addEventListener('click', () => {
+        downloadFile(dataUrl, `${imageData.fileName}-${size}x${size}.png`);
+      });
+      itemsDiv.appendChild(itemDiv);
+    });
+
+    // Update allGeneratedFavicons
+    const existingIndex = allGeneratedFavicons.findIndex(g => g.fileName === imageData.fileName);
+    if (existingIndex >= 0) {
+      allGeneratedFavicons[existingIndex].favicons = favicons;
+    } else {
+      allGeneratedFavicons.push({ fileName: imageData.fileName, favicons });
+    }
+  }
+
+  function regenerateFavicons(imageIndex, groupDiv, sizes) {
+    const itemsDiv = groupDiv.querySelector('.favicon-group-items');
+    generateFaviconsForGroup(imageIndex, itemsDiv, sizes);
+  }
+
+  function resizeImage(img, size, bgColor = '', borderRadius = 0) {
     const canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
@@ -174,26 +262,26 @@ export async function initFavicon() {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    // Calculate aspect ratio to maintain proportions
-    const aspectRatio = img.width / img.height;
-    let drawWidth, drawHeight, offsetX, offsetY;
+    // Clear canvas
+    ctx.clearRect(0, 0, size, size);
 
-    if (aspectRatio > 1) {
-      // Wider than tall
-      drawHeight = size;
-      drawWidth = size * aspectRatio;
-      offsetX = (size - drawWidth) / 2;
-      offsetY = 0;
-    } else {
-      // Taller than wide or square
-      drawWidth = size;
-      drawHeight = size / aspectRatio;
-      offsetX = 0;
-      offsetY = (size - drawHeight) / 2;
+    // Calculate border radius in pixels
+    const radiusPx = (borderRadius / 100) * (size / 2);
+
+    // Draw background with border radius if color is set
+    if (bgColor) {
+      ctx.beginPath();
+      ctx.roundRect(0, 0, size, size, radiusPx);
+      ctx.fillStyle = bgColor;
+      ctx.fill();
     }
 
-    // Fill with transparent background
-    ctx.clearRect(0, 0, size, size);
+    // Create clipping path for border radius
+    if (borderRadius > 0) {
+      ctx.beginPath();
+      ctx.roundRect(0, 0, size, size, radiusPx);
+      ctx.clip();
+    }
 
     // Draw centered and scaled image (crop to square)
     const sourceSize = Math.min(img.width, img.height);

@@ -7,6 +7,17 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.19] - 2025-12-27
+
+### Ajoute
+- **Favicon Generator** : Options de personnalisation par image
+  - Couleur de fond optionnelle (checkbox + color picker)
+  - Border radius ajustable (0-50%) pour coins arrondis
+  - Regeneration en temps reel lors des modifications
+  - Angles transparents avec le border radius
+
+---
+
 ## [3.8.18] - 2025-12-27
 
 ### Corrige
