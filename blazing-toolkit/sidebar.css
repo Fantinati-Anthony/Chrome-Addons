@@ -10,7 +10,6 @@ body[data-mode="sidebar"] {
   padding: 0;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
 }
 
 /* Container adjustments for sidebar */
