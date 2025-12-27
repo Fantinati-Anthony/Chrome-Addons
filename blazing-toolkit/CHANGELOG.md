@@ -7,6 +7,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.25] - 2025-12-27
+
+### Corrige
+- **Favoris** : Suppression de la bordure jaune sur la section favoris
+
+---
+
 ## [3.8.24] - 2025-12-27
 
 ### Corrige

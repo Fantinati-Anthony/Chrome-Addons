@@ -1,5 +1,5 @@
 {
-  "version": "3.8.24",
+  "version": "3.8.25",
   "releaseDate": "2025-12-27",
-  "changelog": "Fix: Reorganized category CSS structure to fix border-radius artifacts."
+  "changelog": "Fix: Removed yellow border from favorites section."
 }
