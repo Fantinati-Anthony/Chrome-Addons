@@ -7,6 +7,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.34] - 2025-12-27
+
+### Corrige
+- **Synchronisation des modules** : tool-store.js utilise maintenant `enabledModules` de chrome.storage.sync (meme source que la page options)
+  - Les changements dans "Gestion des modules et raccourcis" sont maintenant reflechis dans le popup/sidebar
+
+---
+
 ## [3.8.33] - 2025-12-27
 
 ### Supprime

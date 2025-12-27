@@ -3,7 +3,7 @@
 class ToolStore {
   constructor() {
     this.registry = null;
-    this.activatedTools = new Set();
+    this.enabledModules = {}; // Uses enabledModules from sync storage (same as options page)
     this.toolLocales = new Map();
     this.currentLang = 'fr';
     this.isInitialized = false;
@@ -16,8 +16,8 @@ class ToolStore {
     // Load registry
     await this.loadRegistry();
 
-    // Load activated tools from storage
-    await this.loadActivatedTools();
+    // Load enabled modules from sync storage (same as options page)
+    await this.loadEnabledModules();
 
     // Get current language
     const data = await chrome.storage.sync.get(['language']);
@@ -41,18 +41,16 @@ class ToolStore {
     }
   }
 
-  // Load activated tools from storage
-  async loadActivatedTools() {
-    const data = await chrome.storage.local.get(['activatedTools']);
-    if (data.activatedTools && Array.isArray(data.activatedTools)) {
-      this.activatedTools = new Set(data.activatedTools);
-    }
+  // Load enabled modules from sync storage (same source as options page)
+  async loadEnabledModules() {
+    const data = await chrome.storage.sync.get(['enabledModules']);
+    this.enabledModules = data.enabledModules || {};
   }
 
-  // Save activated tools to storage
-  async saveActivatedTools() {
-    await chrome.storage.local.set({
-      activatedTools: Array.from(this.activatedTools)
+  // Save enabled modules to sync storage
+  async saveEnabledModules() {
+    await chrome.storage.sync.set({
+      enabledModules: this.enabledModules
     });
   }
 
@@ -99,27 +97,28 @@ class ToolStore {
     }
   }
 
-  // Check if a tool is activated
+  // Check if a tool is activated (enabled)
+  // A tool is activated if enabledModules[toolId] is NOT explicitly false
   isToolActivated(toolId) {
-    return this.activatedTools.has(toolId);
+    return this.enabledModules[toolId] !== false;
   }
 
-  // Activate a tool
+  // Activate (enable) a tool
   async activateTool(toolId) {
     if (!this.registry.tools[toolId]) {
       console.warn(`Tool ${toolId} not found in registry`);
       return false;
     }
 
-    this.activatedTools.add(toolId);
-    await this.saveActivatedTools();
+    this.enabledModules[toolId] = true;
+    await this.saveEnabledModules();
     return true;
   }
 
-  // Deactivate a tool
+  // Deactivate (disable) a tool
   async deactivateTool(toolId) {
-    this.activatedTools.delete(toolId);
-    await this.saveActivatedTools();
+    this.enabledModules[toolId] = false;
+    await this.saveEnabledModules();
     return true;
   }
 
@@ -165,10 +164,10 @@ class ToolStore {
       .map(([id, info]) => ({ id, ...info }));
   }
 
-  // Get activated tools list
+  // Get activated (enabled) tools list
   getActivatedToolsList() {
-    return Array.from(this.activatedTools)
-      .filter(id => this.registry.tools[id])
+    return Object.keys(this.registry.tools || {})
+      .filter(id => this.enabledModules[id] !== false)
       .map(id => ({
         id,
         ...this.registry.tools[id],
