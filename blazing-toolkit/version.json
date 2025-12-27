@@ -1,5 +1,5 @@
 {
-  "version": "3.8.27",
+  "version": "3.8.28",
   "releaseDate": "2025-12-27",
-  "changelog": "Feature: Added activate all tools buttons in tool catalog with extension reload on close."
+  "changelog": "Feature: Tool catalog categories are now collapsible (collapsed by default)."
 }

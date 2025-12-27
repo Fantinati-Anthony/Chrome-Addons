@@ -7,6 +7,17 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.28] - 2025-12-27
+
+### Ajoute
+- **Catalogue d'outils** : Categories depliables
+  - Chaque categorie est repliee par defaut
+  - Cliquer sur l'en-tete pour deplier/replier
+  - Indicateur du nombre d'outils par categorie
+  - Les categories s'ouvrent automatiquement lors d'une recherche
+
+---
+
 ## [3.8.27] - 2025-12-27
 
 ### Ajoute

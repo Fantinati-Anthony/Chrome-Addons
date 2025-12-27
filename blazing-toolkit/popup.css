@@ -3177,16 +3177,49 @@ input[type="number"] {
   margin-bottom: 12px;
   font-weight: 600;
   color: var(--secondary-color);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.store-category-header:hover {
+  background: var(--bg-hover, #e8e8e8);
+}
+
+.store-category-header .category-toggle {
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+.store-category.collapsed .category-toggle {
+  transform: rotate(-90deg);
 }
 
 .store-category-header .category-emoji {
   font-size: 16px;
 }
 
+.store-category-header .category-tools-count {
+  font-size: 12px;
+  font-weight: normal;
+  color: var(--text-secondary, #666);
+}
+
 .store-tools-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
+  max-height: 2000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.2s ease;
+  opacity: 1;
+}
+
+.store-category.collapsed .store-tools-grid {
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .store-tool-item {
