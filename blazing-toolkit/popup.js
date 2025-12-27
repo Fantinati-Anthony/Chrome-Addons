@@ -59,8 +59,8 @@ async function refreshToolGrid() {
       gridView.insertBefore(emptyState, gridView.firstChild);
 
       // Apply i18n to new element
-      if (typeof I18n !== 'undefined') {
-        I18n.applyToElement(emptyState);
+      if (typeof I18n !== 'undefined' && typeof I18n.applyTranslations === 'function') {
+        I18n.applyTranslations();
       }
     }
     emptyState.style.display = 'block';

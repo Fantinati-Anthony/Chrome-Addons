@@ -1,5 +1,5 @@
 {
-  "version": "3.8.34",
+  "version": "3.8.35",
   "releaseDate": "2025-12-27",
-  "changelog": "Fix: Synchronized tool-store with options page enabledModules."
+  "changelog": "Fix: I18n.applyToElement error and sidebar switch button."
 }
