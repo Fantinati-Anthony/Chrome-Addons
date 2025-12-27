@@ -7,6 +7,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.37] - 2025-12-27
+
+### Modifie
+- **En-tete Logo** : Fusion des options "Logo clair" et "Logo sombre" en une seule option "Logo" qui suit automatiquement le theme
+- **Defaut** : Le mode Logo est maintenant le mode par defaut pour l'en-tete
+
+---
+
 ## [3.8.36] - 2025-12-27
 
 ### Corrige
