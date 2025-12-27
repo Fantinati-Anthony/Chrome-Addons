@@ -3055,11 +3055,13 @@ input[type="number"] {
   border-radius: var(--radius-large);
   width: 100%;
   max-width: 500px;
-  max-height: 90vh;
+  height: 100vh;
+  max-height: 100vh;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   transform: scale(0.95) translateY(-20px);
   transition: transform 0.3s ease;
+  padding: 0;
 }
 
 .tool-store-overlay.visible .tool-store-modal {
@@ -3174,7 +3176,6 @@ input[type="number"] {
   padding: 8px 12px;
   background: var(--bg-color);
   border-radius: var(--radius-medium);
-  margin-bottom: 12px;
   font-weight: 600;
   color: var(--secondary-color);
   cursor: pointer;
