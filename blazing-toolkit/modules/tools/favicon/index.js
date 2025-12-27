@@ -16,9 +16,8 @@ export async function initFavicon() {
   const downloadAllPngBtn = document.getElementById('btn-download-all-png');
   const downloadIcoBtn = document.getElementById('btn-download-ico');
 
-  // Store generated favicons for download
-  let generatedFavicons = [];
-  let originalFileName = 'favicon'; // Default name
+  // Store all generated favicons (array of objects with fileName and favicons)
+  let allGeneratedFavicons = [];
 
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -71,60 +70,85 @@ export async function initFavicon() {
   dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.classList.remove('dragover');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      processImage(file);
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if (files.length > 0) {
+      processImages(files);
     }
   });
 
   importInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      processImage(file);
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      processImages(files);
     }
   });
 
-  async function processImage(file) {
-    // Extract original filename without extension
-    originalFileName = file.name.replace(/\.[^/.]+$/, '') || 'favicon';
+  async function processImages(files) {
+    // Clear previous results
+    allGeneratedFavicons = [];
+    importPreview.innerHTML = '';
+    generatedDiv.innerHTML = '';
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const img = new Image();
-      img.onload = async () => {
-        // Show preview of original image
-        importPreview.innerHTML = `<img src="${e.target.result}" alt="Original">`;
+    // Process each file
+    for (const file of files) {
+      await processImage(file);
+    }
 
-        // Generate favicons in different sizes
-        const sizes = [16, 32, 48, 64, 128, 180, 192, 512];
-        generatedFavicons = [];
+    // Show download buttons if we have results
+    if (allGeneratedFavicons.length > 0) {
+      downloadActions.style.display = 'flex';
+    }
+  }
 
-        generatedDiv.innerHTML = sizes.map(size => {
-          const dataUrl = resizeImage(img, size);
-          generatedFavicons.push({ size, dataUrl });
-          return `
-            <div class="favicon-size-item downloadable" data-size="${size}" data-url="${dataUrl}">
-              <img src="${dataUrl}" width="${Math.min(size, 48)}">
-              <span>${size}x${size}</span>
-            </div>
-          `;
-        }).join('');
+  function processImage(file) {
+    return new Promise((resolve) => {
+      const originalFileName = file.name.replace(/\.[^/.]+$/, '') || 'favicon';
 
-        // Add click handlers for individual downloads
-        generatedDiv.querySelectorAll('.favicon-size-item').forEach(item => {
-          item.addEventListener('click', () => {
-            const size = item.dataset.size;
-            const dataUrl = item.dataset.url;
-            downloadFile(dataUrl, `${originalFileName}-${size}x${size}.png`);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          // Add preview of original image
+          const previewItem = document.createElement('div');
+          previewItem.className = 'favicon-import-preview-item';
+          previewItem.innerHTML = `<img src="${e.target.result}" alt="${originalFileName}"><span>${originalFileName}</span>`;
+          importPreview.appendChild(previewItem);
+
+          // Generate favicons in different sizes
+          const sizes = [16, 32, 48, 64, 128, 180, 192, 512];
+          const favicons = [];
+
+          // Create a group for this image
+          const groupDiv = document.createElement('div');
+          groupDiv.className = 'favicon-group';
+          groupDiv.innerHTML = `<div class="favicon-group-title">${originalFileName}</div><div class="favicon-group-items"></div>`;
+          const itemsDiv = groupDiv.querySelector('.favicon-group-items');
+
+          sizes.forEach(size => {
+            const dataUrl = resizeImage(img, size);
+            favicons.push({ size, dataUrl, fileName: originalFileName });
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'favicon-size-item downloadable';
+            itemDiv.dataset.size = size;
+            itemDiv.dataset.url = dataUrl;
+            itemDiv.dataset.filename = originalFileName;
+            itemDiv.innerHTML = `<img src="${dataUrl}" width="${Math.min(size, 48)}"><span>${size}x${size}</span>`;
+            itemDiv.addEventListener('click', () => {
+              downloadFile(dataUrl, `${originalFileName}-${size}x${size}.png`);
+            });
+            itemsDiv.appendChild(itemDiv);
           });
-        });
 
-        // Show download buttons
-        downloadActions.style.display = 'flex';
+          generatedDiv.appendChild(groupDiv);
+          allGeneratedFavicons.push({ fileName: originalFileName, favicons });
+
+          resolve();
+        };
+        img.src = e.target.result;
       };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    });
   }
 
   function resizeImage(img, size) {
@@ -177,23 +201,26 @@ export async function initFavicon() {
   }
 
   downloadAllPngBtn.addEventListener('click', async () => {
-    for (let i = 0; i < generatedFavicons.length; i++) {
-      const { size, dataUrl } = generatedFavicons[i];
-      downloadFile(dataUrl, `${originalFileName}-${size}x${size}.png`);
-      // Small delay between downloads to avoid browser conflicts
-      if (i < generatedFavicons.length - 1) {
+    for (const group of allGeneratedFavicons) {
+      for (let i = 0; i < group.favicons.length; i++) {
+        const { size, dataUrl, fileName } = group.favicons[i];
+        downloadFile(dataUrl, `${fileName}-${size}x${size}.png`);
+        // Small delay between downloads to avoid browser conflicts
         await new Promise(resolve => setTimeout(resolve, 150));
       }
     }
   });
 
   downloadIcoBtn.addEventListener('click', async () => {
-    // Generate ICO file with multiple sizes (16, 32, 48)
-    const icoSizes = generatedFavicons.filter(f => [16, 32, 48].includes(f.size));
-    const icoBlob = await createIcoFile(icoSizes);
-    const url = URL.createObjectURL(icoBlob);
-    downloadFile(url, `${originalFileName}.ico`);
-    URL.revokeObjectURL(url);
+    for (const group of allGeneratedFavicons) {
+      const icoSizes = group.favicons.filter(f => [16, 32, 48].includes(f.size));
+      const icoBlob = await createIcoFile(icoSizes);
+      const url = URL.createObjectURL(icoBlob);
+      downloadFile(url, `${group.fileName}.ico`);
+      URL.revokeObjectURL(url);
+      // Small delay between downloads
+      await new Promise(resolve => setTimeout(resolve, 150));
+    }
   });
 
   async function createIcoFile(favicons) {

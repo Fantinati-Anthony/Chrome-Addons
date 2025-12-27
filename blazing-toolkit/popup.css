@@ -2438,7 +2438,33 @@ input[type="number"] {
 
 .favicon-import-preview {
   margin: 15px 0;
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.favicon-import-preview-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.favicon-import-preview-item img {
+  max-width: 64px;
+  max-height: 64px;
+  border-radius: var(--radius-small);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.favicon-import-preview-item span {
+  font-size: 10px;
+  color: var(--text-secondary);
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .favicon-import-preview img {
@@ -2446,6 +2472,28 @@ input[type="number"] {
   max-height: 128px;
   border-radius: var(--radius-small);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.favicon-group {
+  margin: 15px 0;
+  padding: 10px;
+  background: var(--bg-color);
+  border-radius: var(--radius-medium);
+}
+
+.favicon-group-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.favicon-group-items {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 }
 
 .favicon-download-actions {
