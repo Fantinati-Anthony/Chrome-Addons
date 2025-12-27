@@ -7,6 +7,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.8.38] - 2025-12-27
+
+### Corrige
+- **Bouton sidebar** : Le side panel s'ouvre maintenant directement depuis le popup (requis par Chrome pour les gestes utilisateur)
+- **CSS** : Reduction du gap des favicon-group-items a 5px
+
+---
+
 ## [3.8.37] - 2025-12-27
 
 ### Modifie
