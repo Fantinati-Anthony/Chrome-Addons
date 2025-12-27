@@ -717,14 +717,22 @@ async function applyCustomOrder() {
       return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
     });
 
-    // Find insertion point (after customLinks if it exists, or at start)
+    // Find insertion point (after customLinks if it exists, or after favorites)
     const customLinks = document.getElementById('category-customLinks');
-    const insertAfter = customLinks || document.getElementById('category-favorites');
+    const favoritesSection = document.getElementById('category-favorites');
+    let insertAfter = customLinks || favoritesSection;
 
     // Re-append categories in new order
     categories.forEach(cat => {
-      if (insertAfter && insertAfter.nextSibling) {
-        gridView.insertBefore(cat, insertAfter.nextSibling);
+      if (insertAfter) {
+        // Insert after the current insertAfter element
+        if (insertAfter.nextSibling) {
+          gridView.insertBefore(cat, insertAfter.nextSibling);
+        } else {
+          gridView.appendChild(cat);
+        }
+        // Update insertAfter to the category we just inserted
+        insertAfter = cat;
       } else {
         gridView.appendChild(cat);
       }
