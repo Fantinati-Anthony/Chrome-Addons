@@ -1,5 +1,5 @@
 {
-  "version": "3.8.31",
+  "version": "3.8.32",
   "releaseDate": "2025-12-27",
-  "changelog": "Fix: Replaced extension reload with tool grid refresh when closing tool catalog."
+  "changelog": "Change: Add tools button now opens options page at modules section."
 }

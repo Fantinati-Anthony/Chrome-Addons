@@ -355,10 +355,11 @@ class ToolStore {
     const closeChangelogBtn = document.getElementById('btn-close-changelog');
     const activateAllBtn = document.getElementById('btn-activate-all-tools');
 
-    // Open store
+    // Open options page - modules section
     if (addToolsBtn) {
       addToolsBtn.addEventListener('click', () => {
-        this.openStore();
+        const optionsUrl = chrome.runtime.getURL('options.html#section-modules');
+        chrome.tabs.create({ url: optionsUrl });
       });
     }
 
