@@ -1,5 +1,5 @@
 {
-  "version": "3.8.23",
+  "version": "3.8.24",
   "releaseDate": "2025-12-27",
-  "changelog": "Fix: Fixed border-radius artifacts on category headers."
+  "changelog": "Fix: Reorganized category CSS structure to fix border-radius artifacts."
 }

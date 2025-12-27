@@ -625,8 +625,6 @@ input[type="number"] {
 /* Category Sections */
 .category-section {
   margin-bottom: 12px;
-  background: var(--category-bg);
-  border-radius: var(--radius-category-top) var(--radius-category-top) var(--radius-category-bottom) var(--radius-category-bottom);
   overflow: visible;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
@@ -688,6 +686,8 @@ input[type="number"] {
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   padding: 10px;
+  background: var(--category-bg);
+  border-radius: 0 0 var(--radius-category-bottom) var(--radius-category-bottom);
 }
 
 .tools-grid:empty {
@@ -700,6 +700,8 @@ input[type="number"] {
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   padding: 10px;
+  background: var(--category-bg);
+  border-radius: 0 0 var(--radius-category-bottom) var(--radius-category-bottom);
 }
 
 #custom-buttons-container:empty::after {
