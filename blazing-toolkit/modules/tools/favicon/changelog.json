@@ -1,6 +1,17 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.1",
   "changelog": [
+    {
+      "version": "1.2.1",
+      "date": "2025-12-27",
+      "type": "improved",
+      "messages": {
+        "fr": "Nommage intelligent des fichiers bases sur le nom original (ex: logo-32x32.png)",
+        "en": "Smart file naming based on original filename (e.g., logo-32x32.png)",
+        "es": "Nombrado inteligente de archivos basado en el nombre original (ej: logo-32x32.png)",
+        "pt": "Nomeacao inteligente de arquivos baseada no nome original (ex: logo-32x32.png)"
+      }
+    },
     {
       "version": "1.2.0",
       "date": "2025-12-26",
