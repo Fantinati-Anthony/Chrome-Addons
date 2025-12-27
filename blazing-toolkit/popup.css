@@ -3041,6 +3041,10 @@ input[type="number"] {
   overflow-y: auto;
 }
 
+#tool-store-modal {
+  padding: 0px !important;
+}
+
 .tool-store-overlay.visible {
   opacity: 1;
   visibility: visible;
