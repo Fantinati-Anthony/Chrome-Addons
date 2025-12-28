@@ -1,5 +1,5 @@
 {
-  "version": "3.9.1",
+  "version": "3.9.2",
   "releaseDate": "2025-12-28",
-  "changelog": "New: Sitemap Discovery Engine - Professional sitemap detection tool. Fix: Added missing modules to settings page (sitemapdiscovery, seoextractor, screenshot)."
+  "changelog": "Fix: Enabled tools now properly appear in popup - applyModuleVisibility() now correctly shows enabled modules."
 }
