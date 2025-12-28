@@ -5,11 +5,29 @@
 async function refreshToolGrid() {
   // Load enabled modules directly from storage (source of truth)
   const data = await chrome.storage.sync.get(['enabledModules']);
-  const enabledModules = data.enabledModules || {};
+  let enabledModules = data.enabledModules || {};
 
   const allToolIcons = document.querySelectorAll('.tool-icon[data-tool]');
   const gridView = document.getElementById('grid-view');
   let visibleCount = 0;
+
+  // Upgrade storage: add new tools that aren't in storage yet
+  let needsUpgrade = false;
+  allToolIcons.forEach(icon => {
+    const toolId = icon.dataset.tool;
+    if (!enabledModules.hasOwnProperty(toolId)) {
+      // New tool not in storage - enable by default
+      enabledModules[toolId] = true;
+      needsUpgrade = true;
+      console.log(`[Popup] New tool detected: ${toolId} - enabling by default`);
+    }
+  });
+
+  // Save upgraded storage if new tools were found
+  if (needsUpgrade) {
+    console.log('[Popup] Upgrading storage with new tools...');
+    await chrome.storage.sync.set({ enabledModules });
+  }
 
   // Show/hide tools based on enabledModules
   // Tools are shown by default unless explicitly disabled (false)

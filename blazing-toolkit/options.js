@@ -945,9 +945,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load saved state
   chrome.storage.sync.get(['enabledModules', 'categoryOrder', 'toolOrder', 'customCategories', 'toolAssignment'], (data) => {
-    if (data.enabledModules) {
-      enabledModules = { ...enabledModules, ...data.enabledModules };
-    }
+    // Track if we need to save (for upgrades when new tools are added)
+    let needsSave = false;
+    const storedModules = data.enabledModules || {};
+
+    // Merge stored state, but keep new tools enabled by default
+    Object.keys(TOOLS_CONFIG).forEach(toolId => {
+      if (storedModules.hasOwnProperty(toolId)) {
+        // Tool exists in storage - use stored value
+        enabledModules[toolId] = storedModules[toolId];
+      } else {
+        // New tool not in storage - keep enabled (default) and mark for save
+        enabledModules[toolId] = true;
+        needsSave = true;
+        console.log(`[Options] New tool detected: ${toolId} - enabling by default`);
+      }
+    });
+
     if (data.categoryOrder && Array.isArray(data.categoryOrder)) {
       categoryOrder = data.categoryOrder;
     }
@@ -960,6 +974,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (data.toolAssignment) {
       toolAssignment = data.toolAssignment;
     }
+
+    // Auto-save if new tools were added (upgrade storage)
+    if (needsSave) {
+      console.log('[Options] Upgrading storage with new tools...');
+      chrome.storage.sync.set({ enabledModules }, () => {
+        console.log('[Options] Storage upgraded successfully');
+      });
+    }
+
     renderModuleManager();
   });
 
