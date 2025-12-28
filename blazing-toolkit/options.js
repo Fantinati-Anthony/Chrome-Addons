@@ -1484,6 +1484,7 @@ document.addEventListener('DOMContentLoaded', () => {
     resetModulesBtn.addEventListener('click', () => {
       if (!confirm('Reinitialiser tous les modules et categories?')) return;
 
+      // Reset to defaults - all tools enabled
       enabledModules = {};
       Object.keys(TOOLS_CONFIG).forEach(toolId => enabledModules[toolId] = true);
       categoryOrder = [...DEFAULT_CATEGORY_ORDER];
@@ -1494,9 +1495,16 @@ document.addEventListener('DOMContentLoaded', () => {
       customCategories = {};
       toolAssignment = {};
 
-      chrome.storage.sync.remove(['enabledModules', 'categoryOrder', 'toolOrder', 'customCategories', 'toolAssignment'], () => {
+      // SAVE the reset state to storage (fix: was using remove instead of set)
+      chrome.storage.sync.set({
+        enabledModules,
+        categoryOrder,
+        toolOrder,
+        customCategories,
+        toolAssignment
+      }, () => {
         renderModuleManager();
-        showStatus(modulesStatus, 'Configuration reinitialisee!', 'success');
+        showStatus(modulesStatus, 'Configuration reinitialisee! Tous les outils sont actifs.', 'success');
       });
     });
   }
