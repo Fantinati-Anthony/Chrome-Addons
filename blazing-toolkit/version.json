@@ -1,5 +1,5 @@
 {
-  "version": "3.9.0",
+  "version": "3.9.1",
   "releaseDate": "2025-12-28",
-  "changelog": "New: Sitemap Discovery Engine - Professional sitemap detection tool that mimics search engine behavior. Merges robots.txt and sitemap.xml detection with recursive resolution, CMS detection, SEO scoring, and more."
+  "changelog": "New: Sitemap Discovery Engine - Professional sitemap detection tool. Fix: Added missing modules to settings page (sitemapdiscovery, seoextractor, screenshot)."
 }
