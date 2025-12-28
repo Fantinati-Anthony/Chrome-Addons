@@ -922,6 +922,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let customCategories = {}; // { catId: { name, emoji } }
   let toolAssignment = {}; // { toolId: catId } - for tools moved to different categories
 
+  // Auto-save enabled modules to storage (debounced)
+  let saveTimeout = null;
+  function autoSaveEnabledModules() {
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+      chrome.storage.sync.set({ enabledModules }, () => {
+        console.log('[Options] Modules auto-saved to storage');
+      });
+    }, 300); // 300ms debounce
+  }
+
   // Initialize default tool order
   Object.keys(CATEGORIES_CONFIG).forEach(cat => {
     toolOrder[cat] = [...CATEGORIES_CONFIG[cat].tools];
@@ -1076,6 +1087,7 @@ document.addEventListener('DOMContentLoaded', () => {
       catEl.querySelector('[data-action="activate-cat"]').addEventListener('click', (e) => {
         e.stopPropagation();
         tools.forEach(toolId => enabledModules[toolId] = true);
+        autoSaveEnabledModules();
         renderModuleManager();
       });
 
@@ -1086,6 +1098,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const toolEl = btn.closest('.mm-tool');
           const toolId = toolEl.dataset.tool;
           enabledModules[toolId] = true;
+          autoSaveEnabledModules();
           renderModuleManager();
         });
       });
@@ -1172,6 +1185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         deactivateBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           tools.forEach(toolId => enabledModules[toolId] = false);
+          autoSaveEnabledModules();
           renderModuleManager();
         });
       }
@@ -1203,6 +1217,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const toolEl = btn.closest('.mm-tool');
           const toolId = toolEl.dataset.tool;
           enabledModules[toolId] = false;
+          autoSaveEnabledModules();
           renderModuleManager();
         });
       });
@@ -1415,6 +1430,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (activateAllBtn) {
     activateAllBtn.addEventListener('click', () => {
       Object.keys(TOOLS_CONFIG).forEach(toolId => enabledModules[toolId] = true);
+      autoSaveEnabledModules();
       renderModuleManager();
     });
   }
@@ -1422,6 +1438,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (deactivateAllBtn) {
     deactivateAllBtn.addEventListener('click', () => {
       Object.keys(enabledModules).forEach(toolId => enabledModules[toolId] = false);
+      autoSaveEnabledModules();
       renderModuleManager();
     });
   }
