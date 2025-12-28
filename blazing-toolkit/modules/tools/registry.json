@@ -81,6 +81,7 @@
     "readability": { "category": "seo", "hasPanel": true },
     "robotstxt": { "category": "seo", "hasPanel": true },
     "seoextractor": { "category": "seo", "hasPanel": true },
+    "sitemapdiscovery": { "category": "seo", "hasPanel": true },
     "socialpreview": { "category": "seo", "hasPanel": true },
     "ssl": { "category": "security", "hasPanel": true },
     "mixedcontent": { "category": "security", "hasPanel": true },

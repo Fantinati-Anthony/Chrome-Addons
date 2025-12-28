@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2025-12-28",
+      "changes": [
+        "Initial release of Sitemap Discovery Engine",
+        "Merges robots.txt and sitemap.xml detection",
+        "Automatic robots.txt analysis with Sitemap: directive extraction",
+        "Standard sitemap path scanning",
+        "Recursive sitemap index resolution (up to 3 levels deep)",
+        "Support for WordPress, Shopify, PrestaShop, and other CMS",
+        "Automatic sitemap type classification (pages, posts, images, videos, products, news)",
+        "Quick and Complete analysis modes",
+        "Session cache for faster repeated analyses",
+        "SEO score calculation for exposed surface",
+        "Export results to JSON",
+        "Copy all discovered URLs",
+        "Rate limiting for respectful crawling"
+      ]
+    }
+  ]
+}
