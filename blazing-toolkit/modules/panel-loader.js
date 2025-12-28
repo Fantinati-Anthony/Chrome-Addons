@@ -37,6 +37,7 @@ import {
   initReadability,
   initRobotsTxt,
   initSeoExtractor,
+  initSitemapDiscovery,
   initSocialPreview,
   // Security & Performance
   initSSL,
@@ -114,6 +115,7 @@ const PanelLoader = (function() {
     readability: initReadability,
     robotstxt: initRobotsTxt,
     seoextractor: initSeoExtractor,
+    sitemapdiscovery: initSitemapDiscovery,
     socialpreview: initSocialPreview,
     // Security & Performance
     ssl: initSSL,

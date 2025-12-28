@@ -37,6 +37,7 @@ export { initBrokenLinks } from './brokenlinks/index.js';
 export { initReadability } from './readability/index.js';
 export { initRobotsTxt } from './robotstxt/index.js';
 export { initSeoExtractor } from './seoextractor/index.js';
+export { initSitemapDiscovery } from './sitemapdiscovery/index.js';
 export { initSocialPreview } from './socialpreview/index.js';
 
 // Security & Performance Tools

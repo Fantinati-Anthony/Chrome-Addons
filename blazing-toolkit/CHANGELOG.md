@@ -7,6 +7,26 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [3.9.0] - 2025-12-28
+
+### Ajoute
+- **Sitemap Discovery Engine** : Nouvel outil professionnel de decouverte de sitemaps
+  - Detection automatique des sitemaps comme les moteurs de recherche
+  - Analyse du robots.txt avec extraction des directives Sitemap:
+  - Scan intelligent des chemins standards (/sitemap.xml, /wp-sitemap.xml, etc.)
+  - Resolution recursive des sitemap index (jusqu'a 3 niveaux de profondeur)
+  - Classification automatique par type (pages, articles, images, videos, produits, news)
+  - Detection automatique du CMS (WordPress, Shopify, PrestaShop, etc.)
+  - Score SEO "Surface exposee" avec indicateurs de bonnes pratiques
+  - Mode rapide vs complet pour l'analyse
+  - Cache session pour des analyses repetees plus rapides
+  - Export JSON des resultats
+  - Copie de toutes les URLs decouvertes
+  - Interface arborescente pour visualiser la hierarchie des sitemaps
+  - Support du mode sombre
+
+---
+
 ## [3.8.38] - 2025-12-27
 
 ### Corrige

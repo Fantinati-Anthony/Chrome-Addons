@@ -1,5 +1,5 @@
 {
-  "version": "3.8.38",
-  "releaseDate": "2025-12-27",
-  "changelog": "Fix: Sidebar switch button now works correctly."
+  "version": "3.9.0",
+  "releaseDate": "2025-12-28",
+  "changelog": "New: Sitemap Discovery Engine - Professional sitemap detection tool that mimics search engine behavior. Merges robots.txt and sitemap.xml detection with recursive resolution, CMS detection, SEO scoring, and more."
 }
