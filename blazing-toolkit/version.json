@@ -1,5 +1,5 @@
 {
-  "version": "3.9.6",
+  "version": "3.9.7",
   "releaseDate": "2025-12-28",
-  "changelog": "Fix: Reset button now properly saves defaults. Added debug logging to identify hidden tools."
+  "changelog": "Fix: Added seoextractor and sitemapdiscovery tools to sidepanel.html. Both popup and sidepanel now have all 68 tools."
 }
