@@ -1,27 +1,33 @@
 // Main popup initialization
 // All modules are loaded via script tags in popup.html
 
-// Global function to refresh the tool grid based on activated tools
+// Global function to refresh the tool grid based on enabled modules
 async function refreshToolGrid() {
-  if (typeof toolStore === 'undefined') return;
+  // Load enabled modules directly from storage (source of truth)
+  const data = await chrome.storage.sync.get(['enabledModules']);
+  const enabledModules = data.enabledModules || {};
 
-  const activatedTools = toolStore.getActivatedToolsList();
   const allToolIcons = document.querySelectorAll('.tool-icon[data-tool]');
   const gridView = document.getElementById('grid-view');
+  let visibleCount = 0;
 
-  // Hide all tools initially
+  // Show/hide tools based on enabledModules
+  // Tools are shown by default unless explicitly disabled (false)
   allToolIcons.forEach(icon => {
     const toolId = icon.dataset.tool;
-    const isActivated = activatedTools.some(t => t.id === toolId);
+    const isEnabled = enabledModules[toolId] !== false;
 
-    if (isActivated) {
+    if (isEnabled) {
       icon.style.display = '';
       icon.classList.remove('tool-hidden');
+      visibleCount++;
 
-      // Add description tooltip if available
-      const locale = toolStore.getToolLocale(toolId);
-      if (locale.description) {
-        icon.dataset.description = locale.description;
+      // Add description tooltip if available from toolStore
+      if (typeof toolStore !== 'undefined') {
+        const locale = toolStore.getToolLocale(toolId);
+        if (locale && locale.description) {
+          icon.dataset.description = locale.description;
+        }
       }
     } else {
       icon.style.display = 'none';
@@ -43,10 +49,9 @@ async function refreshToolGrid() {
   });
 
   // Show/hide empty state
-  const hasActiveTools = activatedTools.length > 0;
   let emptyState = document.getElementById('empty-tools-state');
 
-  if (!hasActiveTools) {
+  if (visibleCount === 0) {
     if (!emptyState) {
       emptyState = document.createElement('div');
       emptyState.id = 'empty-tools-state';
