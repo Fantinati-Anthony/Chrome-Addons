@@ -788,8 +788,11 @@ async function applyModuleVisibility() {
   document.querySelectorAll('.tool-icon[data-tool]').forEach(icon => {
     const toolId = icon.dataset.tool;
     // If module is explicitly disabled (false), hide it
+    // Otherwise, show it (enabled by default)
     if (enabledModules[toolId] === false) {
       icon.style.display = 'none';
+    } else {
+      icon.style.display = '';  // Show enabled tools
     }
   });
 
