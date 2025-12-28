@@ -7,9 +7,13 @@ async function refreshToolGrid() {
   const data = await chrome.storage.sync.get(['enabledModules']);
   let enabledModules = data.enabledModules || {};
 
+  // DEBUG: Log storage state
+  console.log('[Popup] Storage enabledModules:', JSON.stringify(enabledModules));
+
   const allToolIcons = document.querySelectorAll('.tool-icon[data-tool]');
   const gridView = document.getElementById('grid-view');
   let visibleCount = 0;
+  const hiddenTools = [];
 
   // Upgrade storage: add new tools that aren't in storage yet
   let needsUpgrade = false;
@@ -48,10 +52,16 @@ async function refreshToolGrid() {
         }
       }
     } else {
+      hiddenTools.push(toolId);
       icon.style.display = 'none';
       icon.classList.add('tool-hidden');
     }
   });
+
+  // DEBUG: Log hidden tools
+  if (hiddenTools.length > 0) {
+    console.log('[Popup] Hidden tools (explicitly disabled):', hiddenTools);
+  }
 
   // Update category visibility
   document.querySelectorAll('.category-section').forEach(section => {
